@@ -1,0 +1,431 @@
+<!DOCTYPE html>
+
+<html lang="zh-CN"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>AI Talent Agent - 候选人推荐列表</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:wght@400;500;600;700&amp;family=Courier+Prime&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "secondary": "#565e74",
+                        "outline-variant": "#c3c6d7",
+                        "inverse-primary": "#b4c5ff",
+                        "error": "#ba1a1a",
+                        "surface-dim": "#cbdbf5",
+                        "tertiary": "#006242",
+                        "surface-bright": "#f8f9ff",
+                        "secondary-container": "#dae2fd",
+                        "secondary-fixed-dim": "#bec6e0",
+                        "inverse-on-surface": "#eaf1ff",
+                        "tertiary-fixed-dim": "#4edea3",
+                        "on-secondary-fixed-variant": "#3f465c",
+                        "tertiary-container": "#007d55",
+                        "on-secondary-fixed": "#131b2e",
+                        "on-background": "#0b1c30",
+                        "background": "#f8f9ff",
+                        "on-secondary-container": "#5c647a",
+                        "primary-fixed": "#dbe1ff",
+                        "secondary-fixed": "#dae2fd",
+                        "tertiary-fixed": "#6ffbbe",
+                        "on-primary": "#ffffff",
+                        "on-primary-fixed": "#00174b",
+                        "on-surface": "#0b1c30",
+                        "primary": "#004ac6",
+                        "surface": "#f8f9ff",
+                        "outline": "#737686",
+                        "on-tertiary": "#ffffff",
+                        "surface-variant": "#d3e4fe",
+                        "on-surface-variant": "#434655",
+                        "on-tertiary-container": "#bdffdb",
+                        "on-secondary": "#ffffff",
+                        "on-primary-fixed-variant": "#003ea8",
+                        "surface-container-lowest": "#ffffff",
+                        "error-container": "#ffdad6",
+                        "primary-fixed-dim": "#b4c5ff",
+                        "on-error": "#ffffff",
+                        "on-tertiary-fixed": "#002113",
+                        "inverse-surface": "#213145",
+                        "surface-container-high": "#dce9ff",
+                        "surface-tint": "#0053db",
+                        "surface-container-highest": "#d3e4fe",
+                        "surface-container-low": "#eff4ff",
+                        "surface-container": "#e5eeff",
+                        "primary-container": "#2563eb",
+                        "on-tertiary-fixed-variant": "#005236",
+                        "on-primary-container": "#eeefff",
+                        "on-error-container": "#93000a"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.125rem",
+                        "lg": "0.25rem",
+                        "xl": "0.5rem",
+                        "full": "0.75rem"
+                    },
+                    "spacing": {
+                        "stack-md": "12px",
+                        "base": "8px",
+                        "margin-mobile": "16px",
+                        "margin-desktop": "40px",
+                        "stack-sm": "4px",
+                        "gutter": "24px",
+                        "stack-lg": "24px",
+                        "container-max": "1440px",
+                        "margin-tablet": "24px"
+                    },
+                    "fontFamily": {
+                        "code": ["Courier Prime"],
+                        "label-sm": ["Hanken Grotesk"],
+                        "body-lg": ["Hanken Grotesk"],
+                        "headline-lg-mobile": ["Hanken Grotesk"],
+                        "display-md": ["Hanken Grotesk"],
+                        "headline-lg": ["Hanken Grotesk"],
+                        "body-md": ["Hanken Grotesk"],
+                        "label-md": ["Hanken Grotesk"],
+                        "headline-md": ["Hanken Grotesk"],
+                        "body-sm": ["Hanken Grotesk"],
+                        "display-lg": ["Hanken Grotesk"]
+                    }
+                }
+            }
+        }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+            vertical-align: middle;
+            line-height: 1;
+        }
+        .confidence-ring {
+            transform: rotate(-90deg);
+            transform-origin: 50% 50%;
+        }
+        .talent-card-hover:hover {
+            box-shadow: 0px 4px 12px rgba(15, 23, 42, 0.05);
+            border-color: #004ac6;
+        }
+        body { background-color: #f8f9ff; }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col font-body-md text-on-surface">
+<!-- TopNavBar -->
+<header class="bg-surface-container-lowest border-b border-outline-variant sticky top-0 z-50">
+<nav class="flex justify-between items-center w-full px-margin-desktop max-w-container-max mx-auto h-16">
+<div class="flex items-center gap-8">
+<span class="font-headline-md text-headline-md font-bold text-primary">AI Talent Agent</span>
+<div class="hidden md:flex items-center gap-6"><a class="text-on-surface-variant pb-1 hover:text-primary transition-colors duration-200 font-label-md text-label-md" href="#">首页</a><a class="text-primary border-b-2 border-primary pb-1 font-bold font-label-md text-label-md" href="#">岗位需求</a><a class="text-on-surface-variant pb-1 hover:text-primary transition-colors duration-200 font-label-md text-label-md" href="#">候选人推荐</a><a class="text-on-surface-variant pb-1 hover:text-primary transition-colors duration-200 font-label-md text-label-md" href="#">导出中心</a><a class="text-on-surface-variant pb-1 hover:text-primary transition-colors duration-200 font-label-md text-label-md" href="#">设置</a></div>
+</div>
+<div class="flex items-center gap-4">
+<button class="p-2 text-on-surface-variant hover:bg-surface-container rounded-full transition-colors">
+<span class="material-symbols-outlined">notifications</span>
+</button>
+<button class="p-2 text-on-surface-variant hover:bg-surface-container rounded-full transition-colors">
+<span class="material-symbols-outlined">settings</span>
+</button>
+<img alt="User avatar" class="w-8 h-8 rounded-full border border-outline-variant object-cover" data-alt="A professional headshot of a recruitment manager in a bright, modern corporate office. He wears a crisp white shirt and a navy blazer, smiling confidently. The lighting is soft and natural, reflecting a high-end SaaS professional environment with a clean, light-mode aesthetic and primary blue accents." src="https://lh3.googleusercontent.com/aida/AP1WRLvZLheBa43ewT9ySatIke3JYTnyywdjzyJI7dcI7zhidCVLXsi_oOfj0f-EKDaGih2mcMdOQxTlh1JgITxlGgF2hYm2aMvdMWf8gIB7jPH3Vf1YZlrpDdv4RbHaaXKirg9wt7MFuaU1GGadxm86WIDv5sNXpIegRDUQo5bv314ZFhXd-b-fIIqR0n5FdZANHVETKQwgpvodv4r2K_DLeFYRKYvzkwd2kPIdIg_z_njLYZYWDIEJIvn9rao"/>
+</div>
+</nav>
+</header>
+<!-- Main Content Canvas -->
+<main class="flex-grow w-full max-w-container-max mx-auto px-margin-desktop py-stack-lg flex flex-col gap-8">
+<!-- Job Profile Summary Section -->
+<section class="bg-white rounded-xl border border-outline-variant p-stack-lg shadow-sm">
+<div class="flex justify-between items-start mb-6">
+<div>
+<div class="flex items-center gap-3 mb-2">
+<h1 class="font-headline-lg text-headline-lg text-on-surface">高级架构师 (Cloud &amp; AI)</h1>
+<span class="bg-primary/10 text-primary px-3 py-1 rounded-full font-label-sm text-label-sm">招聘中</span>
+</div>
+<div class="flex flex-wrap gap-4 text-on-surface-variant font-body-sm text-body-sm">
+<span class="flex items-center gap-1"><span class="material-symbols-outlined text-[18px]">location_on</span> 上海 · 浦东</span>
+<span class="flex items-center gap-1"><span class="material-symbols-outlined text-[18px]">payments</span> 50k - 80k · 16薪</span>
+<span class="flex items-center gap-1"><span class="material-symbols-outlined text-[18px]">work</span> 8-10年经验</span>
+<span class="flex items-center gap-1"><span class="material-symbols-outlined text-[18px]">school</span> 统招硕士及以上</span>
+</div>
+</div>
+<div class="flex gap-2">
+<button class="flex items-center gap-2 px-4 py-2 border border-outline text-secondary font-label-md text-label-md rounded-lg hover:bg-surface-container transition-all">
+<span class="material-symbols-outlined text-[20px]">edit</span> 修改JD
+                    </button>
+<button class="flex items-center gap-2 px-4 py-2 bg-primary text-on-primary font-label-md text-label-md rounded-lg hover:opacity-90 active:scale-95 transition-all">
+<span class="material-symbols-outlined text-[20px]">auto_awesome</span> 重新分析
+                    </button>
+</div>
+</div>
+<!-- Job Match Insight Tiles -->
+<div class="grid grid-cols-1 md:grid-cols-4 gap-gutter border-t border-outline-variant pt-6">
+<div class="space-y-1">
+<p class="text-on-surface-variant font-label-sm text-label-sm">核心技能要求</p>
+<p class="font-headline-md text-headline-md">Distributed, K8s, PyTorch</p>
+</div>
+<div class="space-y-1">
+<p class="text-on-surface-variant font-label-sm text-label-sm">推荐人选规模</p>
+<p class="font-headline-md text-headline-md">248 位匹配</p>
+</div>
+<div class="space-y-1">
+<p class="text-on-surface-variant font-label-sm text-label-sm">平均匹配度</p>
+<p class="font-headline-md text-headline-md text-primary">82%</p>
+</div>
+<div class="space-y-1">
+<p class="text-on-surface-variant font-label-sm text-label-sm">最近活跃</p>
+<p class="font-headline-md text-headline-md">12 位今日上线</p>
+</div>
+</div>
+</section>
+<!-- Search & Filter Layout -->
+<div class="flex flex-col md:flex-row gap-gutter">
+<!-- Sidebar: Filters -->
+<aside class="w-full md:w-64 flex-shrink-0 space-y-6">
+<div class="bg-white rounded-xl border border-outline-variant p-stack-md">
+<div class="flex justify-between items-center mb-4">
+<h3 class="font-headline-md text-headline-md">筛选条件</h3>
+<button class="text-primary font-label-sm text-label-sm">重置</button>
+</div>
+<div class="space-y-4">
+<!-- Filter Group -->
+<div class="space-y-2">
+<label class="font-label-md text-label-md text-on-surface-variant">匹配分区间</label>
+<div class="flex items-center gap-2">
+<input class="w-full border-outline-variant rounded p-1 text-body-sm focus:ring-primary" placeholder="最低" type="number"/>
+<span>-</span>
+<input class="w-full border-outline-variant rounded p-1 text-body-sm focus:ring-primary" placeholder="最高" type="number"/>
+</div>
+</div>
+<div class="space-y-2">
+<label class="font-label-md text-label-md text-on-surface-variant">推荐等级</label>
+<div class="flex flex-col gap-2">
+<label class="flex items-center gap-2 font-body-sm text-body-sm">
+<input checked="" class="text-primary rounded" type="checkbox"/> 卓越匹配 (90%+)
+                                </label>
+<label class="flex items-center gap-2 font-body-sm text-body-sm">
+<input checked="" class="text-primary rounded" type="checkbox"/> 高度匹配 (80%-90%)
+                                </label>
+<label class="flex items-center gap-2 font-body-sm text-body-sm">
+<input class="text-primary rounded" type="checkbox"/> 中度匹配 (70%-80%)
+                                </label>
+</div>
+</div>
+<div class="space-y-2">
+<label class="font-label-md text-label-md text-on-surface-variant">目前状态</label>
+<select class="w-full border-outline-variant rounded p-2 text-body-sm">
+<option>不限</option>
+<option>离职状态</option>
+<option>在职看机会</option>
+<option>在职稳定</option>
+</select>
+</div>
+</div>
+</div>
+<div class="bg-primary/5 rounded-xl border border-primary/20 p-stack-md">
+<div class="flex items-center gap-2 mb-2">
+<span class="material-symbols-outlined text-primary">tips_and_updates</span>
+<h4 class="font-label-md text-label-md text-primary">AI 寻才建议</h4>
+</div>
+<p class="font-body-sm text-body-sm text-on-secondary-fixed-variant">
+                        建议放宽“行业背景”限制。当前JD对金融背景要求过高，放宽至互联网头部企业可增加45%的优质候选人。
+                    </p>
+</div>
+</aside>
+<!-- Main Area: Candidate List -->
+<div class="flex-grow space-y-4">
+<!-- Sort Bar -->
+<div class="flex justify-between items-center bg-surface-container-low px-4 py-2 rounded-lg border border-outline-variant">
+<p class="font-label-md text-label-md">找到 48 位匹配的候选人</p>
+<div class="flex items-center gap-4">
+<span class="text-on-surface-variant font-label-sm text-label-sm">排序依据:</span>
+<select class="bg-transparent border-none font-label-md text-label-md focus:ring-0">
+<option>AI 综合评分 (高-低)</option>
+<option>入库时间</option>
+<option>薪资要求 (低-高)</option>
+</select>
+</div>
+</div>
+<!-- Candidate Card 1 -->
+<article class="bg-white rounded-xl border border-outline-variant p-6 talent-card-hover transition-all group flex flex-col md:flex-row gap-6">
+<!-- Left: Profile & Core Scores -->
+<div class="md:w-64 flex-shrink-0 border-r border-outline-variant pr-6">
+<div class="flex items-start gap-4 mb-4">
+<img alt="Candidate Photo" class="w-16 h-16 rounded-xl object-cover border border-outline-variant" data-alt="A close-up portrait of a senior male software engineer with glasses, looking professional and approachable. He is in a clean-cut modern studio environment with soft neutral lighting. The style is consistent with a professional recruitment platform, using clean backgrounds and focused framing." src="https://lh3.googleusercontent.com/aida/AP1WRLuqVcWtoRILIou0Vy6NNPh9-16prkvuj-SwxzRgLEH5oUXaS6qa81-N-pOWiK0LE_NwqsO5cRj3xIkzYElKu9G_M-danPB2YtdJrwpLW_WvB3niHBoSM22eQUk4wWq1kEAoN1KRba2RcE8NMG_hHr45RtscWtslVTee5lHgcswA6OIwIx1Z79vg0P9r0GBbyndoawnhXoUwBeXYxXCFRU8C-G4q-bdgS_HWCV7a3XAQ2Z-eqrABLvhdKw"/>
+<div>
+<h3 class="font-headline-md text-headline-md text-on-surface group-hover:text-primary transition-colors">林子杰</h3>
+<p class="text-on-surface-variant font-body-sm text-body-sm">现任：字节跳动 · 资深架构师</p>
+<p class="text-secondary font-label-sm text-label-sm">经验：12年 · 硕士 (清华大学)</p>
+</div>
+</div>
+<!-- Match Score Ring -->
+<div class="flex items-center gap-4 bg-surface-container-lowest p-3 rounded-lg border border-outline-variant">
+<div class="relative w-16 h-16">
+<svg class="w-full h-full confidence-ring" viewbox="0 0 36 36">
+<path class="stroke-outline-variant" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" fill="none" stroke-width="3"></path>
+<path class="stroke-primary" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" fill="none" stroke-dasharray="94, 100" stroke-linecap="round" stroke-width="3"></path>
+</svg>
+<div class="absolute inset-0 flex items-center justify-center font-bold text-primary text-lg">94</div>
+</div>
+<div>
+<p class="font-label-md text-label-md text-primary">卓越匹配</p>
+<p class="text-[10px] text-on-surface-variant uppercase">Total Match Score</p>
+</div>
+</div>
+</div>
+<!-- Middle: Breakdown & AI Insight -->
+<div class="flex-grow flex flex-col gap-4">
+<div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+<div class="bg-surface-container-lowest p-2 rounded border border-outline-variant text-center">
+<p class="text-on-surface-variant font-label-sm text-label-sm">项目经验</p>
+<p class="font-bold text-on-surface">96</p>
+</div>
+<div class="bg-surface-container-lowest p-2 rounded border border-outline-variant text-center">
+<p class="text-on-surface-variant font-label-sm text-label-sm">专业技能</p>
+<p class="font-bold text-on-surface">92</p>
+</div>
+<div class="bg-surface-container-lowest p-2 rounded border border-outline-variant text-center">
+<p class="text-on-surface-variant font-label-sm text-label-sm">学历背景</p>
+<p class="font-bold text-on-surface">98</p>
+</div>
+<div class="bg-surface-container-lowest p-2 rounded border border-outline-variant text-center">
+<p class="text-on-surface-variant font-label-sm text-label-sm">职涯稳定性</p>
+<p class="font-bold text-on-surface">88</p>
+</div>
+</div>
+<div class="bg-tertiary/5 border-l-4 border-tertiary p-3 rounded-r-lg">
+<p class="font-label-md text-label-md text-tertiary flex items-center gap-1 mb-1">
+<span class="material-symbols-outlined text-[18px]">verified</span> AI 推荐理由
+                            </p>
+<ul class="text-body-sm text-on-surface space-y-1 list-disc list-inside">
+<li>具备深厚的超大规模集群调度经验，曾主导万级节点迁移项目。</li>
+<li>技术栈与JD 100% 契合，擅长 Go / C++ 及 PyTorch 优化。</li>
+<li>候选人近期对“云原生+AI”方向有明确求职意愿，与岗位目标高度同步。</li>
+</ul>
+</div>
+<div class="flex flex-wrap gap-2">
+<span class="bg-error-container text-on-error-container px-2 py-0.5 rounded font-label-sm text-label-sm flex items-center gap-1">
+<span class="material-symbols-outlined text-[14px]">warning</span> 待验证：英文口语
+                            </span>
+<span class="bg-surface-variant text-on-surface-variant px-2 py-0.5 rounded font-label-sm text-label-sm">高活跃</span>
+<span class="bg-surface-variant text-on-surface-variant px-2 py-0.5 rounded font-label-sm text-label-sm">大厂背景</span>
+</div>
+</div>
+<!-- Right: Actions -->
+<div class="md:w-32 flex-shrink-0 flex flex-col gap-2">
+<button class="w-full py-2 bg-primary text-on-primary rounded-lg font-label-md text-label-md hover:opacity-90 transition-all">查看详情</button>
+<button class="w-full py-2 border border-outline text-secondary rounded-lg font-label-md text-label-md hover:bg-surface-container transition-all flex items-center justify-center gap-1">
+<span class="material-symbols-outlined text-[18px]">content_copy</span> 摘要
+                        </button>
+<button class="w-full py-2 border border-outline text-secondary rounded-lg font-label-md text-label-md hover:bg-surface-container transition-all flex items-center justify-center gap-1">
+<span class="material-symbols-outlined text-[18px]">add_box</span> 导出
+                        </button>
+</div>
+</article>
+<!-- Candidate Card 2 -->
+<article class="bg-white rounded-xl border border-outline-variant p-6 talent-card-hover transition-all group flex flex-col md:flex-row gap-6">
+<div class="md:w-64 flex-shrink-0 border-r border-outline-variant pr-6">
+<div class="flex items-start gap-4 mb-4">
+<img alt="Candidate Photo" class="w-16 h-16 rounded-xl object-cover border border-outline-variant" data-alt="A professional headshot of a female software engineer, wearing a smart casual blazer, against a softly blurred office window background. The morning sunlight creates a warm and natural lighting effect. Her expression is focused yet friendly, embodying a high-performance corporate culture in a modern SaaS context." src="https://lh3.googleusercontent.com/aida/AP1WRLs_LxjyyIJAFR_y0TwwE06SVyS0qtr51rgdTBWnh7CoVRPTyJ--xsOcj0PO1VjhwQ2-lJ5k7mYNhYroDLOSDqUOnUb51GoksaX-guk0QIW-vDL0hNsTBxmWAesWMSHytDdrufrslI_HSGE2QA5RZLKuBdDez--aphhJJ0-CyMchNE_jJPijURQ5mx5GB7eM4HmJJtkwwpy2JpV02Mo5oP4kHSVqXqctVt1pqgirPgsQP8wZEDYVfJAXcA"/>
+<div>
+<h3 class="font-headline-md text-headline-md text-on-surface group-hover:text-primary transition-colors">王佳敏</h3>
+<p class="text-on-surface-variant font-body-sm text-body-sm">现任：阿里云 · 高级技术专家</p>
+<p class="text-secondary font-label-sm text-label-sm">经验：9年 · 博士 (浙江大学)</p>
+</div>
+</div>
+<div class="flex items-center gap-4 bg-surface-container-lowest p-3 rounded-lg border border-outline-variant">
+<div class="relative w-16 h-16">
+<svg class="w-full h-full confidence-ring" viewbox="0 0 36 36">
+<path class="stroke-outline-variant" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" fill="none" stroke-width="3"></path>
+<path class="stroke-primary" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" fill="none" stroke-dasharray="88, 100" stroke-linecap="round" stroke-width="3"></path>
+</svg>
+<div class="absolute inset-0 flex items-center justify-center font-bold text-primary text-lg">88</div>
+</div>
+<div>
+<p class="font-label-md text-label-md text-primary">高度匹配</p>
+<p class="text-[10px] text-on-surface-variant uppercase">Total Match Score</p>
+</div>
+</div>
+</div>
+<div class="flex-grow flex flex-col gap-4">
+<div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+<div class="bg-surface-container-lowest p-2 rounded border border-outline-variant text-center">
+<p class="text-on-surface-variant font-label-sm text-label-sm">项目经验</p>
+<p class="font-bold text-on-surface">85</p>
+</div>
+<div class="bg-surface-container-lowest p-2 rounded border border-outline-variant text-center">
+<p class="text-on-surface-variant font-label-sm text-label-sm">专业技能</p>
+<p class="font-bold text-on-surface">94</p>
+</div>
+<div class="bg-surface-container-lowest p-2 rounded border border-outline-variant text-center">
+<p class="text-on-surface-variant font-label-sm text-label-sm">学历背景</p>
+<p class="font-bold text-on-surface">99</p>
+</div>
+<div class="bg-surface-container-lowest p-2 rounded border border-outline-variant text-center">
+<p class="text-on-surface-variant font-label-sm text-label-sm">职涯稳定性</p>
+<p class="font-bold text-on-surface">75</p>
+</div>
+</div>
+<div class="bg-tertiary/5 border-l-4 border-tertiary p-3 rounded-r-lg">
+<p class="font-label-md text-label-md text-tertiary flex items-center gap-1 mb-1">
+<span class="material-symbols-outlined text-[18px]">verified</span> AI 推荐理由
+                            </p>
+<ul class="text-body-sm text-on-surface space-y-1 list-disc list-inside">
+<li>在分布式系统一致性协议领域有学术突破，发表多篇顶会论文。</li>
+<li>深刻理解云原生架构，对于高性能算力分配有独到见解。</li>
+</ul>
+</div>
+<div class="flex flex-wrap gap-2">
+<span class="bg-error-container text-on-error-container px-2 py-0.5 rounded font-label-sm text-label-sm flex items-center gap-1">
+<span class="material-symbols-outlined text-[14px]">warning</span> 待验证：职涯跳槽频率
+                            </span>
+<span class="bg-surface-variant text-on-surface-variant px-2 py-0.5 rounded font-label-sm text-label-sm">博士专家</span>
+<span class="bg-surface-variant text-on-surface-variant px-2 py-0.5 rounded font-label-sm text-label-sm">名校校友</span>
+</div>
+</div>
+<div class="md:w-32 flex-shrink-0 flex flex-col gap-2">
+<button class="w-full py-2 bg-primary text-on-primary rounded-lg font-label-md text-label-md hover:opacity-90 transition-all">查看详情</button>
+<button class="w-full py-2 border border-outline text-secondary rounded-lg font-label-md text-label-md hover:bg-surface-container transition-all flex items-center justify-center gap-1">
+<span class="material-symbols-outlined text-[18px]">content_copy</span> 摘要
+                        </button>
+<button class="w-full py-2 border border-outline text-secondary rounded-lg font-label-md text-label-md hover:bg-surface-container transition-all flex items-center justify-center gap-1">
+<span class="material-symbols-outlined text-[18px]">add_box</span> 导出
+                        </button>
+</div>
+</article>
+<!-- Pagination Placeholder -->
+<div class="flex justify-center pt-8">
+<nav class="flex items-center gap-2">
+<button class="w-8 h-8 rounded border border-outline-variant flex items-center justify-center hover:bg-surface-container"><span class="material-symbols-outlined">chevron_left</span></button>
+<button class="w-8 h-8 rounded bg-primary text-on-primary flex items-center justify-center font-label-md text-label-md">1</button>
+<button class="w-8 h-8 rounded border border-outline-variant flex items-center justify-center hover:bg-surface-container font-label-md text-label-md">2</button>
+<button class="w-8 h-8 rounded border border-outline-variant flex items-center justify-center hover:bg-surface-container font-label-md text-label-md">3</button>
+<span class="px-2">...</span>
+<button class="w-8 h-8 rounded border border-outline-variant flex items-center justify-center hover:bg-surface-container font-label-md text-label-md">12</button>
+<button class="w-8 h-8 rounded border border-outline-variant flex items-center justify-center hover:bg-surface-container"><span class="material-symbols-outlined">chevron_right</span></button>
+</nav>
+</div>
+</div>
+</div>
+</main>
+<!-- Footer -->
+<footer class="bg-surface-container w-full py-stack-lg px-margin-desktop border-t border-outline-variant mt-auto">
+<div class="max-w-container-max mx-auto flex flex-col md:flex-row justify-between items-start md:items-center gap-6">
+<div class="space-y-2">
+<span class="font-headline-sm text-headline-sm font-semibold text-secondary">AI Talent Agent</span>
+<p class="font-body-sm text-body-sm text-on-secondary-fixed-variant">© 2024 AI Talent Agent. All rights reserved.</p>
+</div>
+<div class="flex flex-wrap gap-x-8 gap-y-2">
+<a class="text-on-secondary-fixed-variant font-label-sm text-label-sm hover:text-primary transition-all underline" href="#">ATS Integration</a>
+<a class="text-on-secondary-fixed-variant font-label-sm text-label-sm hover:text-primary transition-all underline" href="#">Excel Support</a>
+<a class="text-on-secondary-fixed-variant font-label-sm text-label-sm hover:text-primary transition-all underline" href="#">Feishu Connector</a>
+<a class="text-on-secondary-fixed-variant font-label-sm text-label-sm hover:text-primary transition-all underline" href="#">Privacy Policy</a>
+<a class="text-on-secondary-fixed-variant font-label-sm text-label-sm hover:text-primary transition-all underline" href="#">Terms of Service</a>
+</div>
+</div>
+</footer>
+<!-- FAB (Suppressed based on logic for details/transactional screens but shown here as it is a dashboard-like overview) -->
+<button class="fixed bottom-10 right-10 w-14 h-14 bg-primary text-on-primary rounded-full shadow-lg flex items-center justify-center hover:scale-105 active:scale-95 transition-all z-40">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">add</span>
+</button>
+</body></html>

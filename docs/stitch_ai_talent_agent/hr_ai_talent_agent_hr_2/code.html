@@ -1,0 +1,444 @@
+<!DOCTYPE html>
+
+<html lang="zh-CN"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>HR 导出包 - AI Talent Agent</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "secondary": "#565e74",
+                        "outline-variant": "#c3c6d7",
+                        "inverse-primary": "#b4c5ff",
+                        "error": "#ba1a1a",
+                        "surface-dim": "#cbdbf5",
+                        "tertiary": "#006242",
+                        "surface-bright": "#f8f9ff",
+                        "secondary-container": "#dae2fd",
+                        "secondary-fixed-dim": "#bec6e0",
+                        "inverse-on-surface": "#eaf1ff",
+                        "tertiary-fixed-dim": "#4edea3",
+                        "on-secondary-fixed-variant": "#3f465c",
+                        "tertiary-container": "#007d55",
+                        "on-secondary-fixed": "#131b2e",
+                        "on-background": "#0b1c30",
+                        "background": "#f8f9ff",
+                        "on-secondary-container": "#5c647a",
+                        "primary-fixed": "#dbe1ff",
+                        "secondary-fixed": "#dae2fd",
+                        "tertiary-fixed": "#6ffbbe",
+                        "on-primary": "#ffffff",
+                        "on-primary-fixed": "#00174b",
+                        "on-surface": "#0b1c30",
+                        "primary": "#004ac6",
+                        "surface": "#f8f9ff",
+                        "outline": "#737686",
+                        "on-tertiary": "#ffffff",
+                        "surface-variant": "#d3e4fe",
+                        "on-surface-variant": "#434655",
+                        "on-tertiary-container": "#bdffdb",
+                        "on-secondary": "#ffffff",
+                        "on-primary-fixed-variant": "#003ea8",
+                        "surface-container-lowest": "#ffffff",
+                        "error-container": "#ffdad6",
+                        "primary-fixed-dim": "#b4c5ff",
+                        "on-error": "#ffffff",
+                        "on-tertiary-fixed": "#002113",
+                        "inverse-surface": "#213145",
+                        "surface-container-high": "#dce9ff",
+                        "surface-tint": "#0053db",
+                        "surface-container-highest": "#d3e4fe",
+                        "surface-container-low": "#eff4ff",
+                        "surface-container": "#e5eeff",
+                        "primary-container": "#2563eb",
+                        "on-tertiary-fixed-variant": "#005236",
+                        "on-primary-container": "#eeefff",
+                        "on-error-container": "#93000a"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.125rem",
+                        "lg": "0.25rem",
+                        "xl": "0.5rem",
+                        "full": "0.75rem"
+                    },
+                    "spacing": {
+                        "stack-md": "12px",
+                        "base": "8px",
+                        "margin-mobile": "16px",
+                        "margin-desktop": "40px",
+                        "stack-sm": "4px",
+                        "gutter": "24px",
+                        "stack-lg": "24px",
+                        "container-max": "1440px",
+                        "margin-tablet": "24px"
+                    },
+                    "fontFamily": {
+                        "code": ["Courier Prime"],
+                        "label-sm": ["Hanken Grotesk"],
+                        "body-lg": ["Hanken Grotesk"],
+                        "headline-lg-mobile": ["Hanken Grotesk"],
+                        "display-md": ["Hanken Grotesk"],
+                        "headline-lg": ["Hanken Grotesk"],
+                        "body-md": ["Hanken Grotesk"],
+                        "label-md": ["Hanken Grotesk"],
+                        "headline-md": ["Hanken Grotesk"],
+                        "body-sm": ["Hanken Grotesk"],
+                        "display-lg": ["Hanken Grotesk"]
+                    },
+                    "fontSize": {
+                        "code": ["14px", {"lineHeight": "20px", "fontWeight": "400"}],
+                        "label-sm": ["12px", {"lineHeight": "16px", "letterSpacing": "0.02em", "fontWeight": "500"}],
+                        "body-lg": ["18px", {"lineHeight": "28px", "fontWeight": "400"}],
+                        "headline-lg-mobile": ["20px", {"lineHeight": "28px", "fontWeight": "600"}],
+                        "display-md": ["30px", {"lineHeight": "38px", "letterSpacing": "-0.01em", "fontWeight": "700"}],
+                        "headline-lg": ["24px", {"lineHeight": "32px", "fontWeight": "600"}],
+                        "body-md": ["16px", {"lineHeight": "24px", "fontWeight": "400"}],
+                        "label-md": ["14px", {"lineHeight": "16px", "fontWeight": "600"}],
+                        "headline-md": ["20px", {"lineHeight": "28px", "fontWeight": "600"}],
+                        "body-sm": ["14px", {"lineHeight": "20px", "fontWeight": "400"}],
+                        "display-lg": ["36px", {"lineHeight": "44px", "letterSpacing": "-0.02em", "fontWeight": "700"}]
+                    }
+                }
+            }
+        }
+    </script>
+<style>
+        body {
+            background-color: #F8FAFC;
+            font-family: 'Hanken Grotesk', sans-serif;
+            color: #0b1c30;
+        }
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .glass-panel {
+            background: rgba(255, 255, 255, 0.8);
+            backdrop-filter: blur(12px);
+            border: 1px solid #E2E8F0;
+        }
+        .bento-grid {
+            display: grid;
+            grid-template-columns: repeat(12, 1fr);
+            gap: 24px;
+        }
+        .custom-scrollbar::-webkit-scrollbar {
+            width: 6px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-track {
+            background: transparent;
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb {
+            background: #cbd5e1;
+            border-radius: 10px;
+        }
+    </style>
+</head>
+<body class="flex flex-col min-h-screen">
+<!-- TopNavBar -->
+<header class="bg-surface-container-lowest dark:bg-inverse-surface border-b border-outline-variant dark:border-outline sticky top-0 z-50">
+<div class="flex justify-between items-center w-full px-margin-desktop max-w-container-max mx-auto h-16">
+<div class="flex items-center gap-8">
+<span class="font-headline-md text-headline-md font-bold text-primary dark:text-primary-fixed-dim">AI Talent Agent</span>
+<nav class="hidden md:flex items-center gap-6 h-full"><a class="text-on-surface-variant dark:text-surface-variant pb-1 hover:text-primary dark:hover:text-primary-fixed-dim transition-colors duration-200 font-label-md text-label-md" href="#">首页</a><a class="text-on-surface-variant dark:text-surface-variant pb-1 hover:text-primary dark:hover:text-primary-fixed-dim transition-colors duration-200 font-label-md text-label-md" href="#">岗位需求</a><a class="text-on-surface-variant dark:text-surface-variant pb-1 hover:text-primary dark:hover:text-primary-fixed-dim transition-colors duration-200 font-label-md text-label-md" href="#">候选人推荐</a><a class="text-on-surface-variant dark:text-surface-variant pb-1 hover:text-primary dark:hover:text-primary-fixed-dim transition-colors duration-200 font-label-md text-label-md" href="#">导出中心</a><a class="text-on-surface-variant dark:text-surface-variant pb-1 hover:text-primary dark:hover:text-primary-fixed-dim transition-colors duration-200 font-label-md text-label-md" href="#">设置</a></nav>
+</div>
+<div class="flex items-center gap-4">
+<button class="p-2 text-on-surface-variant hover:bg-surface-container rounded-full transition-all">
+<span class="material-symbols-outlined">notifications</span>
+</button>
+<button class="p-2 text-on-surface-variant hover:bg-surface-container rounded-full transition-all">
+<span class="material-symbols-outlined">settings</span>
+</button>
+<div class="w-8 h-8 rounded-full overflow-hidden border border-outline-variant">
+<img alt="User avatar" data-alt="A professional close-up portrait of a corporate HR manager with a friendly expression. She is wearing a modern business suit, and the background is a blurred, high-end contemporary office space with soft lighting. The image quality is crisp and professional, fitting a premium B2B SaaS platform aesthetic with clean, bright tones." src="https://lh3.googleusercontent.com/aida/AP1WRLvVgD6krDfvOYCsaamlcpwu9yBO1XvnJgPaemcvZDL6BN6aBJyDRjGI-O0tIZ5gK_0DELpG0D5RWABj84k2qbDQYfiXdMVHNyvLJoRd7r4n0N6GVuuy2ni1WZN3Kx7rWQnWP0nZWga6E2Mf4OCE2847ZDRWUgT-F-2cDUwHIPKoosMWSyU10w9EqJKyHxOUAvY2Atbl01LZooofQopQtrPOLWc5mOwC-J80-GBsLc2sjMW48sYvc96KfNU"/>
+</div>
+</div>
+</div>
+</header>
+<main class="flex-grow w-full max-w-container-max mx-auto px-margin-desktop py-10">
+<!-- Header Section -->
+<div class="mb-10 flex justify-between items-end">
+<div>
+<h1 class="font-display-md text-display-md text-on-background mb-2">HR 数据导出工作站</h1>
+<p class="font-body-md text-body-md text-secondary">将 AI 筛选结果快速同步至您的现有工作流 (ATS, Excel, 企业微信)</p>
+</div>
+<div class="flex gap-3">
+<button class="flex items-center gap-2 bg-surface-container border border-outline-variant px-4 py-2 rounded-xl text-on-surface hover:bg-surface-container-high transition-all font-label-md text-label-md">
+<span class="material-symbols-outlined text-sm">history</span>
+                    导出历史
+                </button>
+<button class="flex items-center gap-2 bg-primary text-on-primary px-6 py-2 rounded-xl hover:opacity-90 transition-all font-label-md text-label-md shadow-sm"><span class="material-symbols-outlined text-sm">cloud_upload</span>
+                    生成 ATS 导入包</button>
+</div>
+</div>
+<!-- Bento Layout -->
+<div class="bento-grid">
+<!-- Left Panel: Configuration & Field Preview -->
+<div class="col-span-12 lg:col-span-4 flex flex-col gap-6">
+<!-- Export Format Selector -->
+<section class="glass-panel p-6 rounded-2xl shadow-sm">
+<h3 class="font-headline-sm text-headline-sm mb-4 flex items-center gap-2">
+<span class="material-symbols-outlined text-primary">unarchive</span>
+                        导出格式
+                    </h3>
+<div class="space-y-2">
+<label class="flex items-center justify-between p-3 rounded-lg border border-primary bg-primary-fixed/10 cursor-pointer group">
+<div class="flex items-center gap-3">
+<span class="material-symbols-outlined text-primary">table_view</span>
+<span class="font-label-md text-label-md">Excel / CSV 报表</span>
+</div>
+<input checked="" class="text-primary focus:ring-primary" name="format" type="radio"/>
+</label>
+<label class="flex items-center justify-between p-3 rounded-lg border border-outline-variant hover:border-primary transition-all cursor-pointer group">
+<div class="flex items-center gap-3">
+<span class="material-symbols-outlined text-secondary">mail</span>
+<span class="font-label-md text-label-md">邮件通知正文</span>
+</div>
+<input class="text-primary focus:ring-primary" name="format" type="radio"/>
+</label>
+<label class="flex items-center justify-between p-3 rounded-lg border border-outline-variant hover:border-primary transition-all cursor-pointer group">
+<div class="flex items-center gap-3">
+<span class="material-symbols-outlined text-secondary">chat</span>
+<span class="font-label-md text-label-md">飞书 / 企微摘要</span>
+</div>
+<input class="text-primary focus:ring-primary" name="format" type="radio"/>
+</label>
+<label class="flex items-center justify-between p-3 rounded-lg border border-outline-variant hover:border-primary transition-all cursor-pointer group">
+<div class="flex items-center gap-3">
+<span class="material-symbols-outlined text-secondary">description</span>
+<span class="font-label-md text-label-md">面试评价表 (PDF)</span>
+</div>
+<input class="text-primary focus:ring-primary" name="format" type="radio"/>
+</label>
+<label class="flex items-center justify-between p-3 rounded-lg border border-outline-variant hover:border-primary transition-all cursor-pointer group">
+<div class="flex items-center gap-3">
+<span class="material-symbols-outlined text-secondary">terminal</span>
+<span class="font-label-md text-label-md">标准 JSON 格式</span>
+</div>
+<input class="text-primary focus:ring-primary" name="format" type="radio"/>
+</label>
+</div>
+</section>
+<!-- Field Selection -->
+<section class="glass-panel p-6 rounded-2xl shadow-sm flex-grow">
+<div class="flex justify-between items-center mb-4">
+<h3 class="font-headline-sm text-headline-sm flex items-center gap-2">
+<span class="material-symbols-outlined text-primary">checklist</span>
+                            字段预览与筛选
+                        </h3>
+<button class="text-primary font-label-sm text-label-sm hover:underline">全选</button>
+</div>
+<div class="space-y-3 custom-scrollbar overflow-y-auto max-h-[400px] pr-2">
+<div class="p-3 bg-surface-container-low rounded-lg border border-outline-variant/30 flex items-center justify-between">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-sm text-outline">drag_indicator</span>
+<span class="font-body-sm text-body-sm">姓名 / 手机号</span>
+</div>
+<input checked="" class="rounded-sm text-primary focus:ring-primary" type="checkbox"/>
+</div>
+<div class="p-3 bg-surface-container-low rounded-lg border border-outline-variant/30 flex items-center justify-between">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-sm text-outline">drag_indicator</span>
+<span class="font-body-sm text-body-sm">AI 综合评分 (Confidence)</span>
+</div>
+<input checked="" class="rounded-sm text-primary focus:ring-primary" type="checkbox"/>
+</div>
+<div class="p-3 bg-surface-container-low rounded-lg border border-outline-variant/30 flex items-center justify-between">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-sm text-outline">drag_indicator</span>
+<span class="font-body-sm text-body-sm">核心技能匹配度</span>
+</div>
+<input checked="" class="rounded-sm text-primary focus:ring-primary" type="checkbox"/>
+</div>
+<div class="p-3 bg-surface-container-low rounded-lg border border-outline-variant/30 flex items-center justify-between">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-sm text-outline">drag_indicator</span>
+<span class="font-body-sm text-body-sm">履历关键节点提取</span>
+</div>
+<input checked="" class="rounded-sm text-primary focus:ring-primary" type="checkbox"/>
+</div>
+<div class="p-3 bg-surface-container-low rounded-lg border border-outline-variant/30 flex items-center justify-between">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-sm text-outline">drag_indicator</span>
+<span class="font-body-sm text-body-sm">简历原始附件链接</span>
+</div>
+<input class="rounded-sm text-primary focus:ring-primary" type="checkbox"/>
+</div>
+<div class="p-3 bg-surface-container-low rounded-lg border border-outline-variant/30 flex items-center justify-between opacity-60">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-sm text-outline">drag_indicator</span>
+<span class="font-body-sm text-body-sm">GitHub/作品集 深度分析</span>
+</div>
+<input class="rounded-sm text-primary focus:ring-primary" type="checkbox"/>
+</div>
+</div>
+</section>
+</div>
+<!-- Right Panel: Output Preview -->
+<div class="col-span-12 lg:col-span-8 flex flex-col gap-6">
+<!-- Preview Area -->
+<section class="glass-panel rounded-2xl shadow-sm flex-grow flex flex-col overflow-hidden min-h-[600px]">
+<div class="border-b border-outline-variant p-4 bg-surface-container-low flex justify-between items-center">
+<div class="flex gap-4">
+<button class="px-4 py-1 text-primary border-b-2 border-primary font-label-md text-label-md">数据视图</button>
+<button class="px-4 py-1 text-secondary hover:text-primary font-label-md text-label-md transition-colors">渲染预览</button>
+</div>
+<div class="flex items-center gap-2 text-secondary font-label-sm text-label-sm">
+<span class="material-symbols-outlined text-sm">visibility</span>
+                            正在预览前 10 条数据 (共 156 条)
+                        </div>
+</div>
+<!-- Content Canvas -->
+<div class="flex-grow p-6 overflow-auto bg-white custom-scrollbar">
+<!-- Excel Preview Table -->
+<table class="w-full border-collapse">
+<thead>
+<tr class="bg-surface-container text-left">
+<th class="p-3 font-label-sm text-label-sm text-secondary border border-outline-variant">序号</th>
+<th class="p-3 font-label-sm text-label-sm text-secondary border border-outline-variant">人才名称</th>
+<th class="p-3 font-label-sm text-label-sm text-secondary border border-outline-variant">AI 评分</th>
+<th class="p-3 font-label-sm text-label-sm text-secondary border border-outline-variant">匹配关键点</th>
+<th class="p-3 font-label-sm text-label-sm text-secondary border border-outline-variant">当前薪资 (估)</th>
+<th class="p-3 font-label-sm text-label-sm text-secondary border border-outline-variant">风险预警</th>
+</tr>
+</thead>
+<tbody class="font-body-sm text-body-sm">
+<tr>
+<td class="p-3 border border-outline-variant">1</td>
+<td class="p-3 border border-outline-variant font-medium">张三 (Senior Dev)</td>
+<td class="p-3 border border-outline-variant">
+<span class="px-2 py-0.5 bg-tertiary/10 text-tertiary rounded-full font-bold">94%</span>
+</td>
+<td class="p-3 border border-outline-variant">7年后端架构, 云原生专家</td>
+<td class="p-3 border border-outline-variant">45k/mo</td>
+<td class="p-3 border border-outline-variant text-secondary">无</td>
+</tr>
+<tr class="bg-surface-container-lowest">
+<td class="p-3 border border-outline-variant">2</td>
+<td class="p-3 border border-outline-variant font-medium">李四 (Product Manager)</td>
+<td class="p-3 border border-outline-variant">
+<span class="px-2 py-0.5 bg-tertiary/10 text-tertiary rounded-full font-bold">88%</span>
+</td>
+<td class="p-3 border border-outline-variant">50w+ DAU 产品经验</td>
+<td class="p-3 border border-outline-variant">38k/mo</td>
+<td class="p-3 border border-outline-variant text-error">跳槽频繁 (近1年3换)</td>
+</tr>
+<tr>
+<td class="p-3 border border-outline-variant">3</td>
+<td class="p-3 border border-outline-variant font-medium">王五 (UI/UX Designer)</td>
+<td class="p-3 border border-outline-variant">
+<span class="px-2 py-0.5 bg-tertiary/10 text-tertiary rounded-full font-bold">91%</span>
+</td>
+<td class="p-3 border border-outline-variant">B端 SaaS 设计, 交互专家</td>
+<td class="p-3 border border-outline-variant">32k/mo</td>
+<td class="p-3 border border-outline-variant text-secondary">无</td>
+</tr>
+<tr class="bg-surface-container-lowest">
+<td class="p-3 border border-outline-variant">4</td>
+<td class="p-3 border border-outline-variant font-medium">赵六 (Data Scientist)</td>
+<td class="p-3 border border-outline-variant">
+<span class="px-2 py-0.5 bg-tertiary/10 text-tertiary rounded-full font-bold">85%</span>
+</td>
+<td class="p-3 border border-outline-variant">NLP 方向, 顶会论文 2 篇</td>
+<td class="p-3 border border-outline-variant">55k/mo</td>
+<td class="p-3 border border-outline-variant text-secondary">英语口语一般</td>
+</tr>
+<!-- Filler rows for visualization -->
+<tr><td class="p-3 border border-outline-variant">5</td><td class="p-4 border border-outline-variant">...</td><td class="p-4 border border-outline-variant">...</td><td class="p-4 border border-outline-variant">...</td><td class="p-4 border border-outline-variant">...</td><td class="p-4 border border-outline-variant">...</td></tr>
+<tr class="bg-surface-container-lowest"><td class="p-3 border border-outline-variant">6</td><td class="p-4 border border-outline-variant">...</td><td class="p-4 border border-outline-variant">...</td><td class="p-4 border border-outline-variant">...</td><td class="p-4 border border-outline-variant">...</td><td class="p-4 border border-outline-variant">...</td></tr>
+</tbody>
+</table>
+</div>
+<!-- Action Bar -->
+<div class="p-6 bg-surface-container-low border-t border-outline-variant grid grid-cols-2 md:grid-cols-4 gap-4">
+<button class="flex flex-col items-center justify-center p-4 bg-white border border-outline-variant rounded-xl hover:border-primary hover:shadow-md transition-all group">
+<span class="material-symbols-outlined text-3xl text-primary mb-2">download</span>
+<span class="font-label-md text-label-md">下载 Excel</span>
+</button>
+<button class="flex flex-col items-center justify-center p-4 bg-white border border-outline-variant rounded-xl hover:border-primary hover:shadow-md transition-all group">
+<span class="material-symbols-outlined text-3xl text-secondary mb-2">content_copy</span>
+<span class="font-label-md text-label-md">复制邮件正文</span>
+</button>
+<button class="flex flex-col items-center justify-center p-4 bg-white border border-outline-variant rounded-xl hover:border-primary hover:shadow-md transition-all group">
+<span class="material-symbols-outlined text-3xl text-secondary mb-2">share</span>
+<span class="font-label-md text-label-md">复制协作摘要</span>
+</button>
+<button class="flex flex-col items-center justify-center p-4 bg-white border border-outline-variant rounded-xl hover:border-primary hover:shadow-md transition-all group">
+<span class="material-symbols-outlined text-3xl text-secondary mb-2">code</span>
+<span class="font-label-md text-label-md">下载 JSON</span>
+</button>
+</div>
+</section>
+<!-- Integration Status -->
+<div class="flex items-center gap-6 p-4 bg-surface-container-highest/50 rounded-xl border border-outline-variant/30">
+<div class="flex -space-x-2">
+<div class="w-8 h-8 rounded-full bg-blue-500 flex items-center justify-center text-white ring-2 ring-white text-[10px] font-bold">FS</div>
+<div class="w-8 h-8 rounded-full bg-green-500 flex items-center justify-center text-white ring-2 ring-white text-[10px] font-bold">WC</div>
+<div class="w-8 h-8 rounded-full bg-orange-500 flex items-center justify-center text-white ring-2 ring-white text-[10px] font-bold">ATS</div>
+</div>
+<p class="font-body-sm text-body-sm text-secondary">
+<span class="text-on-surface font-semibold">连接器就绪:</span> 飞书, 企业微信, Moka ATS 已通过 Webhook 授权连接。
+                    </p>
+<button class="ml-auto text-primary font-label-sm text-label-sm hover:underline">管理集成</button>
+</div>
+</div>
+</div>
+</main>
+<!-- Footer -->
+<footer class="w-full py-stack-lg px-margin-desktop border-t border-outline-variant dark:border-outline mt-auto bg-surface-container dark:bg-on-secondary-fixed">
+<div class="max-w-container-max mx-auto flex flex-col md:flex-row justify-between items-center gap-6">
+<div>
+<span class="font-headline-sm text-headline-sm font-semibold text-secondary dark:text-secondary-fixed-dim">AI Talent Agent</span>
+<p class="mt-2 font-body-sm text-body-sm text-on-secondary-fixed-variant dark:text-secondary-fixed-dim opacity-70">© 2024 AI Talent Agent. All rights reserved.</p>
+</div>
+<div class="flex flex-wrap justify-center gap-x-8 gap-y-2">
+<a class="font-label-sm text-label-sm text-on-secondary-fixed-variant dark:text-secondary-fixed-dim hover:text-primary dark:hover:text-primary-fixed-dim underline transition-all" href="#">ATS Integration</a>
+<a class="font-label-sm text-label-sm text-on-secondary-fixed-variant dark:text-secondary-fixed-dim hover:text-primary dark:hover:text-primary-fixed-dim underline transition-all" href="#">Excel Support</a>
+<a class="font-label-sm text-label-sm text-on-secondary-fixed-variant dark:text-secondary-fixed-dim hover:text-primary dark:hover:text-primary-fixed-dim underline transition-all" href="#">Feishu Connector</a>
+<a class="font-label-sm text-label-sm text-on-secondary-fixed-variant dark:text-secondary-fixed-dim hover:text-primary dark:hover:text-primary-fixed-dim underline transition-all" href="#">WeCom Sync</a>
+<a class="font-label-sm text-label-sm text-on-secondary-fixed-variant dark:text-secondary-fixed-dim hover:text-primary dark:hover:text-primary-fixed-dim underline transition-all" href="#">Privacy Policy</a>
+<a class="font-label-sm text-label-sm text-on-secondary-fixed-variant dark:text-secondary-fixed-dim hover:text-primary dark:hover:text-primary-fixed-dim underline transition-all" href="#">Terms of Service</a>
+</div>
+</div>
+</footer>
+<script>
+        // Simple Interaction logic for demo
+        document.querySelectorAll('input[name="format"]').forEach(radio => {
+            radio.addEventListener('change', (e) => {
+                // Remove active classes from all labels
+                document.querySelectorAll('input[name="format"]').forEach(r => {
+                    r.parentElement.classList.remove('border-primary', 'bg-primary-fixed/10');
+                    r.parentElement.classList.add('border-outline-variant');
+                    r.parentElement.querySelector('span:first-child').classList.remove('text-primary');
+                    r.parentElement.querySelector('span:first-child').classList.add('text-secondary');
+                });
+                
+                // Add active classes to selected
+                if(e.target.checked) {
+                    const label = e.target.parentElement;
+                    label.classList.remove('border-outline-variant');
+                    label.classList.add('border-primary', 'bg-primary-fixed/10');
+                    label.querySelector('span:first-child').classList.add('text-primary');
+                    label.querySelector('span:first-child').classList.remove('text-secondary');
+                }
+            });
+        });
+
+        // Hover effect for table rows
+        const rows = document.querySelectorAll('tbody tr');
+        rows.forEach(row => {
+            row.addEventListener('mouseenter', () => {
+                row.classList.add('bg-primary-fixed/5');
+            });
+            row.addEventListener('mouseleave', () => {
+                row.classList.remove('bg-primary-fixed/5');
+            });
+        });
+    </script>
+</body></html>

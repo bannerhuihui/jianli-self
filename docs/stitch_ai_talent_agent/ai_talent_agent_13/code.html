@@ -1,0 +1,362 @@
+<!DOCTYPE html>
+
+<html lang="zh-CN"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>AI Talent Agent - 人才画像</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:wght@400;500;600;700&amp;family=Courier+Prime&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "surface-container": "#e5eeff",
+                        "on-secondary": "#ffffff",
+                        "on-primary": "#ffffff",
+                        "tertiary": "#006242",
+                        "secondary": "#565e74",
+                        "inverse-surface": "#213145",
+                        "secondary-fixed": "#dae2fd",
+                        "primary-fixed": "#dbe1ff",
+                        "inverse-on-surface": "#eaf1ff",
+                        "tertiary-fixed": "#6ffbbe",
+                        "background": "#f8f9ff",
+                        "surface-container-low": "#eff4ff",
+                        "on-primary-container": "#eeefff",
+                        "on-tertiary-fixed-variant": "#005236",
+                        "on-surface": "#0b1c30",
+                        "outline-variant": "#c3c6d7",
+                        "surface-container-lowest": "#ffffff",
+                        "primary": "#004ac6",
+                        "surface-bright": "#f8f9ff",
+                        "on-background": "#0b1c30",
+                        "primary-fixed-dim": "#b4c5ff",
+                        "surface-dim": "#cbdbf5",
+                        "outline": "#737686",
+                        "tertiary-fixed-dim": "#4edea3",
+                        "on-primary-fixed": "#00174b",
+                        "on-secondary-fixed-variant": "#3f465c",
+                        "tertiary-container": "#007d55",
+                        "inverse-primary": "#b4c5ff",
+                        "surface": "#f8f9ff",
+                        "surface-tint": "#0053db",
+                        "error": "#ba1a1a",
+                        "error-container": "#ffdad6",
+                        "on-error": "#ffffff",
+                        "on-tertiary-fixed": "#002113",
+                        "on-error-container": "#93000a",
+                        "secondary-container": "#dae2fd",
+                        "on-tertiary": "#ffffff",
+                        "on-primary-fixed-variant": "#003ea8",
+                        "surface-variant": "#d3e4fe",
+                        "on-secondary-container": "#5c647a",
+                        "on-secondary-fixed": "#131b2e",
+                        "on-surface-variant": "#434655",
+                        "on-tertiary-container": "#bdffdb",
+                        "primary-container": "#2563eb",
+                        "surface-container-highest": "#d3e4fe",
+                        "surface-container-high": "#dce9ff",
+                        "secondary-fixed-dim": "#bec6e0"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.125rem",
+                        "lg": "0.25rem",
+                        "xl": "0.5rem",
+                        "full": "0.75rem"
+                    },
+                    "spacing": {
+                        "margin-tablet": "24px",
+                        "margin-desktop": "40px",
+                        "base": "8px",
+                        "gutter": "24px",
+                        "stack-md": "12px",
+                        "margin-mobile": "16px",
+                        "stack-sm": "4px",
+                        "stack-lg": "24px",
+                        "container-max": "1440px"
+                    },
+                    "fontFamily": {
+                        "label-sm": ["Hanken Grotesk"],
+                        "headline-lg": ["Hanken Grotesk"],
+                        "display-lg": ["Hanken Grotesk"],
+                        "label-md": ["Hanken Grotesk"],
+                        "body-sm": ["Hanken Grotesk"],
+                        "headline-md": ["Hanken Grotesk"],
+                        "headline-lg-mobile": ["Hanken Grotesk"],
+                        "body-lg": ["Hanken Grotesk"],
+                        "code": ["Courier Prime"],
+                        "display-md": ["Hanken Grotesk"],
+                        "body-md": ["Hanken Grotesk"]
+                    }
+                }
+            }
+        }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .radar-chart-container {
+            filter: drop-shadow(0px 4px 12px rgba(15, 23, 42, 0.05));
+        }
+        .bento-grid {
+            display: grid;
+            grid-template-columns: repeat(12, 1fr);
+            gap: 24px;
+        }
+        .glass-panel {
+            background: rgba(255, 255, 255, 0.8);
+            backdrop-filter: blur(12px);
+            border: 1px solid #E2E8F0;
+        }
+    </style>
+</head>
+<body class="bg-background text-on-surface font-body-md min-h-screen flex flex-col">
+<!-- TopNavBar -->
+<header class="bg-surface-container-lowest border-b border-outline-variant sticky top-0 z-50">
+<div class="flex justify-between items-center w-full px-margin-desktop max-w-container-max mx-auto h-16">
+<div class="flex items-center gap-8">
+<span class="font-headline-md text-headline-md font-bold text-primary">AI Talent Agent</span>
+<nav class="hidden md:flex gap-6 items-center">
+<a class="text-on-surface-variant hover:text-primary transition-colors duration-200 font-label-md text-label-md" href="#">首页</a>
+<a class="text-on-surface-variant hover:text-primary transition-colors duration-200 font-label-md text-label-md" href="#">我的简历</a>
+<a class="text-on-surface-variant hover:text-primary transition-colors duration-200 font-label-md text-label-md" href="#">AI 面试</a>
+<a class="text-primary border-b-2 border-primary pb-1 font-bold font-label-md text-label-md" href="#">个人画像</a>
+</nav>
+</div>
+<div class="flex items-center gap-4">
+<div class="hidden md:flex relative">
+<span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-outline">search</span>
+<input class="pl-10 pr-4 py-2 bg-surface-container-low border-none rounded-lg text-body-sm w-64 focus:ring-2 focus:ring-primary/20" placeholder="搜索人才或报告..." type="text"/>
+</div>
+<button class="material-symbols-outlined text-on-surface-variant hover:bg-surface-container p-2 rounded-full transition-all">notifications</button>
+<button class="material-symbols-outlined text-on-surface-variant hover:bg-surface-container p-2 rounded-full transition-all">settings</button>
+<img alt="User avatar" class="w-8 h-8 rounded-full border border-outline-variant" src="https://lh3.googleusercontent.com/aida/AP1WRLvGDwqsZvMSw7fxdH7HvnSomw3BH444PyRDFkOy8wth-KlUCEfGaUucsGjNz-pZuWLxkL6O2pqH5YuxsYhEGYQfImjMczSgcdbW1l6OEtZO55fhCpvxGfI1DkdYnZiiRoka3QhOIxNFC8FoJmvUvg2ZYMy8UUo3RBSA9yIvc_GuxpqMYZtWQyVGlKFC0OPCEwY-DJrTcjMFs8hJ3OkEvOBKFM2fomEXccPgOmSVjss3PG-yJQozmS8VAQ"/>
+</div>
+</div>
+</header>
+<main class="flex-grow w-full max-w-container-max mx-auto px-margin-desktop py-stack-lg">
+<!-- Header Actions & Summary -->
+<div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-8 gap-4">
+<div>
+<h1 class="font-display-md text-display-md text-on-surface mb-2">陈思远 (Leo Chen)</h1>
+<div class="flex items-center gap-3">
+<span class="bg-tertiary/10 text-tertiary px-3 py-1 rounded-full font-label-md text-label-md">技术领军型人才</span>
+<span class="text-outline text-body-sm">最后更新: 2024年10月24日</span>
+</div>
+</div>
+<div class="flex gap-3">
+<button class="flex items-center gap-2 border border-outline text-on-surface-variant px-4 py-2 rounded hover:bg-surface-container transition-all font-label-md text-label-md">
+<span class="material-symbols-outlined text-[20px]">download</span>
+                    导出人才包
+                </button>
+<button class="flex items-center gap-2 bg-primary text-on-primary px-6 py-2 rounded hover:opacity-90 transition-all font-label-md text-label-md shadow-sm">
+<span class="material-symbols-outlined text-[20px]">auto_awesome</span>
+                    生成优化建议
+                </button>
+</div>
+</div>
+<!-- Main Content Bento Grid -->
+<div class="grid grid-cols-12 gap-6">
+<!-- Overall Score & Radar Chart Card -->
+<div class="col-span-12 lg:col-span-5 bg-surface-container-lowest border border-outline-variant rounded-xl p-8 flex flex-col items-center justify-center relative overflow-hidden min-h-[500px]">
+<div class="absolute top-6 left-6">
+<h2 class="font-headline-md text-headline-md">综合评分</h2>
+<p class="text-primary font-display-lg text-display-lg mt-1">94<span class="text-body-md font-normal">/100</span></p>
+</div>
+<!-- Radar Chart Placeholder (Styled Canvas) -->
+<div class="w-full aspect-square max-w-[360px] relative radar-chart-container mt-8">
+<svg class="w-full h-full" viewbox="0 0 400 400">
+<!-- Background Grid -->
+<polygon fill="none" points="200,40 338,120 338,280 200,360 62,280 62,120" stroke="#E2E8F0" stroke-width="1"></polygon>
+<polygon fill="none" points="200,80 303,140 303,260 200,320 97,260 97,140" stroke="#E2E8F0" stroke-width="1"></polygon>
+<polygon fill="none" points="200,120 269,160 269,240 200,280 131,240 131,160" stroke="#E2E8F0" stroke-width="1"></polygon>
+<line stroke="#E2E8F0" stroke-width="1" x1="200" x2="200" y1="40" y2="360"></line>
+<line stroke="#E2E8F0" stroke-width="1" x1="62" x2="338" y1="120" y2="280"></line>
+<line stroke="#E2E8F0" stroke-width="1" x1="338" x2="62" y1="120" y2="280"></line>
+<!-- Data Shape -->
+<polygon fill="rgba(37, 99, 235, 0.15)" points="200,60 320,130 310,250 200,340 100,270 80,140" stroke="#2563EB" stroke-width="2"></polygon>
+<!-- Labels -->
+<text class="fill-on-surface-variant font-label-sm text-[12px]" text-anchor="middle" x="200" y="25">创新能力</text>
+<text class="fill-on-surface-variant font-label-sm text-[12px]" text-anchor="start" x="350" y="115">领导力</text>
+<text class="fill-on-surface-variant font-label-sm text-[12px]" text-anchor="start" x="350" y="295">执行能力</text>
+<text class="fill-on-surface-variant font-label-sm text-[12px]" text-anchor="middle" x="200" y="385">职业稳定性</text>
+<text class="fill-on-surface-variant font-label-sm text-[12px]" text-anchor="end" x="50" y="295">抗压能力</text>
+<text class="fill-on-surface-variant font-label-sm text-[12px]" text-anchor="end" x="50" y="115">学习能力</text>
+</svg>
+</div>
+</div>
+<!-- Risk Cards & Quick Insights -->
+<div class="col-span-12 lg:col-span-7 grid grid-cols-1 md:grid-cols-2 gap-6">
+<!-- Risk Card -->
+<div class="bg-error-container/30 border border-error/20 rounded-xl p-6 flex flex-col justify-between">
+<div>
+<div class="flex items-center gap-2 text-error mb-3">
+<span class="material-symbols-outlined">warning</span>
+<h3 class="font-headline-md text-headline-md">潜在风险</h3>
+</div>
+<p class="font-label-md text-label-md text-on-error-container mb-2">职业转换频繁</p>
+<p class="text-body-sm text-on-secondary-container leading-relaxed">过去5年内更换了4家公司，平均在职时间不足14个月。这可能预示着对企业文化适应性较弱或追求短期回报。</p>
+</div>
+<div class="mt-4 pt-4 border-t border-error/10">
+<span class="text-body-sm font-medium text-error flex items-center gap-1">
+                            证据来源：简历履历自动分析
+                        </span>
+</div>
+</div>
+<!-- Match Reason Card -->
+<div class="bg-surface-container-lowest border border-outline-variant rounded-xl p-6 flex flex-col justify-between">
+<div>
+<div class="flex items-center gap-2 text-primary mb-3">
+<span class="material-symbols-outlined">verified</span>
+<h3 class="font-headline-md text-headline-md">核心优势</h3>
+</div>
+<p class="font-label-md text-label-md text-on-surface mb-2">架构演进经验丰富</p>
+<p class="text-body-sm text-on-secondary-container leading-relaxed">在腾讯期间曾主导过日活千万级的系统重构，展现了极强的技术深度和系统性思考能力。</p>
+</div>
+<div class="mt-4 pt-4 border-t border-outline-variant">
+<span class="text-body-sm font-medium text-primary flex items-center gap-1">
+                            证据来源：面试第 2 题深度回答
+                        </span>
+</div>
+</div>
+<!-- Dimension Detail: Logic -->
+<div class="col-span-1 md:col-span-2 bg-surface-container-lowest border border-outline-variant rounded-xl p-6">
+<div class="flex items-center justify-between mb-4">
+<div class="flex items-center gap-3">
+<div class="w-10 h-10 bg-primary/10 rounded flex items-center justify-center text-primary">
+<span class="material-symbols-outlined">psychology</span>
+</div>
+<div>
+<h3 class="font-headline-md text-headline-md">逻辑能力</h3>
+<p class="text-primary font-label-md text-label-md">AI 结论: 逻辑思维极其严密</p>
+</div>
+</div>
+<div class="flex items-center gap-2 bg-tertiary/10 text-tertiary px-3 py-1 rounded-full font-label-sm text-label-sm">
+<span class="material-symbols-outlined text-[14px]" style="font-variation-settings: 'FILL' 1;">shield_lock</span>
+                            高置信度
+                        </div>
+</div>
+<div class="bg-surface-container-low p-4 rounded-lg">
+<p class="text-body-sm text-on-surface-variant italic mb-2">“根据面试第 3 题关于复杂交易系统一致性保障的回答，候选人能够清晰地拆解分布式事务的 CAP 权衡，并给出具体的降级策略方案。”</p>
+<div class="flex items-center gap-2 text-primary font-label-sm text-label-sm">
+<span class="material-symbols-outlined text-[16px]">description</span>
+                            查看面试原始录音/转文字
+                        </div>
+</div>
+</div>
+</div>
+<!-- Detailed Dimensions List -->
+<div class="col-span-12 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+<!-- Learning Capability -->
+<div class="bg-surface-container-lowest border border-outline-variant rounded-xl p-6 hover:shadow-lg transition-all cursor-pointer">
+<div class="flex justify-between items-start mb-4">
+<h4 class="font-headline-md text-headline-md">学习能力</h4>
+<span class="text-primary font-bold">92%</span>
+</div>
+<p class="text-body-sm text-on-surface-variant mb-4">主动学习意愿强，近两年持续贡献开源社区并掌握 Rust 开发。</p>
+<div class="flex items-center gap-2 bg-tertiary/10 text-tertiary px-2 py-0.5 rounded text-[12px] w-fit">
+                        证据: GitHub 活动轨迹
+                    </div>
+</div>
+<!-- Stress Management -->
+<div class="bg-surface-container-lowest border border-outline-variant rounded-xl p-6 hover:shadow-lg transition-all cursor-pointer">
+<div class="flex justify-between items-start mb-4">
+<h4 class="font-headline-md text-headline-md">抗压能力</h4>
+<span class="text-primary font-bold">88%</span>
+</div>
+<p class="text-body-sm text-on-surface-variant mb-4">在应对压力面试时表现稳健，情绪控制良好，逻辑未受干扰。</p>
+<div class="flex items-center gap-2 bg-tertiary/10 text-tertiary px-2 py-0.5 rounded text-[12px] w-fit">
+                        证据: 情绪波动实时监控
+                    </div>
+</div>
+<!-- Innovation -->
+<div class="bg-surface-container-lowest border border-outline-variant rounded-xl p-6 hover:shadow-lg transition-all cursor-pointer">
+<div class="flex justify-between items-start mb-4">
+<h4 class="font-headline-md text-headline-md">创新能力</h4>
+<span class="text-primary font-bold">95%</span>
+</div>
+<p class="text-body-sm text-on-surface-variant mb-4">拥有3项技术专利，在解决旧有问题时能提出差异化技术路径。</p>
+<div class="flex items-center gap-2 bg-tertiary/10 text-tertiary px-2 py-0.5 rounded text-[12px] w-fit">
+                        证据: 专利文档关联
+                    </div>
+</div>
+</div>
+</div>
+<!-- Evidence Drawer (Simulation Component) -->
+<aside class="fixed right-0 top-0 h-full w-full md:w-[480px] bg-white shadow-2xl z-[60] transform translate-x-full transition-transform duration-300 border-l border-outline-variant overflow-y-auto" id="evidence-drawer">
+<div class="p-8">
+<div class="flex justify-between items-center mb-8">
+<h2 class="font-display-md text-display-md">数据证据详情</h2>
+<button class="material-symbols-outlined text-on-surface-variant hover:bg-surface-container p-2 rounded-full" onclick="toggleDrawer()">close</button>
+</div>
+<div class="space-y-8">
+<section>
+<h3 class="font-label-md text-label-md text-primary uppercase tracking-wider mb-4">原始简历片段</h3>
+<div class="bg-surface-container-low p-4 rounded font-code text-code text-on-surface-variant leading-relaxed">
+                            "2021-2023: 架构师 @ 腾讯云<br/>
+                            主导了自研分布式存储系统 Nebula 的冷热数据分离方案设计，将存储成本降低了40%，并支持了EB级数据的弹性扩展..."
+                        </div>
+</section>
+<section>
+<h3 class="font-label-md text-label-md text-primary uppercase tracking-wider mb-4">AI 推理链路</h3>
+<div class="space-y-4">
+<div class="flex gap-4">
+<div class="w-1 bg-primary rounded-full"></div>
+<div>
+<p class="font-label-md text-label-md">关键信息提取</p>
+<p class="text-body-sm text-on-secondary-container">识别到关键词：EB级、重构、冷热分离。</p>
+</div>
+</div>
+<div class="flex gap-4">
+<div class="w-1 bg-primary rounded-full"></div>
+<div>
+<p class="font-label-md text-label-md">背景验证</p>
+<p class="text-body-sm text-on-secondary-container">Nebula 系统在腾讯内部确为核心高压系统，设计难度极高。</p>
+</div>
+</div>
+</div>
+</section>
+<section>
+<h3 class="font-label-md text-label-md text-primary uppercase tracking-wider mb-4">相关可视化</h3>
+<div class="aspect-video rounded-lg overflow-hidden border border-outline-variant relative">
+<img class="w-full h-full object-cover" data-alt="A sophisticated data visualization dashboard showing multiple interconnected data nodes and growth charts. The UI is clean and modern with a professional palette of blues and grays, featuring sharp lines and subtle glassmorphism effects. The lighting is soft and consistent, conveying a sense of high-tech analytical precision." src="https://lh3.googleusercontent.com/aida/AP1WRLsIBCJN2AspmsTYsxVYD1usPvds1KpQbvrnTKUpnqHf1ZrsVR4YAK1Hq_uHCFUvNJu4h7efeztaYzPQGAvb6kquEIqnz0gi5eknR4LkAcJs60gvQC-w63GAitV6xyPy7bIiCC1q1EXxWs8jfdfBfuTybbXO61a7UkqAbzmHy_65Boz8rmtrdbJ0dBsmsmBn0YIl474asEBhwrT4AgHjWAD4t_0j9BBE6qADyqMbVjxYRt5Q97EfDw9yMA"/>
+</div>
+</section>
+</div>
+</div>
+</aside>
+</main>
+<!-- Footer -->
+<footer class="w-full py-stack-lg px-margin-desktop border-t border-outline-variant mt-auto bg-surface-container">
+<div class="max-w-container-max mx-auto flex flex-col md:flex-row justify-between items-center gap-6">
+<div class="flex flex-col items-center md:items-start">
+<span class="font-headline-sm text-headline-sm font-semibold text-secondary">AI Talent Agent</span>
+<p class="font-body-sm text-body-sm text-on-secondary-fixed-variant mt-2">© 2024 AI Talent Agent. All rights reserved.</p>
+</div>
+<div class="flex flex-wrap justify-center gap-6">
+<a class="text-on-secondary-fixed-variant hover:text-primary transition-all font-label-sm text-label-sm" href="#">ATS Integration</a>
+<a class="text-on-secondary-fixed-variant hover:text-primary transition-all font-label-sm text-label-sm" href="#">Excel Support</a>
+<a class="text-on-secondary-fixed-variant hover:text-primary transition-all font-label-sm text-label-sm" href="#">Feishu Connector</a>
+<a class="text-on-secondary-fixed-variant hover:text-primary transition-all font-label-sm text-label-sm" href="#">WeCom Sync</a>
+<a class="text-on-secondary-fixed-variant hover:text-primary transition-all font-label-sm text-label-sm" href="#">Privacy Policy</a>
+<a class="text-on-secondary-fixed-variant hover:text-primary transition-all font-label-sm text-label-sm" href="#">Terms of Service</a>
+</div>
+</div>
+</footer>
+<script>
+        function toggleDrawer() {
+            const drawer = document.getElementById('evidence-drawer');
+            drawer.classList.toggle('translate-x-full');
+        }
+
+        // Add event listeners to all profile cards to simulate drawer opening
+        document.querySelectorAll('.col-span-12 .bg-surface-container-lowest').forEach(card => {
+            card.addEventListener('click', toggleDrawer);
+        });
+    </script>
+</body></html>

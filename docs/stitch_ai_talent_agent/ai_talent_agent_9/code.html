@@ -1,0 +1,292 @@
+<!DOCTYPE html>
+
+<html class="light" lang="zh-CN"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>智聘 TalentAgent - AI 人才理解层</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@400;500;700&amp;family=Inter:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "error": "#ba1a1a",
+                        "tertiary-container": "#0074a6",
+                        "tertiary-fixed-dim": "#89ceff",
+                        "surface-container-lowest": "#ffffff",
+                        "secondary-fixed-dim": "#b7c8e1",
+                        "secondary-container": "#d0e1fb",
+                        "on-surface-variant": "#434655",
+                        "surface-tint": "#0053db",
+                        "on-tertiary-container": "#e4f2ff",
+                        "surface-container-highest": "#e0e3e5",
+                        "primary-container": "#2563eb",
+                        "background": "#f7f9fb",
+                        "inverse-primary": "#b4c5ff",
+                        "on-tertiary": "#ffffff",
+                        "on-surface": "#191c1e",
+                        "on-primary-container": "#eeefff",
+                        "on-primary-fixed": "#00174b",
+                        "on-error-container": "#93000a",
+                        "on-tertiary-fixed": "#001e2f",
+                        "on-secondary-fixed": "#0b1c30",
+                        "surface-dim": "#d8dadc",
+                        "primary-fixed": "#dbe1ff",
+                        "on-primary-fixed-variant": "#003ea8",
+                        "on-error": "#ffffff",
+                        "primary-fixed-dim": "#b4c5ff",
+                        "on-secondary-container": "#54647a",
+                        "secondary": "#505f76",
+                        "error-container": "#ffdad6",
+                        "on-tertiary-fixed-variant": "#004c6e",
+                        "on-secondary": "#ffffff",
+                        "outline-variant": "#c3c6d7",
+                        "surface-bright": "#f7f9fb",
+                        "surface-variant": "#e0e3e5",
+                        "outline": "#737686",
+                        "surface-container": "#eceef0",
+                        "secondary-fixed": "#d3e4fe",
+                        "primary": "#004ac6",
+                        "on-background": "#191c1e",
+                        "on-primary": "#ffffff",
+                        "inverse-on-surface": "#eff1f3",
+                        "surface-container-low": "#f2f4f6",
+                        "surface": "#f7f9fb",
+                        "surface-container-high": "#e6e8ea",
+                        "inverse-surface": "#2d3133",
+                        "on-secondary-fixed-variant": "#38485d",
+                        "tertiary": "#005a82",
+                        "tertiary-fixed": "#c9e6ff"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "sm": "8px",
+                        "xl": "32px",
+                        "md": "16px",
+                        "margin": "24px",
+                        "lg": "24px",
+                        "xs": "4px",
+                        "2xl": "48px",
+                        "gutter": "24px",
+                        "base": "4px"
+                    },
+                    "fontFamily": {
+                        "headline-md": ["Noto Sans SC", "Inter", "sans-serif"],
+                        "headline-sm": ["Noto Sans SC", "Inter", "sans-serif"],
+                        "headline-lg-mobile": ["Noto Sans SC", "Inter", "sans-serif"],
+                        "body-sm": ["Noto Sans SC", "Inter", "sans-serif"],
+                        "headline-lg": ["Noto Sans SC", "Inter", "sans-serif"],
+                        "body-lg": ["Noto Sans SC", "Inter", "sans-serif"],
+                        "body-md": ["Noto Sans SC", "Inter", "sans-serif"],
+                        "label-md": ["Noto Sans SC", "Inter", "sans-serif"],
+                        "label-sm": ["Noto Sans SC", "Inter", "sans-serif"]
+                    },
+                    "fontSize": {
+                        "headline-md": ["24px", {"lineHeight": "1.3", "fontWeight": "600"}],
+                        "headline-sm": ["20px", {"lineHeight": "1.4", "fontWeight": "600"}],
+                        "headline-lg-mobile": ["24px", {"lineHeight": "1.2", "fontWeight": "600"}],
+                        "body-sm": ["12px", {"lineHeight": "1.6", "fontWeight": "400"}],
+                        "headline-lg": ["30px", {"lineHeight": "1.2", "fontWeight": "600"}],
+                        "body-lg": ["16px", {"lineHeight": "1.6", "fontWeight": "400"}],
+                        "body-md": ["14px", {"lineHeight": "1.6", "fontWeight": "400"}],
+                        "label-md": ["14px", {"lineHeight": "1", "fontWeight": "500"}],
+                        "label-sm": ["12px", {"lineHeight": "1", "fontWeight": "500"}]
+                    }
+                }
+            }
+        }
+    </script>
+<style>
+        body {
+            background-color: #f7f9fb;
+            color: #191c1e;
+            -webkit-font-smoothing: antialiased;
+        }
+        .glass-card {
+            background: rgba(255, 255, 255, 0.7);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(226, 232, 240, 0.8);
+        }
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+</head>
+<body class="flex flex-col min-h-screen">
+<!-- TopAppBar -->
+<header class="bg-surface docked full-width top-0 sticky z-50 border-b border-outline-variant transition-colors duration-200 flex justify-between items-center px-margin py-sm w-full">
+<div class="flex items-center gap-2">
+<span class="font-headline-sm text-headline-sm font-bold text-primary">智聘 TalentAgent</span>
+</div>
+<div class="flex items-center gap-sm">
+<button class="material-symbols-outlined text-primary p-2 hover:bg-surface-container-low rounded-full transition-colors">menu</button>
+</div>
+</header>
+<main class="flex-grow pb-24">
+<!-- Hero Section -->
+<section class="relative overflow-hidden px-margin pt-xl pb-2xl">
+<!-- Animated Background Placeholder -->
+<div class="absolute inset-0 -z-10 opacity-40">
+
+</div>
+<div class="max-w-md mx-auto text-center space-y-md mt-sm">
+<div class="inline-flex items-center px-3 py-1 rounded-full bg-primary/10 border border-primary/20">
+<span class="text-primary font-label-sm text-label-sm">基于 LLM 的下一代招聘架构</span>
+</div>
+<h1 class="font-headline-lg-mobile text-headline-lg-mobile text-on-surface tracking-tight">
+                    AI 人才理解层 - 赋能每一位候选人与 HR
+                </h1>
+<p class="font-body-md text-body-md text-on-surface-variant max-w-[280px] mx-auto">
+                    超越传统关键词匹配，通过深度访谈与多维画像，精准构建人岗连接的智能底座。
+                </p>
+<div class="flex flex-col gap-sm pt-md">
+<button class="bg-primary-container text-on-primary text-label-md font-label-md py-4 rounded-xl shadow-lg shadow-primary/20 active:scale-95 transition-transform duration-150">
+                        立即开始
+                    </button>
+<button class="border border-outline-variant bg-surface text-secondary text-label-md font-label-md py-4 rounded-xl active:scale-95 transition-transform duration-150">
+                        了解更多
+                    </button>
+</div>
+</div>
+</section>
+<!-- Functional Bento Grid -->
+<section class="px-margin space-y-md">
+<div class="grid grid-cols-2 gap-md">
+<!-- Card 1: Resume Analysis -->
+<div class="col-span-2 glass-card p-lg rounded-2xl flex flex-col gap-sm">
+<div class="w-12 h-12 rounded-xl bg-tertiary-fixed flex items-center justify-center">
+<span class="material-symbols-outlined text-tertiary">description</span>
+</div>
+<div>
+<h3 class="font-headline-sm text-headline-sm text-on-surface">简历深度解析</h3>
+<p class="font-body-sm text-body-sm text-on-surface-variant mt-xs">自动提取项目核心贡献、技术栈深度与职业稳定性，语义级理解候选人背景。</p>
+</div>
+<div class="mt-sm rounded-lg overflow-hidden border border-outline-variant">
+<img class="w-full h-32 object-cover" data-alt="A clean, high-tech interface displaying a complex data visualization of a professional resume being analyzed by AI. The screen shows glowing blue connecting lines and highlighted semantic tags over a structured document. The aesthetic is clean B2B SaaS with soft ambient lighting and a professional blue and white color scheme." src="https://lh3.googleusercontent.com/aida/AP1WRLvR3WWJ7XHocdm0aWyvhaBhWscz_wnpau5Ct0XbyxjuHFkyw2-tpQhTCgnXccPnaJvloQ91Nz4xgu0EE_dEpDXKTIbKQREjMBywVgiGINK9WEZPXuCfDBI3YxVGxHYUlj9qGeshFn6K4sou87xLKW_fis35_qASYFAlG3E5iH1KEoOBCYofYQt7aU0COT0kgKjMOar-B3HkWGHLi_i6YrSBNuqMYiLIp2PHqMw-DpnORSN8-5Wsw9YAEDI"/>
+</div>
+</div>
+<!-- Card 2: AI Interview -->
+<div class="glass-card p-md rounded-2xl flex flex-col gap-sm">
+<div class="w-10 h-10 rounded-xl bg-secondary-container flex items-center justify-center">
+<span class="material-symbols-outlined text-on-secondary-container">chat_bubble</span>
+</div>
+<h3 class="font-label-md text-label-md font-bold text-on-surface">AI 深度访谈</h3>
+<p class="font-body-sm text-body-sm text-on-surface-variant">24/7 在线初筛，通过多轮追问还原真实能力。</p>
+</div>
+<!-- Card 3: Talent Profile -->
+<div class="glass-card p-md rounded-2xl flex flex-col gap-sm">
+<div class="w-10 h-10 rounded-xl bg-primary-container/20 flex items-center justify-center">
+<span class="material-symbols-outlined text-primary">person_search</span>
+</div>
+<h3 class="font-label-md text-label-md font-bold text-on-surface">人才画像</h3>
+<p class="font-body-sm text-body-sm text-on-surface-variant">50+ 维度标签体系，构建企业私有化人才库。</p>
+</div>
+<!-- Card 4: Multi-version Resume -->
+<div class="col-span-2 glass-card p-lg rounded-2xl flex items-center gap-lg">
+<div class="flex-grow">
+<h3 class="font-label-md text-label-md font-bold text-on-surface">多版本简历生成</h3>
+<p class="font-body-sm text-body-sm text-on-surface-variant mt-1">针对不同JD自动优化，突出核心优势，提升初筛通过率。</p>
+</div>
+<div class="flex-shrink-0 w-20 h-20 rounded-xl bg-surface-container-high flex items-center justify-center">
+<span class="material-symbols-outlined text-on-surface-variant text-4xl">auto_awesome</span>
+</div>
+</div>
+</div>
+</section>
+<!-- Integration Logos -->
+<section class="mt-2xl px-margin">
+<h4 class="font-label-sm text-label-sm text-outline text-center uppercase tracking-widest mb-lg">已集成办公生态</h4>
+<div class="flex flex-wrap justify-center items-center gap-xl opacity-60 grayscale">
+<div class="flex flex-col items-center gap-1">
+<img alt="Excel" class="w-8 h-8" src="https://lh3.googleusercontent.com/aida/AP1WRLsBqxk0J4MYS7ckcEXihLTrNmjoGL2x2EF9UtY24nYdneGrXPzbLJ6-WLEHXoAiQj89rkPQ5KUis5pp_1lsaPobD8kkAprK_0B5iAqLEGt3bLjR3ShWDr_5jjk5KmXRa8JNGZ5EwCMTXmge5JylNsPmr0C31KJCyrfhKPNlNs4noDsTEGvuLkhAOcs0_o3DE7UsBGIl2fnxE16DuTmkTZ4YFVUYbjRjDkD0VTYQqHte7Sf2TgMqOJrk9tA"/>
+<span class="text-[10px] font-medium">Excel</span>
+</div>
+<div class="flex flex-col items-center gap-1">
+<div class="w-8 h-8 bg-[#3370FF] rounded-lg flex items-center justify-center">
+<span class="text-white font-bold text-xs">F</span>
+</div>
+<span class="text-[10px] font-medium">Feishu</span>
+</div>
+<div class="flex flex-col items-center gap-1">
+<div class="w-8 h-8 bg-[#1877F2] rounded-lg flex items-center justify-center">
+<span class="text-white font-bold text-xs">W</span>
+</div>
+<span class="text-[10px] font-medium">WeCom</span>
+</div>
+<div class="flex flex-col items-center gap-1">
+<div class="w-8 h-8 bg-on-surface rounded-lg flex items-center justify-center">
+<span class="text-white font-bold text-xs">N</span>
+</div>
+<span class="text-[10px] font-medium">Notion</span>
+</div>
+</div>
+</section>
+<!-- Call to Action -->
+<section class="mt-2xl px-margin mx-4 py-xl bg-inverse-surface rounded-3xl text-center">
+<h2 class="font-headline-sm text-headline-sm text-surface-bright mb-sm">开启智能招聘新时代</h2>
+<p class="font-body-sm text-body-sm text-surface-variant mb-lg px-margin">已有超过 500+ 企业通过智聘提升了 40% 的招聘效率。</p>
+<button class="bg-primary text-on-primary font-label-md text-label-md px-xl py-md rounded-full shadow-lg">
+                申请演示
+            </button>
+</section>
+</main>
+<!-- BottomNavBar -->
+<nav class="fixed bottom-0 left-0 w-full flex justify-around items-center px-4 pb-4 pt-2 bg-surface border-t border-outline-variant shadow-lg z-50">
+<a class="flex flex-col items-center justify-center bg-primary-container text-on-primary-container rounded-xl px-3 py-1 active:scale-95 transition-transform duration-150" href="#">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">group</span>
+<span class="font-label-sm text-label-sm">人才库</span>
+</a>
+<a class="flex flex-col items-center justify-center text-on-surface-variant px-3 py-1 hover:bg-secondary-container/50 active:scale-95 transition-transform duration-150" href="#">
+<span class="material-symbols-outlined">chat_bubble</span>
+<span class="font-label-sm text-label-sm">AI 访谈</span>
+</a>
+<a class="flex flex-col items-center justify-center text-on-surface-variant px-3 py-1 hover:bg-secondary-container/50 active:scale-95 transition-transform duration-150" href="#">
+<span class="material-symbols-outlined">analytics</span>
+<span class="font-label-sm text-label-sm">解析</span>
+</a>
+<a class="flex flex-col items-center justify-center text-on-surface-variant px-3 py-1 hover:bg-secondary-container/50 active:scale-95 transition-transform duration-150" href="#">
+<span class="material-symbols-outlined">person</span>
+<span class="font-label-sm text-label-sm">我的</span>
+</a>
+</nav>
+<script>
+        // Micro-interactions for glass cards
+        document.querySelectorAll('.glass-card').forEach(card => {
+            card.addEventListener('touchstart', () => {
+                card.style.transform = 'scale(0.98)';
+                card.style.transition = 'transform 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275)';
+            });
+            card.addEventListener('touchend', () => {
+                card.style.transform = 'scale(1)';
+            });
+        });
+
+        // Simple sticky header effect
+        window.addEventListener('scroll', () => {
+            const header = document.querySelector('header');
+            if (window.scrollY > 20) {
+                header.classList.add('shadow-md');
+                header.style.backgroundColor = 'rgba(247, 249, 251, 0.95)';
+                header.style.backdropFilter = 'blur(8px)';
+            } else {
+                header.classList.remove('shadow-md');
+                header.style.backgroundColor = '#f7f9fb';
+                header.style.backdropFilter = 'none';
+            }
+        });
+    </script>
+</body></html>

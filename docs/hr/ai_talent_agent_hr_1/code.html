@@ -1,0 +1,304 @@
+<!DOCTYPE html>
+
+<html class="light" lang="zh-CN"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "secondary": "#565e74",
+                        "outline-variant": "#c3c6d7",
+                        "inverse-primary": "#b4c5ff",
+                        "error": "#ba1a1a",
+                        "surface-dim": "#cbdbf5",
+                        "tertiary": "#006242",
+                        "surface-bright": "#f8f9ff",
+                        "secondary-container": "#dae2fd",
+                        "secondary-fixed-dim": "#bec6e0",
+                        "inverse-on-surface": "#eaf1ff",
+                        "tertiary-fixed-dim": "#4edea3",
+                        "on-secondary-fixed-variant": "#3f465c",
+                        "tertiary-container": "#007d55",
+                        "on-secondary-fixed": "#131b2e",
+                        "on-background": "#0b1c30",
+                        "background": "#f8f9ff",
+                        "on-secondary-container": "#5c647a",
+                        "primary-fixed": "#dbe1ff",
+                        "secondary-fixed": "#dae2fd",
+                        "tertiary-fixed": "#6ffbbe",
+                        "on-primary": "#ffffff",
+                        "on-primary-fixed": "#00174b",
+                        "on-surface": "#0b1c30",
+                        "primary": "#004ac6",
+                        "surface": "#f8f9ff",
+                        "outline": "#737686",
+                        "on-tertiary": "#ffffff",
+                        "surface-variant": "#d3e4fe",
+                        "on-surface-variant": "#434655",
+                        "on-tertiary-container": "#bdffdb",
+                        "on-secondary": "#ffffff",
+                        "on-primary-fixed-variant": "#003ea8",
+                        "surface-container-lowest": "#ffffff",
+                        "error-container": "#ffdad6",
+                        "primary-fixed-dim": "#b4c5ff",
+                        "on-error": "#ffffff",
+                        "on-tertiary-fixed": "#002113",
+                        "inverse-surface": "#213145",
+                        "surface-container-high": "#dce9ff",
+                        "surface-tint": "#0053db",
+                        "surface-container-highest": "#d3e4fe",
+                        "surface-container-low": "#eff4ff",
+                        "surface-container": "#e5eeff",
+                        "primary-container": "#2563eb",
+                        "on-tertiary-fixed-variant": "#005236",
+                        "on-primary-container": "#eeefff",
+                        "on-error-container": "#93000a"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.125rem",
+                        "lg": "0.25rem",
+                        "xl": "0.5rem",
+                        "full": "0.75rem"
+                    },
+                    "spacing": {
+                        "stack-md": "12px",
+                        "base": "8px",
+                        "margin-mobile": "16px",
+                        "margin-desktop": "40px",
+                        "stack-sm": "4px",
+                        "gutter": "24px",
+                        "stack-lg": "24px",
+                        "container-max": "1440px",
+                        "margin-tablet": "24px"
+                    },
+                    "fontFamily": {
+                        "body-lg": ["Hanken Grotesk"],
+                        "body-md": ["Hanken Grotesk"],
+                        "body-sm": ["Hanken Grotesk"],
+                        "label-md": ["Hanken Grotesk"],
+                        "label-sm": ["Hanken Grotesk"],
+                        "headline-lg": ["Hanken Grotesk"],
+                        "headline-md": ["Hanken Grotesk"],
+                        "display-md": ["Hanken Grotesk"],
+                        "display-lg": ["Hanken Grotesk"]
+                    },
+                }
+            }
+        }
+    </script>
+<style>
+        body { font-family: 'Hanken Grotesk', sans-serif; }
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+            display: inline-block;
+            line-height: 1;
+            text-transform: none;
+            letter-spacing: normal;
+            word-wrap: normal;
+            white-space: nowrap;
+            direction: ltr;
+        }
+        .glass-panel {
+            background: rgba(255, 255, 255, 0.8);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(226, 232, 240, 1);
+        }
+        .step-pulse {
+            animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+        }
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+    </style>
+</head>
+<body class="bg-background text-on-surface min-h-screen flex flex-col">
+<!-- TopNavBar -->
+<header class="bg-surface-container-lowest border-b border-outline-variant sticky top-0 z-50">
+<div class="flex justify-between items-center w-full px-margin-desktop max-w-container-max mx-auto h-16">
+<div class="flex items-center gap-8">
+<span class="font-headline-md text-headline-md font-bold text-primary">AI Talent Agent</span>
+<nav class="hidden md:flex gap-6"><a class="font-label-md text-label-md text-primary border-b-2 border-primary pb-1 font-bold" href="#">首页</a><a class="font-label-md text-label-md text-on-surface-variant pb-1 hover:text-primary transition-colors duration-200" href="#">岗位需求</a><a class="font-label-md text-label-md text-on-surface-variant pb-1 hover:text-primary transition-colors duration-200" href="#">候选人推荐</a><a class="font-label-md text-label-md text-on-surface-variant pb-1 hover:text-primary transition-colors duration-200" href="#">导出中心</a><a class="font-label-md text-label-md text-on-surface-variant pb-1 hover:text-primary transition-colors duration-200" href="#">设置</a></nav>
+</div>
+<div class="flex items-center gap-4">
+<button class="p-2 text-on-surface-variant hover:bg-surface-container rounded-full transition-all">
+<span class="material-symbols-outlined">notifications</span>
+</button>
+<button class="p-2 text-on-surface-variant hover:bg-surface-container rounded-full transition-all">
+<span class="material-symbols-outlined">settings</span>
+</button>
+<div class="w-8 h-8 rounded-full overflow-hidden border border-outline-variant">
+<img alt="User avatar" class="w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida/AP1WRLtb9P69JZDODdJWdmqGjVgiK3t19jGqE3otNE9vwt2QbMKJ065aVu29sR4D04ODP4OReTpSbkmWeSDiDi4g9LNdEdqt5EGVvEoHxovrMHjc_R7xzyh6MRzx661XxPxShEU4RagM7vFb2sECzxOEZiKtZfPr8qEXefDuuiz_GmFD_W_sgcGYjbpaP3JC8HlN5rCfEPbgr9mbsmxadXWZ_BrCm9VMCm7h1pdsMiXO70MHwlItQ_g2xyx8kg"/>
+</div>
+</div>
+</div>
+</header>
+<!-- Main Content -->
+<main class="flex-grow w-full max-w-container-max mx-auto px-margin-desktop py-stack-lg">
+<!-- Header Section -->
+<div class="mb-10 max-w-4xl">
+<h1 class="font-display-md text-display-md mb-2">输入岗位需求</h1>
+<p class="font-body-md text-body-md text-on-surface-variant">
+                请在下方描述您的岗位需求。AI 将基于您的输入自动解析并生成专业的岗位画像与评估维度。
+            </p>
+</div>
+<div class="grid grid-cols-1 lg:grid-cols-12 gap-gutter items-start">
+<!-- Left: Input Area (8 Columns) -->
+<div class="lg:col-span-8 space-y-6">
+<div class="bg-surface-container-lowest rounded-xl border border-outline-variant p-6 shadow-sm">
+<div class="flex justify-between items-center mb-4">
+<label class="font-label-md text-label-md text-on-surface-variant flex items-center gap-2" for="job-input">
+<span class="material-symbols-outlined text-primary text-[20px]">description</span>
+                            需求详细描述
+                        </label>
+<div class="flex gap-2">
+<button class="text-secondary hover:text-primary text-sm font-medium transition-colors" onclick="clearInput()">清空内容</button>
+</div>
+</div>
+<div class="relative">
+<textarea class="w-full h-96 p-4 rounded-lg bg-surface-container-low border-none focus:ring-2 focus:ring-primary text-body-md font-body-md placeholder-on-surface-variant/40 resize-none transition-all" id="job-input" placeholder="请输入详细的岗位需求，例如：
+1. 岗位名称：高级前端开发工程师
+2. 工作年限：5-8年
+3. 核心技能：React, Next.js, TypeScript, Tailwind CSS
+4. 主要职责：负责 SaaS 平台核心业务开发，优化前端架构...
+5. 软素质：良好的跨部门沟通能力，极强的自驱力
+6. 职业偏好：有大型互联网公司背景，或者有 0 到 1 创业经验者优先。"></textarea>
+</div>
+<div class="mt-8 flex justify-end">
+<button class="bg-primary hover:bg-on-primary-fixed-variant text-on-primary px-8 py-4 rounded-xl font-label-md text-label-md flex items-center gap-2 shadow-lg hover:shadow-primary/20 active:scale-95 transition-all">
+<span>生成岗位画像</span>
+<span class="material-symbols-outlined">auto_awesome</span>
+</button>
+</div>
+</div>
+<!-- Sample Section -->
+<div>
+<h3 class="font-label-md text-label-md text-on-surface-variant mb-4 px-1">示例模板</h3>
+<div class="flex flex-wrap gap-3">
+<button class="bg-surface-container-low border border-outline-variant hover:border-primary hover:bg-primary-fixed hover:text-on-primary-fixed px-4 py-2 rounded-full font-label-sm text-label-sm transition-all flex items-center gap-2" onclick="useTemplate('frontend')">
+<span class="material-symbols-outlined text-[18px]">code</span>
+                            高级前端工程师
+                        </button>
+<button class="bg-surface-container-low border border-outline-variant hover:border-primary hover:bg-primary-fixed hover:text-on-primary-fixed px-4 py-2 rounded-full font-label-sm text-label-sm transition-all flex items-center gap-2" onclick="useTemplate('pm')">
+<span class="material-symbols-outlined text-[18px]">inventory_2</span>
+                            资深产品经理
+                        </button>
+<button class="bg-surface-container-low border border-outline-variant hover:border-primary hover:bg-primary-fixed hover:text-on-primary-fixed px-4 py-2 rounded-full font-label-sm text-label-sm transition-all flex items-center gap-2" onclick="useTemplate('backend')">
+<span class="material-symbols-outlined text-[18px]">terminal</span>
+                            Java 开发专家
+                        </button>
+<button class="bg-surface-container-low border border-outline-variant hover:border-primary hover:bg-primary-fixed hover:text-on-primary-fixed px-4 py-2 rounded-full font-label-sm text-label-sm transition-all flex items-center gap-2" onclick="useTemplate('hr')">
+<span class="material-symbols-outlined text-[18px]">groups</span>
+                            人力资源经理
+                        </button>
+</div>
+</div>
+</div>
+<!-- Right: Instructions & Tips (4 Columns) -->
+<div class="lg:col-span-4 space-y-6">
+<!-- Guidance Card -->
+<div class="bg-surface-container rounded-xl p-6 border border-outline-variant">
+<h3 class="font-headline-md text-headline-md mb-4 flex items-center gap-2">
+<span class="material-symbols-outlined text-primary">tips_and_updates</span>
+                        撰写小贴士
+                    </h3>
+<ul class="space-y-4">
+<li class="flex gap-3">
+<div class="w-6 h-6 rounded-full bg-primary text-on-primary flex items-center justify-center shrink-0 font-label-sm">1</div>
+<div>
+<p class="font-label-md text-label-md">结构化输入</p>
+<p class="font-body-sm text-body-sm text-on-surface-variant">尽可能包含年限、技能、职责、软素质等明确维度。</p>
+</div>
+</li>
+<li class="flex gap-3">
+<div class="w-6 h-6 rounded-full bg-primary text-on-primary flex items-center justify-center shrink-0 font-label-sm">2</div>
+<div>
+<p class="font-label-md text-label-md">强调关键特质</p>
+<p class="font-body-sm text-body-sm text-on-surface-variant">如“有跨团队协作经验”或“熟悉高并发架构”。</p>
+</div>
+</li>
+<li class="flex gap-3">
+<div class="w-6 h-6 rounded-full bg-primary text-on-primary flex items-center justify-center shrink-0 font-label-sm">3</div>
+<div>
+<p class="font-label-md text-label-md">不限格式</p>
+<p class="font-body-sm text-body-sm text-on-surface-variant">您可以直接粘贴现有的 JD 文本，AI 会自动为您整理。</p>
+</div>
+</li>
+</ul>
+</div>
+<!-- Preview Placeholder -->
+<div class="bg-surface-container-lowest rounded-xl p-6 border border-outline-variant border-dashed">
+<div class="flex flex-col items-center justify-center py-12 text-center text-on-surface-variant opacity-60">
+<span class="material-symbols-outlined text-[48px] mb-4">preview</span>
+<p class="font-label-md text-label-md">画像预览区域</p>
+<p class="font-body-sm text-body-sm mt-1 px-4">输入需求并点击生成后，这里将显示解析结果。</p>
+</div>
+</div>
+<!-- Process Steps -->
+<div class="p-2">
+<h4 class="font-label-sm text-label-sm text-outline mb-4">生成流程</h4>
+<div class="flex flex-col gap-6 relative before:absolute before:left-[11px] before:top-2 before:bottom-2 before:w-[2px] before:bg-outline-variant">
+<div class="flex items-center gap-4 relative">
+<div class="w-6 h-6 rounded-full bg-primary flex items-center justify-center z-10 border-4 border-background">
+<div class="w-2 h-2 rounded-full bg-on-primary step-pulse"></div>
+</div>
+<span class="font-label-md text-label-md">输入需求描述</span>
+</div>
+<div class="flex items-center gap-4 relative">
+<div class="w-6 h-6 rounded-full bg-surface-container border-2 border-outline-variant flex items-center justify-center z-10 bg-background"></div>
+<span class="font-label-md text-label-md text-on-surface-variant">AI 深度解析</span>
+</div>
+<div class="flex items-center gap-4 relative">
+<div class="w-6 h-6 rounded-full bg-surface-container border-2 border-outline-variant flex items-center justify-center z-10 bg-background"></div>
+<span class="font-label-md text-label-md text-on-surface-variant">生成核心维度</span>
+</div>
+<div class="flex items-center gap-4 relative">
+<div class="w-6 h-6 rounded-full bg-surface-container border-2 border-outline-variant flex items-center justify-center z-10 bg-background"></div>
+<span class="font-label-md text-label-md text-on-surface-variant">完成画像建模</span>
+</div>
+</div>
+</div>
+</div>
+</div>
+</main>
+<!-- Footer -->
+<footer class="w-full py-stack-lg px-margin-desktop border-t border-outline-variant bg-surface-container mt-auto">
+<div class="max-w-container-max mx-auto flex flex-col md:flex-row justify-between items-center gap-6">
+<div class="flex flex-col gap-2">
+<span class="font-headline-sm text-headline-sm font-semibold text-secondary">AI Talent Agent</span>
+<p class="font-body-sm text-body-sm text-on-secondary-fixed-variant">© 2024 AI Talent Agent. All rights reserved.</p>
+</div>
+<div class="flex flex-wrap justify-center gap-x-8 gap-y-4">
+<a class="font-label-sm text-label-sm text-on-secondary-fixed-variant hover:text-primary transition-all underline" href="#">ATS Integration</a>
+<a class="font-label-sm text-label-sm text-on-secondary-fixed-variant hover:text-primary transition-all underline" href="#">Excel Support</a>
+<a class="font-label-sm text-label-sm text-on-secondary-fixed-variant hover:text-primary transition-all underline" href="#">Feishu Connector</a>
+<a class="font-label-sm text-label-sm text-on-secondary-fixed-variant hover:text-primary transition-all underline" href="#">WeCom Sync</a>
+<a class="font-label-sm text-label-sm text-on-secondary-fixed-variant hover:text-primary transition-all underline" href="#">Privacy Policy</a>
+<a class="font-label-sm text-label-sm text-on-secondary-fixed-variant hover:text-primary transition-all underline" href="#">Terms of Service</a>
+</div>
+</div>
+</footer>
+<script>
+        const templates = {
+            frontend: `岗位名称：高级前端工程师\n工作年限：5年以上\n核心技能：React, TypeScript, Next.js, Webpack, Tailwind CSS\n岗位职责：\n1. 负责核心 SaaS 产品的业务功能开发与维护。\n2. 参与前端技术架构演进及性能优化。\n3. 制定前端开发规范，进行 Code Review。\n软素质：沟通能力强，具备良好的团队协作意识。`,
+            pm: `岗位名称：资深产品经理\n工作年限：3-5年\n行业背景：互联网教育或 SaaS 领域优先\n岗位职责：\n1. 调研用户需求，独立完成产品方案设计与原型绘制。\n2. 协调研发、UI、测试，确保产品高质量上线。\n3. 分析业务数据，持续迭代优化产品功能。\n核心优势：逻辑清晰，对数据敏感，抗压能力强。`,
+            backend: `岗位名称：Java 开发专家\n工作年限：8年以上\n核心技能：Java, Spring Boot, Spring Cloud, Redis, MySQL, Kubernetes\n岗位职责：\n1. 负责高并发系统架构设计及核心代码编写。\n2. 解决线上系统突发问题，保证系统高可用。\n3. 指导中级开发人员，提升团队技术实力。`,
+            hr: `岗位名称：人力资源经理\n工作年限：5-10年\n核心技能：人才招募、组织发展、薪酬绩效\n岗位职责：\n1. 负责公司高端人才的招聘及渠道维护。\n2. 完善绩效评估体系，推动企业文化建设。\n3. 建立人才梯队，协助各部门解决管理问题。`
+        };
+
+        function useTemplate(key) {
+            document.getElementById('job-input').value = templates[key];
+        }
+
+        function clearInput() {
+            document.getElementById('job-input').value = '';
+        }
+    </script>
+</body></html>

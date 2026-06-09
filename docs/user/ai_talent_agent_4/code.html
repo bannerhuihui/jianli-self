@@ -1,0 +1,470 @@
+<!DOCTYPE html>
+
+<html lang="zh-CN"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>AI Talent Agent - 人才画像</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:wght@400;500;600;700&amp;family=Courier+Prime&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "surface-container": "#e5eeff",
+                        "on-secondary": "#ffffff",
+                        "on-primary": "#ffffff",
+                        "tertiary": "#006242",
+                        "secondary": "#565e74",
+                        "inverse-surface": "#213145",
+                        "secondary-fixed": "#dae2fd",
+                        "primary-fixed": "#dbe1ff",
+                        "inverse-on-surface": "#eaf1ff",
+                        "tertiary-fixed": "#6ffbbe",
+                        "background": "#f8f9ff",
+                        "surface-container-low": "#eff4ff",
+                        "on-primary-container": "#eeefff",
+                        "on-tertiary-fixed-variant": "#005236",
+                        "on-surface": "#0b1c30",
+                        "outline-variant": "#c3c6d7",
+                        "surface-container-lowest": "#ffffff",
+                        "primary": "#004ac6",
+                        "surface-bright": "#f8f9ff",
+                        "on-background": "#0b1c30",
+                        "primary-fixed-dim": "#b4c5ff",
+                        "surface-dim": "#cbdbf5",
+                        "outline": "#737686",
+                        "tertiary-fixed-dim": "#4edea3",
+                        "on-primary-fixed": "#00174b",
+                        "on-secondary-fixed-variant": "#3f465c",
+                        "tertiary-container": "#007d55",
+                        "inverse-primary": "#b4c5ff",
+                        "surface": "#f8f9ff",
+                        "surface-tint": "#0053db",
+                        "error": "#ba1a1a",
+                        "error-container": "#ffdad6",
+                        "on-error": "#ffffff",
+                        "on-tertiary-fixed": "#002113",
+                        "on-error-container": "#93000a",
+                        "secondary-container": "#dae2fd",
+                        "on-tertiary": "#ffffff",
+                        "on-primary-fixed-variant": "#003ea8",
+                        "surface-variant": "#d3e4fe",
+                        "on-secondary-container": "#5c647a",
+                        "on-secondary-fixed": "#131b2e",
+                        "on-surface-variant": "#434655",
+                        "on-tertiary-container": "#bdffdb",
+                        "primary-container": "#2563eb",
+                        "surface-container-highest": "#d3e4fe",
+                        "surface-container-high": "#dce9ff",
+                        "secondary-fixed-dim": "#bec6e0"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.125rem",
+                        "lg": "0.25rem",
+                        "xl": "0.5rem",
+                        "full": "0.75rem"
+                    },
+                    "spacing": {
+                        "margin-tablet": "24px",
+                        "margin-desktop": "40px",
+                        "base": "8px",
+                        "gutter": "24px",
+                        "stack-md": "12px",
+                        "margin-mobile": "16px",
+                        "stack-sm": "4px",
+                        "stack-lg": "24px",
+                        "container-max": "1440px"
+                    },
+                    "fontFamily": {
+                        "label-sm": ["Hanken Grotesk"],
+                        "headline-lg": ["Hanken Grotesk"],
+                        "display-lg": ["Hanken Grotesk"],
+                        "label-md": ["Hanken Grotesk"],
+                        "body-sm": ["Hanken Grotesk"],
+                        "headline-md": ["Hanken Grotesk"],
+                        "headline-lg-mobile": ["Hanken Grotesk"],
+                        "body-lg": ["Hanken Grotesk"],
+                        "code": ["Courier Prime"],
+                        "display-md": ["Hanken Grotesk"],
+                        "body-md": ["Hanken Grotesk"]
+                    }
+                }
+            }
+        }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .radar-chart-container {
+            filter: drop-shadow(0px 4px 12px rgba(15, 23, 42, 0.05));
+        }
+        .glass-panel {
+            background: rgba(255, 255, 255, 0.8);
+            backdrop-filter: blur(12px);
+            border: 1px solid #E2E8F0;
+        }
+    </style>
+</head>
+<body class="bg-background text-on-surface font-body-md min-h-screen flex flex-col">
+<!-- TopNavBar -->
+<header class="bg-surface-container-lowest border-b border-outline-variant sticky top-0 z-50">
+<div class="flex justify-between items-center w-full px-margin-desktop max-w-container-max mx-auto h-16">
+<div class="flex items-center gap-8">
+<span class="font-headline-md text-headline-md font-bold text-primary">AI Talent Agent</span>
+<nav class="hidden md:flex gap-6 items-center">
+<a class="text-on-surface-variant hover:text-primary transition-colors duration-200 font-label-md text-label-md" href="#">首页</a>
+<a class="text-on-surface-variant hover:text-primary transition-colors duration-200 font-label-md text-label-md" href="#">我的简历</a>
+<a class="text-on-surface-variant hover:text-primary transition-colors duration-200 font-label-md text-label-md" href="#">AI 面试</a>
+<a class="text-primary border-b-2 border-primary pb-1 font-bold font-label-md text-label-md" href="#">个人画像</a>
+</nav>
+</div>
+<div class="flex items-center gap-4">
+<div class="hidden md:flex relative">
+<span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-outline">search</span>
+<input class="pl-10 pr-4 py-2 bg-surface-container-low border-none rounded-lg text-body-sm w-64 focus:ring-2 focus:ring-primary/20" placeholder="搜索人才或报告..." type="text"/>
+</div>
+<button class="material-symbols-outlined text-on-surface-variant hover:bg-surface-container p-2 rounded-full transition-all">notifications</button>
+<button class="material-symbols-outlined text-on-surface-variant hover:bg-surface-container p-2 rounded-full transition-all">settings</button>
+<img alt="User avatar" class="w-8 h-8 rounded-full border border-outline-variant" src="https://lh3.googleusercontent.com/aida/AP1WRLvGDwqsZvMSw7fxdH7HvnSomw3BH444PyRDFkOy8wth-KlUCEfGaUucsGjNz-pZuWLxkL6O2pqH5YuxsYhEGYQfImjMczSgcdbW1l6OEtZO55fhCpvxGfI1DkdYnZiiRoka3QhOIxNFC8FoJmvUvg2ZYMy8UUo3RBSA9yIvc_GuxpqMYZtWQyVGlKFC0OPCEwY-DJrTcjMFs8hJ3OkEvOBKFM2fomEXccPgOmSVjss3PG-yJQozmS8VAQ"/>
+</div>
+</div>
+</header>
+<main class="flex-grow w-full max-w-container-max mx-auto px-margin-desktop py-stack-lg">
+<!-- Header Actions & Summary -->
+<div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-8 gap-4">
+<div>
+<h1 class="font-display-md text-display-md text-on-surface mb-2">陈思远 (Leo Chen)</h1>
+<div class="flex items-center gap-3">
+<span class="bg-tertiary/10 text-tertiary px-3 py-1 rounded-full font-label-md text-label-md">技术领军型人才</span>
+<span class="text-outline text-body-sm">最后更新: 2024年10月24日</span>
+</div>
+</div>
+<div class="flex gap-3">
+<button class="flex items-center gap-2 border border-outline text-on-surface-variant px-4 py-2 rounded hover:bg-surface-container transition-all font-label-md text-label-md">
+<span class="material-symbols-outlined text-[20px]">download</span>
+                导出人才包
+            </button>
+<button class="flex items-center gap-2 bg-primary text-on-primary px-6 py-2 rounded hover:opacity-90 transition-all font-label-md text-label-md shadow-sm">
+<span class="material-symbols-outlined text-[20px]">auto_awesome</span>
+                生成优化建议
+            </button>
+</div>
+</div>
+<div class="grid grid-cols-12 gap-6">
+<!-- Radar Chart Card -->
+<div class="col-span-12 lg:col-span-5 bg-surface-container-lowest border border-outline-variant rounded-xl p-8 flex flex-col items-center justify-center relative overflow-hidden h-fit">
+<div class="w-full">
+<h2 class="font-headline-md text-headline-md">能力模型概览</h2>
+<p class="text-primary font-display-lg text-display-lg mt-1">94<span class="text-body-md font-normal">/100</span></p>
+</div>
+<div class="w-full aspect-square max-w-[360px] relative radar-chart-container mt-4">
+<svg class="w-full h-full" viewbox="0 0 400 400">
+<polygon fill="none" points="200,40 338,120 338,280 200,360 62,280 62,120" stroke="#E2E8F0" stroke-width="1"></polygon>
+<polygon fill="none" points="200,80 303,140 303,260 200,320 97,260 97,140" stroke="#E2E8F0" stroke-width="1"></polygon>
+<polygon fill="none" points="200,120 269,160 269,240 200,280 131,240 131,160" stroke="#E2E8F0" stroke-width="1"></polygon>
+<line stroke="#E2E8F0" stroke-width="1" x1="200" x2="200" y1="40" y2="360"></line>
+<line stroke="#E2E8F0" stroke-width="1" x1="62" x2="338" y1="120" y2="280"></line>
+<line stroke="#E2E8F0" stroke-width="1" x1="338" x2="62" y1="120" y2="280"></line>
+<polygon fill="rgba(37, 99, 235, 0.15)" points="200,60 320,130 310,250 200,340 100,270 80,140" stroke="#2563EB" stroke-width="2"></polygon>
+<text class="fill-on-surface-variant font-label-sm text-[12px]" text-anchor="middle" x="200" y="25">创新能力</text>
+<text class="fill-on-surface-variant font-label-sm text-[12px]" text-anchor="start" x="350" y="115">领导力</text>
+<text class="fill-on-surface-variant font-label-sm text-[12px]" text-anchor="start" x="350" y="295">执行能力</text>
+<text class="fill-on-surface-variant font-label-sm text-[12px]" text-anchor="middle" x="200" y="385">职业稳定性</text>
+<text class="fill-on-surface-variant font-label-sm text-[12px]" text-anchor="end" x="50" y="295">抗压能力</text>
+<text class="fill-on-surface-variant font-label-sm text-[12px]" text-anchor="end" x="50" y="115">学习能力</text>
+</svg>
+</div>
+</div>
+<!-- Dimension List -->
+<div class="col-span-12 lg:col-span-7 space-y-4">
+<div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+<!-- Learning Capability -->
+<div class="bg-surface-container-lowest border border-outline-variant rounded-xl p-5 hover:shadow-md transition-all cursor-pointer group" onclick="toggleDrawer()">
+<div class="flex justify-between items-start mb-3">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-primary text-[20px]">school</span>
+<h4 class="font-headline-md text-headline-md">学习能力</h4>
+</div>
+<div class="flex items-center gap-1 bg-tertiary/10 text-tertiary px-2 py-0.5 rounded text-[12px]">
+<span class="material-symbols-outlined text-[14px]" style="font-variation-settings: 'FILL' 1;">verified</span>
+                            高置信度
+                        </div>
+</div>
+<div class="flex items-center gap-2 mb-4">
+<div class="flex gap-1">
+<span class="material-symbols-outlined text-primary text-[18px]" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="material-symbols-outlined text-primary text-[18px]" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="material-symbols-outlined text-primary text-[18px]" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="material-symbols-outlined text-primary text-[18px]" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="material-symbols-outlined text-outline-variant text-[18px]" style="font-variation-settings: 'FILL' 1;">star</span>
+</div>
+<span class="text-primary font-bold text-label-md">4.0 / 5.0</span>
+</div>
+<div class="flex items-center justify-between">
+<span class="text-body-sm text-on-surface-variant">基于开源社区贡献分析</span>
+<span class="text-primary text-label-sm flex items-center group-hover:translate-x-1 transition-transform">查看证据 <span class="material-symbols-outlined text-[16px]">chevron_right</span></span>
+</div>
+</div>
+<!-- Logic Capability -->
+<div class="bg-surface-container-lowest border border-outline-variant rounded-xl p-5 hover:shadow-md transition-all cursor-pointer group" onclick="toggleDrawer()">
+<div class="flex justify-between items-start mb-3">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-primary text-[20px]">psychology</span>
+<h4 class="font-headline-md text-headline-md">逻辑能力</h4>
+</div>
+<div class="flex items-center gap-1 bg-tertiary/10 text-tertiary px-2 py-0.5 rounded text-[12px]">
+<span class="material-symbols-outlined text-[14px]" style="font-variation-settings: 'FILL' 1;">verified</span>
+                            极高置信
+                        </div>
+</div>
+<div class="flex items-center gap-2 mb-4">
+<div class="flex gap-1">
+<span class="material-symbols-outlined text-primary text-[18px]" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="material-symbols-outlined text-primary text-[18px]" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="material-symbols-outlined text-primary text-[18px]" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="material-symbols-outlined text-primary text-[18px]" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="material-symbols-outlined text-primary text-[18px]" style="font-variation-settings: 'FILL' 1;">star</span>
+</div>
+<span class="text-primary font-bold text-label-md">5.0 / 5.0</span>
+</div>
+<div class="flex items-center justify-between">
+<span class="text-body-sm text-on-surface-variant">基于分布式事务答题逻辑</span>
+<span class="text-primary text-label-sm flex items-center group-hover:translate-x-1 transition-transform">查看证据 <span class="material-symbols-outlined text-[16px]">chevron_right</span></span>
+</div>
+</div>
+<!-- Communication -->
+<div class="bg-surface-container-lowest border border-outline-variant rounded-xl p-5 hover:shadow-md transition-all cursor-pointer group" onclick="toggleDrawer()">
+<div class="flex justify-between items-start mb-3">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-primary text-[20px]">chat</span>
+<h4 class="font-headline-md text-headline-md">沟通能力</h4>
+</div>
+<div class="flex items-center gap-1 bg-secondary-container text-secondary px-2 py-0.5 rounded text-[12px]">
+<span class="material-symbols-outlined text-[14px]">info</span>
+                            中等置信
+                        </div>
+</div>
+<div class="flex items-center gap-2 mb-4">
+<div class="flex gap-1">
+<span class="material-symbols-outlined text-primary text-[18px]" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="material-symbols-outlined text-primary text-[18px]" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="material-symbols-outlined text-primary text-[18px]" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="material-symbols-outlined text-primary text-[18px]" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="material-symbols-outlined text-outline-variant text-[18px]" style="font-variation-settings: 'FILL' 1;">star</span>
+</div>
+<span class="text-primary font-bold text-label-md">4.0 / 5.0</span>
+</div>
+<div class="flex items-center justify-between">
+<span class="text-body-sm text-on-surface-variant">基于面试表达清晰度</span>
+<span class="text-primary text-label-sm flex items-center group-hover:translate-x-1 transition-transform">查看证据 <span class="material-symbols-outlined text-[16px]">chevron_right</span></span>
+</div>
+</div>
+<!-- Execution -->
+<div class="bg-surface-container-lowest border border-outline-variant rounded-xl p-5 hover:shadow-md transition-all cursor-pointer group" onclick="toggleDrawer()">
+<div class="flex justify-between items-start mb-3">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-primary text-[20px]">bolt</span>
+<h4 class="font-headline-md text-headline-md">执行能力</h4>
+</div>
+<div class="flex items-center gap-1 bg-tertiary/10 text-tertiary px-2 py-0.5 rounded text-[12px]">
+<span class="material-symbols-outlined text-[14px]" style="font-variation-settings: 'FILL' 1;">verified</span>
+                            高置信度
+                        </div>
+</div>
+<div class="flex items-center gap-2 mb-4">
+<div class="flex gap-1">
+<span class="material-symbols-outlined text-primary text-[18px]" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="material-symbols-outlined text-primary text-[18px]" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="material-symbols-outlined text-primary text-[18px]" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="material-symbols-outlined text-primary text-[18px]" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="material-symbols-outlined text-outline-variant text-[18px]" style="font-variation-settings: 'FILL' 1;">star</span>
+</div>
+<span class="text-primary font-bold text-label-md">4.5 / 5.0</span>
+</div>
+<div class="flex items-center justify-between">
+<span class="text-body-sm text-on-surface-variant">基于腾讯云项目落地数据</span>
+<span class="text-primary text-label-sm flex items-center group-hover:translate-x-1 transition-transform">查看证据 <span class="material-symbols-outlined text-[16px]">chevron_right</span></span>
+</div>
+</div>
+<!-- Innovation -->
+<div class="bg-surface-container-lowest border border-outline-variant rounded-xl p-5 hover:shadow-md transition-all cursor-pointer group" onclick="toggleDrawer()">
+<div class="flex justify-between items-start mb-3">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-primary text-[20px]">lightbulb</span>
+<h4 class="font-headline-md text-headline-md">创新能力</h4>
+</div>
+<div class="flex items-center gap-1 bg-tertiary/10 text-tertiary px-2 py-0.5 rounded text-[12px]">
+<span class="material-symbols-outlined text-[14px]" style="font-variation-settings: 'FILL' 1;">verified</span>
+                            极高置信
+                        </div>
+</div>
+<div class="flex items-center gap-2 mb-4">
+<div class="flex gap-1">
+<span class="material-symbols-outlined text-primary text-[18px]" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="material-symbols-outlined text-primary text-[18px]" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="material-symbols-outlined text-primary text-[18px]" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="material-symbols-outlined text-primary text-[18px]" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="material-symbols-outlined text-primary text-[18px]" style="font-variation-settings: 'FILL' 1;">star</span>
+</div>
+<span class="text-primary font-bold text-label-md">4.8 / 5.0</span>
+</div>
+<div class="flex items-center justify-between">
+<span class="text-body-sm text-on-surface-variant">基于3项技术专利记录</span>
+<span class="text-primary text-label-sm flex items-center group-hover:translate-x-1 transition-transform">查看证据 <span class="material-symbols-outlined text-[16px]">chevron_right</span></span>
+</div>
+</div>
+<!-- Leadership -->
+<div class="bg-surface-container-lowest border border-outline-variant rounded-xl p-5 hover:shadow-md transition-all cursor-pointer group" onclick="toggleDrawer()">
+<div class="flex justify-between items-start mb-3">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-primary text-[20px]">groups</span>
+<h4 class="font-headline-md text-headline-md">领导力</h4>
+</div>
+<div class="flex items-center gap-1 bg-secondary-container text-secondary px-2 py-0.5 rounded text-[12px]">
+<span class="material-symbols-outlined text-[14px]">info</span>
+                            中等置信
+                        </div>
+</div>
+<div class="flex items-center gap-2 mb-4">
+<div class="flex gap-1">
+<span class="material-symbols-outlined text-primary text-[18px]" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="material-symbols-outlined text-primary text-[18px]" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="material-symbols-outlined text-primary text-[18px]" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="material-symbols-outlined text-outline-variant text-[18px]" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="material-symbols-outlined text-outline-variant text-[18px]" style="font-variation-settings: 'FILL' 1;">star</span>
+</div>
+<span class="text-primary font-bold text-label-md">3.5 / 5.0</span>
+</div>
+<div class="flex items-center justify-between">
+<span class="text-body-sm text-on-surface-variant">基于15人团队带教经验</span>
+<span class="text-primary text-label-sm flex items-center group-hover:translate-x-1 transition-transform">查看证据 <span class="material-symbols-outlined text-[16px]">chevron_right</span></span>
+</div>
+</div>
+<!-- Stress Management -->
+<div class="bg-surface-container-lowest border border-outline-variant rounded-xl p-5 hover:shadow-md transition-all cursor-pointer group" onclick="toggleDrawer()">
+<div class="flex justify-between items-start mb-3">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-primary text-[20px]">verified_user</span>
+<h4 class="font-headline-md text-headline-md">抗压能力</h4>
+</div>
+<div class="flex items-center gap-1 bg-tertiary/10 text-tertiary px-2 py-0.5 rounded text-[12px]">
+<span class="material-symbols-outlined text-[14px]" style="font-variation-settings: 'FILL' 1;">verified</span>
+                            高置信度
+                        </div>
+</div>
+<div class="flex items-center gap-2 mb-4">
+<div class="flex gap-1">
+<span class="material-symbols-outlined text-primary text-[18px]" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="material-symbols-outlined text-primary text-[18px]" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="material-symbols-outlined text-primary text-[18px]" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="material-symbols-outlined text-primary text-[18px]" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="material-symbols-outlined text-outline-variant text-[18px]" style="font-variation-settings: 'FILL' 1;">star</span>
+</div>
+<span class="text-primary font-bold text-label-md">4.2 / 5.0</span>
+</div>
+<div class="flex items-center justify-between">
+<span class="text-body-sm text-on-surface-variant">压力测试情绪稳健性分析</span>
+<span class="text-primary text-label-sm flex items-center group-hover:translate-x-1 transition-transform">查看证据 <span class="material-symbols-outlined text-[16px]">chevron_right</span></span>
+</div>
+</div>
+<!-- Stability -->
+<div class="bg-error-container/20 border border-error/20 rounded-xl p-5 hover:shadow-md transition-all cursor-pointer group" onclick="toggleDrawer()">
+<div class="flex justify-between items-start mb-3">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-error text-[20px]">warning</span>
+<h4 class="font-headline-md text-headline-md text-on-error-container">职业稳定性</h4>
+</div>
+<div class="flex items-center gap-1 bg-error-container text-error px-2 py-0.5 rounded text-[12px]">
+<span class="material-symbols-outlined text-[14px]" style="font-variation-settings: 'FILL' 1;">verified</span>
+                            高置信度
+                        </div>
+</div>
+<div class="flex items-center gap-2 mb-4">
+<div class="flex gap-1">
+<span class="material-symbols-outlined text-error text-[18px]" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="material-symbols-outlined text-error text-[18px]" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="material-symbols-outlined text-outline-variant text-[18px]" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="material-symbols-outlined text-outline-variant text-[18px]" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="material-symbols-outlined text-outline-variant text-[18px]" style="font-variation-settings: 'FILL' 1;">star</span>
+</div>
+<span class="text-error font-bold text-label-md">2.0 / 5.0</span>
+</div>
+<div class="flex items-center justify-between">
+<span class="text-body-sm text-on-error-container">五年四跳履历异常分析</span>
+<span class="text-error text-label-sm flex items-center group-hover:translate-x-1 transition-transform">查看风险 <span class="material-symbols-outlined text-[16px]">chevron_right</span></span>
+</div>
+</div>
+</div>
+</div>
+</div>
+<!-- Evidence Drawer (Simulation Component) -->
+<aside class="fixed right-0 top-0 h-full w-full md:w-[480px] bg-white shadow-2xl z-[60] transform translate-x-full transition-transform duration-300 border-l border-outline-variant overflow-y-auto" id="evidence-drawer">
+<div class="p-8">
+<div class="flex justify-between items-center mb-8">
+<h2 class="font-display-md text-display-md">数据证据详情</h2>
+<button class="material-symbols-outlined text-on-surface-variant hover:bg-surface-container p-2 rounded-full" onclick="toggleDrawer()">close</button>
+</div>
+<div class="space-y-8">
+<section>
+<h3 class="font-label-md text-label-md text-primary uppercase tracking-wider mb-4">原始简历片段</h3>
+<div class="bg-surface-container-low p-4 rounded font-code text-code text-on-surface-variant leading-relaxed">
+                        "2021-2023: 架构师 @ 腾讯云<br/>
+                        主导了自研分布式存储系统 Nebula 的冷热数据分离方案设计，将存储成本降低了40%，并支持了EB级数据的弹性扩展..."
+                    </div>
+</section>
+<section>
+<h3 class="font-label-md text-label-md text-primary uppercase tracking-wider mb-4">AI 推理链路</h3>
+<div class="space-y-4">
+<div class="flex gap-4">
+<div class="w-1 bg-primary rounded-full"></div>
+<div>
+<p class="font-label-md text-label-md">关键信息提取</p>
+<p class="text-body-sm text-on-secondary-container">识别到关键词：EB级、重构、冷热分离。</p>
+</div>
+</div>
+<div class="flex gap-4">
+<div class="w-1 bg-primary rounded-full"></div>
+<div>
+<p class="font-label-md text-label-md">背景验证</p>
+<p class="text-body-sm text-on-secondary-container">Nebula 系统在腾讯内部确为核心高压系统，设计难度极高。</p>
+</div>
+</div>
+</div>
+</section>
+<section>
+<h3 class="font-label-md text-label-md text-primary uppercase tracking-wider mb-4">相关可视化</h3>
+<div class="aspect-video rounded-lg overflow-hidden border border-outline-variant relative">
+<img class="w-full h-full object-cover" data-alt="Sophisticated data visualization dashboard" src="https://lh3.googleusercontent.com/aida/AP1WRLsIBCJN2AspmsTYsxVYD1usPvds1KpQbvrnTKUpnqHf1ZrsVR4YAK1Hq_uHCFUvNJu4h7efeztaYzPQGAvb6kquEIqnz0gi5eknR4LkAcJs60gvQC-w63GAitV6xyPy7bIiCC1q1EXxWs8jfdfBfuTybbXO61a7UkqAbzmHy_65Boz8rmtrdbJ0dBsmsmBn0YIl474asEBhwrT4AgHjWAD4t_0j9BBE6qADyqMbVjxYRt5Q97EfDw9yMA"/>
+</div>
+</section>
+</div>
+</div>
+</aside>
+</main>
+<footer class="w-full py-stack-lg px-margin-desktop border-t border-outline-variant mt-auto bg-surface-container">
+<div class="max-w-container-max mx-auto flex flex-col md:flex-row justify-between items-center gap-6">
+<div class="flex flex-col items-center md:items-start">
+<span class="font-headline-sm text-headline-sm font-semibold text-secondary">AI Talent Agent</span>
+<p class="font-body-sm text-body-sm text-on-secondary-fixed-variant mt-2">© 2024 AI Talent Agent. All rights reserved.</p>
+</div>
+<div class="flex flex-wrap justify-center gap-6">
+<a class="text-on-secondary-fixed-variant hover:text-primary transition-all font-label-sm text-label-sm" href="#">ATS Integration</a>
+<a class="text-on-secondary-fixed-variant hover:text-primary transition-all font-label-sm text-label-sm" href="#">Excel Support</a>
+<a class="text-on-secondary-fixed-variant hover:text-primary transition-all font-label-sm text-label-sm" href="#">Feishu Connector</a>
+<a class="text-on-secondary-fixed-variant hover:text-primary transition-all font-label-sm text-label-sm" href="#">WeCom Sync</a>
+<a class="text-on-secondary-fixed-variant hover:text-primary transition-all font-label-sm text-label-sm" href="#">Privacy Policy</a>
+<a class="text-on-secondary-fixed-variant hover:text-primary transition-all font-label-sm text-label-sm" href="#">Terms of Service</a>
+</div>
+</div>
+</footer>
+<script>
+    function toggleDrawer() {
+        const drawer = document.getElementById('evidence-drawer');
+        drawer.classList.toggle('translate-x-full');
+    }
+</script>
+</body></html>

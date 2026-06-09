@@ -1,0 +1,401 @@
+<!DOCTYPE html>
+
+<html class="light" lang="zh-CN"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>岗位画像确认 - AI Talent Agent</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+            vertical-align: middle;
+        }
+        .glass-card {
+            background: rgba(255, 255, 255, 0.8);
+            backdrop-filter: blur(12px);
+            border: 1px solid #E2E8F0;
+        }
+        .editable-field:hover {
+            background-color: #f1f5f9;
+            border-radius: 4px;
+        }
+        .radar-grid {
+            stroke: #E2E8F0;
+            stroke-width: 1;
+        }
+        .radar-area {
+            fill: #2563EB;
+            fill-opacity: 0.1;
+            stroke: #2563EB;
+            stroke-width: 2;
+        }
+        @keyframes pulse-subtle {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.7; }
+        }
+        .animate-pulse-subtle {
+            animation: pulse-subtle 3s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+        }
+    </style>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "secondary": "#565e74",
+                        "outline-variant": "#c3c6d7",
+                        "inverse-primary": "#b4c5ff",
+                        "error": "#ba1a1a",
+                        "surface-dim": "#cbdbf5",
+                        "tertiary": "#006242",
+                        "surface-bright": "#f8f9ff",
+                        "secondary-container": "#dae2fd",
+                        "secondary-fixed-dim": "#bec6e0",
+                        "inverse-on-surface": "#eaf1ff",
+                        "tertiary-fixed-dim": "#4edea3",
+                        "on-secondary-fixed-variant": "#3f465c",
+                        "tertiary-container": "#007d55",
+                        "on-secondary-fixed": "#131b2e",
+                        "on-background": "#0b1c30",
+                        "background": "#f8f9ff",
+                        "on-secondary-container": "#5c647a",
+                        "primary-fixed": "#dbe1ff",
+                        "secondary-fixed": "#dae2fd",
+                        "tertiary-fixed": "#6ffbbe",
+                        "on-primary": "#ffffff",
+                        "on-primary-fixed": "#00174b",
+                        "on-surface": "#0b1c30",
+                        "primary": "#004ac6",
+                        "surface": "#f8f9ff",
+                        "outline": "#737686",
+                        "on-tertiary": "#ffffff",
+                        "surface-variant": "#d3e4fe",
+                        "on-surface-variant": "#434655",
+                        "on-tertiary-container": "#bdffdb",
+                        "on-secondary": "#ffffff",
+                        "on-primary-fixed-variant": "#003ea8",
+                        "surface-container-lowest": "#ffffff",
+                        "error-container": "#ffdad6",
+                        "primary-fixed-dim": "#b4c5ff",
+                        "on-error": "#ffffff",
+                        "on-tertiary-fixed": "#002113",
+                        "inverse-surface": "#213145",
+                        "surface-container-high": "#dce9ff",
+                        "surface-tint": "#0053db",
+                        "surface-container-highest": "#d3e4fe",
+                        "surface-container-low": "#eff4ff",
+                        "surface-container": "#e5eeff",
+                        "primary-container": "#2563eb",
+                        "on-tertiary-fixed-variant": "#005236",
+                        "on-primary-container": "#eeefff",
+                        "on-error-container": "#93000a"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.125rem",
+                        "lg": "0.25rem",
+                        "xl": "0.5rem",
+                        "full": "0.75rem"
+                    },
+                    "spacing": {
+                        "stack-md": "12px",
+                        "base": "8px",
+                        "margin-mobile": "16px",
+                        "margin-desktop": "40px",
+                        "stack-sm": "4px",
+                        "gutter": "24px",
+                        "stack-lg": "24px",
+                        "container-max": "1440px",
+                        "margin-tablet": "24px"
+                    },
+                    "fontFamily": {
+                        "code": ["Courier Prime"],
+                        "label-sm": ["Hanken Grotesk"],
+                        "body-lg": ["Hanken Grotesk"],
+                        "headline-lg-mobile": ["Hanken Grotesk"],
+                        "display-md": ["Hanken Grotesk"],
+                        "headline-lg": ["Hanken Grotesk"],
+                        "body-md": ["Hanken Grotesk"],
+                        "label-md": ["Hanken Grotesk"],
+                        "headline-md": ["Hanken Grotesk"],
+                        "body-sm": ["Hanken Grotesk"],
+                        "display-lg": ["Hanken Grotesk"]
+                    },
+                    "fontSize": {
+                        "code": ["14px", {"lineHeight": "20px", "fontWeight": "400"}],
+                        "label-sm": ["12px", {"lineHeight": "16px", "letterSpacing": "0.02em", "fontWeight": "500"}],
+                        "body-lg": ["18px", {"lineHeight": "28px", "fontWeight": "400"}],
+                        "headline-lg-mobile": ["20px", {"lineHeight": "28px", "fontWeight": "600"}],
+                        "display-md": ["30px", {"lineHeight": "38px", "letterSpacing": "-0.01em", "fontWeight": "700"}],
+                        "headline-lg": ["24px", {"lineHeight": "32px", "fontWeight": "600"}],
+                        "body-md": ["16px", {"lineHeight": "24px", "fontWeight": "400"}],
+                        "label-md": ["14px", {"lineHeight": "16px", "fontWeight": "600"}],
+                        "headline-md": ["20px", {"lineHeight": "28px", "fontWeight": "600"}],
+                        "body-sm": ["14px", {"lineHeight": "20px", "fontWeight": "400"}],
+                        "display-lg": ["36px", {"lineHeight": "44px", "letterSpacing": "-0.02em", "fontWeight": "700"}]
+                    }
+                },
+            },
+        }
+    </script>
+</head>
+<body class="bg-background text-on-surface font-body-md min-h-screen flex flex-col">
+<!-- TopNavBar -->
+<header class="bg-surface-container-lowest dark:bg-inverse-surface border-b border-outline-variant dark:border-outline docked full-width top-0 z-50">
+<div class="flex justify-between items-center w-full px-margin-desktop max-w-container-max mx-auto h-16">
+<div class="flex items-center gap-8">
+<span class="font-headline-md text-headline-md font-bold text-primary dark:text-primary-fixed-dim">AI Talent Agent</span>
+<nav class="hidden md:flex items-center gap-6"><a class="text-on-surface-variant dark:text-surface-variant pb-1 font-label-md text-label-md hover:text-primary dark:hover:text-primary-fixed-dim transition-colors duration-200" href="#">首页</a><a class="text-primary dark:text-primary-fixed-dim border-b-2 border-primary dark:border-primary-fixed-dim pb-1 font-bold font-label-md text-label-md" href="#">岗位需求</a><a class="text-on-surface-variant dark:text-surface-variant pb-1 font-label-md text-label-md hover:text-primary dark:hover:text-primary-fixed-dim transition-colors duration-200" href="#">候选人推荐</a><a class="text-on-surface-variant dark:text-surface-variant pb-1 font-label-md text-label-md hover:text-primary dark:hover:text-primary-fixed-dim transition-colors duration-200" href="#">导出中心</a><a class="text-on-surface-variant dark:text-surface-variant pb-1 font-label-md text-label-md hover:text-primary dark:hover:text-primary-fixed-dim transition-colors duration-200" href="#">设置</a></nav>
+</div>
+<div class="flex items-center gap-4">
+<button class="material-symbols-outlined text-on-surface-variant hover:text-primary transition-colors">notifications</button>
+<button class="material-symbols-outlined text-on-surface-variant hover:text-primary transition-colors">settings</button>
+<div class="w-8 h-8 rounded-full bg-surface-container-high overflow-hidden border border-outline-variant">
+<img alt="User avatar" class="w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida/AP1WRLsvuJ57kYIrWeFm7qHSXbbEMAvJ-YpfKc6tsOBkFdCHRuA68l7VB7-BCLnWmcd581B8DstdP15y1jdH01TybuGX1yM54DEvBM96hKhEp4Xzb3fNgBDeom4LQ1xCLZJSCicVVCB1jo1v7_2JgTFHBVzMVG4hW1fcmVUZVBJHcWZFgJ0RYg9swIQFfJJB9G0f-NIfQYgsASwVk2Xuz4n4FvrrJdwB5jrED5S6uOb9TO61BTH_DOxkRkKq52U"/>
+</div>
+</div>
+</div>
+</header>
+<main class="flex-grow w-full max-w-container-max mx-auto px-margin-desktop py-stack-lg">
+<!-- Header Section -->
+<div class="mb-stack-lg flex flex-col md:flex-row md:items-end justify-between gap-4">
+<div>
+<div class="flex items-center gap-2 mb-2">
+<span class="material-symbols-outlined text-primary">psychology</span>
+<span class="text-primary font-label-md text-label-md">AI 岗位画像分析已完成</span>
+</div>
+<h1 class="font-display-md text-display-md text-on-surface">岗位画像确认</h1>
+<p class="text-on-surface-variant font-body-md text-body-md mt-1">请核对 AI 提取的关键要素，确保画像准确以实现精准匹配。</p>
+</div>
+<div class="flex gap-3">
+<button class="px-6 py-2 border border-outline text-on-surface font-label-md text-label-md rounded-lg hover:bg-surface-container-low transition-colors flex items-center gap-2">
+<span class="material-symbols-outlined text-[20px]">download</span> 导出画像
+                </button>
+<button class="px-8 py-2 bg-primary text-on-primary font-label-md text-label-md rounded-lg hover:opacity-90 active:scale-95 transition-all shadow-sm flex items-center gap-2">
+                    开始匹配候选人 <span class="material-symbols-outlined text-[20px]">arrow_forward</span>
+</button>
+</div>
+</div>
+<!-- Bento Grid Layout -->
+<div class="grid grid-cols-12 gap-gutter">
+<!-- Main Info Card -->
+<div class="col-span-12 lg:col-span-8 space-y-gutter">
+<!-- Basic Job Info -->
+<div class="glass-card p-stack-lg rounded-xl">
+<div class="flex items-center justify-between mb-4">
+<h2 class="font-headline-md text-headline-md flex items-center gap-2">
+<span class="material-symbols-outlined text-primary">work</span> 基本信息
+                        </h2>
+<button class="text-primary hover:underline font-label-md text-label-md">编辑全部</button>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-2 gap-stack-lg">
+<div class="space-y-1">
+<label class="text-on-surface-variant font-label-sm text-label-sm">岗位名称</label>
+<div class="editable-field p-2 -ml-2 border border-transparent transition-colors font-headline-sm text-headline-sm font-semibold">
+                                高级全栈工程师 (Node.js &amp; React)
+                            </div>
+</div>
+<div class="space-y-1">
+<label class="text-on-surface-variant font-label-sm text-label-sm">经验要求</label>
+<div class="editable-field p-2 -ml-2 border border-transparent transition-colors font-body-md text-body-md">
+                                5-8 年互联网大厂或高增长初创公司经验
+                            </div>
+</div>
+</div>
+</div>
+<!-- Core Responsibilities -->
+<div class="glass-card p-stack-lg rounded-xl">
+<h2 class="font-headline-md text-headline-md mb-4 flex items-center gap-2">
+<span class="material-symbols-outlined text-primary">assignment</span> 核心职责
+                    </h2>
+<ul class="space-y-4">
+<li class="flex gap-4 group">
+<div class="mt-1.5 w-1.5 h-1.5 rounded-full bg-primary flex-shrink-0"></div>
+<div class="editable-field flex-grow p-1 -m-1 transition-colors">
+                                负责高性能、高可扩展的微服务架构设计与核心模块开发。
+                            </div>
+</li>
+<li class="flex gap-4 group">
+<div class="mt-1.5 w-1.5 h-1.5 rounded-full bg-primary flex-shrink-0"></div>
+<div class="editable-field flex-grow p-1 -m-1 transition-colors">
+                                优化前端性能，提升复杂交互场景下的用户体验与渲染效率。
+                            </div>
+</li>
+<li class="flex gap-4 group">
+<div class="mt-1.5 w-1.5 h-1.5 rounded-full bg-primary flex-shrink-0"></div>
+<div class="editable-field flex-grow p-1 -m-1 transition-colors">
+                                指导初中级工程师，参与代码审查并制定技术标准。
+                            </div>
+</li>
+</ul>
+<!-- Missing Info Prompt -->
+<div class="mt-6 p-4 bg-primary-fixed/30 border border-primary-fixed rounded-lg flex items-start gap-3 animate-pulse-subtle">
+<span class="material-symbols-outlined text-primary">tips_and_updates</span>
+<div class="text-on-primary-fixed-variant font-body-sm text-body-sm">
+<span class="font-bold">AI 建议：</span> 职责中未明确提及对具体云服务（如 AWS, Aliyun）的管理经验，这通常是高级职位的关键点，建议补充。
+                            <button class="text-primary font-bold ml-2 hover:underline">点击补充</button>
+</div>
+</div>
+</div>
+<!-- Skills Section -->
+<div class="grid grid-cols-1 md:grid-cols-2 gap-gutter">
+<!-- Must-have -->
+<div class="glass-card p-stack-lg rounded-xl">
+<h2 class="font-headline-sm text-headline-sm mb-4 flex items-center gap-2">
+<span class="material-symbols-outlined text-primary" data-weight="fill" style="font-variation-settings: 'FILL' 1;">star</span> 必须具备 (Must-have)
+                        </h2>
+<div class="flex flex-wrap gap-2">
+<span class="px-3 py-1 bg-primary/10 text-primary border border-primary/20 rounded-full font-label-md text-label-md">TypeScript</span>
+<span class="px-3 py-1 bg-primary/10 text-primary border border-primary/20 rounded-full font-label-md text-label-md">Node.js</span>
+<span class="px-3 py-1 bg-primary/10 text-primary border border-primary/20 rounded-full font-label-md text-label-md">React / Next.js</span>
+<span class="px-3 py-1 bg-primary/10 text-primary border border-primary/20 rounded-full font-label-md text-label-md">GraphQL</span>
+<span class="px-3 py-1 bg-primary/10 text-primary border border-primary/20 rounded-full font-label-md text-label-md">PostgreSQL</span>
+<button class="px-3 py-1 border border-dashed border-outline-variant text-on-surface-variant rounded-full font-label-md text-label-md hover:border-primary transition-colors">+ 添加</button>
+</div>
+</div>
+<!-- Bonus -->
+<div class="glass-card p-stack-lg rounded-xl">
+<h2 class="font-headline-sm text-headline-sm mb-4 flex items-center gap-2">
+<span class="material-symbols-outlined text-secondary">add_circle</span> 加分项 (Bonus)
+                        </h2>
+<div class="flex flex-wrap gap-2">
+<span class="px-3 py-1 bg-secondary/10 text-secondary border border-secondary/20 rounded-full font-label-md text-label-md">Rust</span>
+<span class="px-3 py-1 bg-secondary/10 text-secondary border border-secondary/20 rounded-full font-label-md text-label-md">Docker/K8s</span>
+<span class="px-3 py-1 bg-secondary/10 text-secondary border border-secondary/20 rounded-full font-label-md text-label-md">Web3.js</span>
+<span class="px-3 py-1 bg-secondary/10 text-secondary border border-secondary/20 rounded-full font-label-md text-label-md">开源贡献</span>
+<button class="px-3 py-1 border border-dashed border-outline-variant text-on-surface-variant rounded-full font-label-md text-label-md hover:border-secondary transition-colors">+ 添加</button>
+</div>
+</div>
+</div>
+</div>
+<!-- Side Sidebar -->
+<div class="col-span-12 lg:col-span-4 space-y-gutter">
+<!-- Competency Requirements (Radar Chart Simulation) -->
+<div class="glass-card p-stack-lg rounded-xl">
+<h2 class="font-headline-md text-headline-md mb-6 flex items-center gap-2"><span class="material-symbols-outlined text-primary">radar</span> 岗位能力要求</h2>
+<div class="relative aspect-square flex items-center justify-center mb-6">
+<!-- SVG Radar Chart -->
+<svg class="w-full max-w-[240px]" viewbox="0 0 200 200">
+<!-- Grid -->
+<polygon class="radar-grid" fill="none" points="100,20 180,80 150,170 50,170 20,80"></polygon>
+<polygon class="radar-grid" fill="none" opacity="0.5" points="100,60 140,90 125,135 75,135 60,90"></polygon>
+<!-- Lines -->
+<line class="radar-grid" x1="100" x2="100" y1="100" y2="20"></line>
+<line class="radar-grid" x1="100" x2="180" y1="100" y2="80"></line>
+<line class="radar-grid" x1="100" x2="150" y1="100" y2="170"></line>
+<line class="radar-grid" x1="100" x2="50" y1="100" y2="170"></line>
+<line class="radar-grid" x1="100" x2="20" y1="100" y2="80"></line>
+<!-- Active Area -->
+<polygon class="radar-area" points="100,35 170,85 130,160 60,155 35,90"></polygon>
+</svg>
+<!-- Labels -->
+<div class="absolute top-0 text-center font-label-sm text-label-sm w-full">技术深度</div>
+<div class="absolute right-0 top-[40%] font-label-sm text-label-sm">系统架构</div>
+<div class="absolute bottom-2 right-10 font-label-sm text-label-sm">团队领导力</div>
+<div class="absolute bottom-2 left-10 font-label-sm text-label-sm">业务理解</div>
+<div class="absolute left-0 top-[40%] font-label-sm text-label-sm">沟通协作</div>
+</div>
+<div class="space-y-3">
+<div class="flex justify-between items-center text-body-sm font-body-sm">
+<span>技术深度</span>
+<span class="text-primary font-bold">90/100</span>
+</div>
+<div class="w-full bg-surface-container rounded-full h-1.5">
+<div class="bg-primary h-1.5 rounded-full" style="width: 90%"></div>
+</div>
+<div class="flex justify-between items-center text-body-sm font-body-sm">
+<span>沟通协作</span>
+<span class="text-primary font-bold">75/100</span>
+</div>
+<div class="w-full bg-surface-container rounded-full h-1.5">
+<div class="bg-primary h-1.5 rounded-full" style="width: 75%"></div>
+</div>
+</div>
+</div>
+<!-- Career Orientation -->
+<div class="glass-card p-stack-lg rounded-xl">
+<h2 class="font-headline-md text-headline-md mb-4 flex items-center gap-2">
+<span class="material-symbols-outlined text-primary">explore</span> 职业倾向 (Persona)
+                    </h2>
+<div class="space-y-4">
+<div class="flex items-start gap-3">
+<span class="material-symbols-outlined text-tertiary mt-1">check_circle</span>
+<div>
+<p class="font-label-md text-label-md">自我驱动型</p>
+<p class="text-on-surface-variant font-body-sm text-body-sm">在不确定性中寻找最优技术路径。</p>
+</div>
+</div>
+<div class="flex items-start gap-3">
+<span class="material-symbols-outlined text-tertiary mt-1">check_circle</span>
+<div>
+<p class="font-label-md text-label-md">产品思维</p>
+<p class="text-on-surface-variant font-body-sm text-body-sm">不仅仅是写代码，更关注业务价值实现。</p>
+</div>
+</div>
+<div class="mt-4 p-3 bg-surface-container rounded-lg border-l-4 border-error">
+<p class="text-error font-label-sm text-label-sm font-bold flex items-center gap-1"><span class="material-symbols-outlined text-[16px]">info</span> 完善岗位画像</p>
+<p class="text-on-surface-variant font-body-sm text-body-sm mt-1">建议设置工作模式（远程/办公），当前默认为混合办公。</p>
+<button class="text-primary font-label-sm text-label-sm mt-1 font-bold underline">立即设定</button>
+</div>
+</div>
+</div>
+<!-- Job Insight Banner -->
+<div class="relative h-48 rounded-xl overflow-hidden group cursor-pointer">
+<img alt="Job context" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" data-alt="A modern, high-tech office interior at sunset with golden sunlight streaming through floor-to-ceiling windows. Professional recruiters are collaborating around a minimalist wooden table equipped with sleek laptops. The atmosphere is warm, focused, and sophisticated, emphasizing human-centric intelligence and professional reliability with a clean blue and white color palette." src="https://lh3.googleusercontent.com/aida/AP1WRLv-_8DvsBNnbQy-XYiow7GNXIrLIadT3t8oR-TaNee5GV-AjPNKDtADQLlWU5Klk7mT4MduxFuRIur4QQxp_3fa9atfrWfIvXDo1cJ6s14sUZHX7f2IP-6z8gesu5oygqfXDrJBiW7nV0OIlLGUCB5LFn9F9GreDH526CfWm4QZTZTZmbkw9vrZHIzRGPr-2zO9UDYwyHLjwFhmbV6tuOe8FNvUAw4K6WC5jWk3_7XKkA-mLRXnR5d099M"/>
+<div class="absolute inset-0 bg-gradient-to-t from-primary/80 to-transparent flex flex-col justify-end p-4">
+<p class="text-on-primary font-bold font-headline-sm text-headline-sm">行业洞察</p>
+<p class="text-on-primary/90 font-body-sm text-body-sm">当前市场上此类人才稀缺，建议匹配薪资范围：40k-65k。</p>
+</div>
+</div>
+</div>
+</div>
+</main>
+<!-- Footer -->
+<footer class="bg-surface-container dark:bg-on-secondary-fixed w-full py-stack-lg px-margin-desktop border-t border-outline-variant dark:border-outline mt-auto">
+<div class="max-w-container-max mx-auto flex flex-col md:flex-row justify-between items-start md:items-center gap-8">
+<div class="space-y-4">
+<span class="font-headline-sm text-headline-sm font-semibold text-secondary dark:text-secondary-fixed-dim">AI Talent Agent</span>
+<p class="font-body-sm text-body-sm text-on-secondary-fixed-variant dark:text-secondary-fixed-dim max-w-sm">基于生成式 AI 的新一代人才招聘解决方案，通过画像解析与精准匹配提升招聘效率。</p>
+<p class="font-body-sm text-body-sm text-on-secondary-fixed-variant dark:text-secondary-fixed-dim opacity-70">© 2024 AI Talent Agent. All rights reserved.</p>
+</div>
+<div class="grid grid-cols-2 md:grid-cols-3 gap-x-12 gap-y-4">
+<a class="text-on-secondary-fixed-variant dark:text-secondary-fixed-dim font-label-sm text-label-sm hover:text-primary dark:hover:text-primary-fixed-dim underline transition-all" href="#">ATS Integration</a>
+<a class="text-on-secondary-fixed-variant dark:text-secondary-fixed-dim font-label-sm text-label-sm hover:text-primary dark:hover:text-primary-fixed-dim underline transition-all" href="#">Excel Support</a>
+<a class="text-on-secondary-fixed-variant dark:text-secondary-fixed-dim font-label-sm text-label-sm hover:text-primary dark:hover:text-primary-fixed-dim underline transition-all" href="#">Feishu Connector</a>
+<a class="text-on-secondary-fixed-variant dark:text-secondary-fixed-dim font-label-sm text-label-sm hover:text-primary dark:hover:text-primary-fixed-dim underline transition-all" href="#">WeCom Sync</a>
+<a class="text-on-secondary-fixed-variant dark:text-secondary-fixed-dim font-label-sm text-label-sm hover:text-primary dark:hover:text-primary-fixed-dim underline transition-all" href="#">Privacy Policy</a>
+<a class="text-on-secondary-fixed-variant dark:text-secondary-fixed-dim font-label-sm text-label-sm hover:text-primary dark:hover:text-primary-fixed-dim underline transition-all" href="#">Terms of Service</a>
+</div>
+</div>
+</footer>
+<!-- Interactive Layer: Simple UI Script -->
+<script>
+        // Placeholder for future interactivity like editing text
+        document.querySelectorAll('.editable-field').forEach(field => {
+            field.addEventListener('click', function() {
+                const currentText = this.innerText;
+                const input = document.createElement('textarea');
+                input.value = currentText;
+                input.className = 'w-full p-2 border border-primary rounded bg-white font-inherit focus:outline-none focus:ring-2 focus:ring-primary/20';
+                input.style.height = this.offsetHeight + 'px';
+                
+                this.replaceWith(input);
+                input.focus();
+
+                input.addEventListener('blur', function() {
+                    field.innerText = this.value;
+                    this.replaceWith(field);
+                });
+                
+                input.addEventListener('keydown', function(e) {
+                    if (e.key === 'Enter' && !e.shiftKey) {
+                        this.blur();
+                    }
+                });
+            });
+        });
+    </script>
+</body></html>

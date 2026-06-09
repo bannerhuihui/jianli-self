@@ -1,0 +1,308 @@
+<!DOCTYPE html>
+
+<html class="light" lang="zh-CN"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>智聘 TalentAgent - AI 面试</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@400;500;600;700&amp;family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC,+Inter,+sans-serif:wght@100..900&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "error": "#ba1a1a",
+                        "tertiary-container": "#0074a6",
+                        "tertiary-fixed-dim": "#89ceff",
+                        "surface-container-lowest": "#ffffff",
+                        "secondary-fixed-dim": "#b7c8e1",
+                        "secondary-container": "#d0e1fb",
+                        "on-surface-variant": "#434655",
+                        "surface-tint": "#0053db",
+                        "on-tertiary-container": "#e4f2ff",
+                        "surface-container-highest": "#e0e3e5",
+                        "primary-container": "#2563eb",
+                        "background": "#f7f9fb",
+                        "inverse-primary": "#b4c5ff",
+                        "on-tertiary": "#ffffff",
+                        "on-surface": "#191c1e",
+                        "on-primary-container": "#eeefff",
+                        "on-primary-fixed": "#00174b",
+                        "on-error-container": "#93000a",
+                        "on-tertiary-fixed": "#001e2f",
+                        "on-secondary-fixed": "#0b1c30",
+                        "surface-dim": "#d8dadc",
+                        "primary-fixed": "#dbe1ff",
+                        "on-primary-fixed-variant": "#003ea8",
+                        "on-error": "#ffffff",
+                        "primary-fixed-dim": "#b4c5ff",
+                        "on-secondary-container": "#54647a",
+                        "secondary": "#505f76",
+                        "error-container": "#ffdad6",
+                        "on-tertiary-fixed-variant": "#004c6e",
+                        "on-secondary": "#ffffff",
+                        "outline-variant": "#c3c6d7",
+                        "surface-bright": "#f7f9fb",
+                        "surface-variant": "#e0e3e5",
+                        "outline": "#737686",
+                        "surface-container": "#eceef0",
+                        "secondary-fixed": "#d3e4fe",
+                        "primary": "#004ac6",
+                        "on-background": "#191c1e",
+                        "on-primary": "#ffffff",
+                        "inverse-on-surface": "#eff1f3",
+                        "surface-container-low": "#f2f4f6",
+                        "surface": "#f7f9fb",
+                        "surface-container-high": "#e6e8ea",
+                        "inverse-surface": "#2d3133",
+                        "on-secondary-fixed-variant": "#38485d",
+                        "tertiary": "#005a82",
+                        "tertiary-fixed": "#c9e6ff"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "sm": "8px",
+                        "xl": "32px",
+                        "md": "16px",
+                        "margin": "24px",
+                        "lg": "24px",
+                        "xs": "4px",
+                        "2xl": "48px",
+                        "gutter": "24px",
+                        "base": "4px"
+                    },
+                    "fontFamily": {
+                        "headline-md": ["Noto Sans SC, Inter, sans-serif"],
+                        "headline-sm": ["Noto Sans SC, Inter, sans-serif"],
+                        "headline-lg-mobile": ["Noto Sans SC, Inter, sans-serif"],
+                        "body-sm": ["Noto Sans SC, Inter, sans-serif"],
+                        "headline-lg": ["Noto Sans SC, Inter, sans-serif"],
+                        "body-lg": ["Noto Sans SC, Inter, sans-serif"],
+                        "body-md": ["Noto Sans SC, Inter, sans-serif"],
+                        "label-md": ["Noto Sans SC, Inter, sans-serif"],
+                        "label-sm": ["Noto Sans SC, Inter, sans-serif"]
+                    },
+                    "fontSize": {
+                        "headline-md": ["24px", {"lineHeight": "1.3", "fontWeight": "600"}],
+                        "headline-sm": ["20px", {"lineHeight": "1.4", "fontWeight": "600"}],
+                        "headline-lg-mobile": ["24px", {"lineHeight": "1.2", "fontWeight": "600"}],
+                        "body-sm": ["12px", {"lineHeight": "1.6", "fontWeight": "400"}],
+                        "headline-lg": ["30px", {"lineHeight": "1.2", "fontWeight": "600"}],
+                        "body-lg": ["16px", {"lineHeight": "1.6", "fontWeight": "400"}],
+                        "body-md": ["14px", {"lineHeight": "1.6", "fontWeight": "400"}],
+                        "label-md": ["14px", {"lineHeight": "1", "fontWeight": "500"}],
+                        "label-sm": ["12px", {"lineHeight": "1", "fontWeight": "500"}]
+                    }
+                }
+            }
+        }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+            display: inline-block;
+            vertical-align: middle;
+        }
+        ::-webkit-scrollbar { width: 4px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 10px; }
+        .chat-container { height: calc(100vh - 380px); }
+        @keyframes pulse-ring {
+            0% { transform: scale(.33); opacity: 0; }
+            80%, 100% { opacity: 0; }
+        }
+        .recording-pulse {
+            position: relative;
+        }
+        .recording-pulse::before {
+            content: '';
+            position: absolute;
+            top: -100%; left: -100%;
+            width: 300%; height: 300%;
+            background-color: #2563eb;
+            border-radius: 50%;
+            animation: pulse-ring 1.5s cubic-bezier(0.215, 0.61, 0.355, 1) infinite;
+            z-index: -1;
+            opacity: 0.2;
+        }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-background text-on-surface font-body-md text-body-md overflow-hidden">
+<!-- TopAppBar -->
+<header class="bg-surface border-b border-outline-variant fixed top-0 w-full z-50 flex justify-between items-center px-margin py-sm transition-colors duration-200">
+<div class="flex items-center gap-sm">
+<span class="material-symbols-outlined text-primary">psychology</span>
+<h1 class="font-headline-sm text-headline-sm font-bold text-primary">智聘 TalentAgent</h1>
+</div>
+<div class="flex items-center gap-md">
+<div class="w-8 h-8 rounded-full bg-secondary-container flex items-center justify-center">
+<span class="material-symbols-outlined text-on-secondary-container" style="font-variation-settings: 'FILL' 1;">person</span>
+</div>
+<button class="material-symbols-outlined text-on-surface-variant hover:bg-surface-container-low p-xs rounded-full transition-colors duration-200">menu</button>
+</div>
+</header>
+<main class="pt-[64px] pb-[100px] px-md max-w-lg mx-auto h-full flex flex-col">
+<!-- Interview Context Panel (Sticky/Fixed Content) -->
+<section class="mt-md bg-surface-container-lowest border border-outline-variant rounded-xl p-md shadow-sm">
+<div class="flex items-start gap-sm mb-sm">
+<span class="material-symbols-outlined text-primary" style="font-variation-settings: 'FILL' 1;">quiz</span>
+<div>
+<h2 class="font-label-md text-label-md text-on-surface-variant mb-xs">当前问题</h2>
+<p class="font-headline-sm text-headline-sm text-on-surface leading-snug">请结合过往经历，谈谈你是如何处理团队内部意见分歧的？</p>
+</div>
+</div>
+<div class="grid grid-cols-2 gap-md pt-sm border-t border-outline-variant">
+<div>
+<h3 class="font-label-sm text-label-sm text-on-surface-variant mb-xs">为什么问这个问题</h3>
+<p class="font-body-sm text-body-sm text-secondary">考察候选人在压力环境下的沟通协作能力与冲突解决机制。</p>
+</div>
+<div>
+<h3 class="font-label-sm text-label-sm text-on-surface-variant mb-xs">目标能力标签</h3>
+<div class="flex flex-wrap gap-xs">
+<span class="bg-tertiary-fixed text-on-tertiary-fixed font-label-sm text-[10px] px-2 py-0.5 rounded-full">逻辑表达</span>
+<span class="bg-secondary-fixed text-on-secondary-fixed font-label-sm text-[10px] px-2 py-0.5 rounded-full">团队协作</span>
+</div>
+</div>
+</div>
+</section>
+<!-- Action Buttons -->
+<div class="flex gap-md mt-md mb-sm">
+<button class="flex-1 py-sm px-md border border-outline text-on-surface rounded-lg font-label-md hover:bg-surface-container transition-colors">跳过问题</button>
+<button class="flex-1 py-sm px-md bg-error-container text-on-error-container rounded-lg font-label-md hover:opacity-90 transition-opacity">结束并生成画像</button>
+</div>
+<!-- Chat History -->
+<section class="chat-container overflow-y-auto space-y-md py-md pr-xs" id="chat-viewport">
+<!-- AI Message -->
+<div class="flex items-start gap-sm max-w-[85%]">
+<div class="w-8 h-8 rounded-lg bg-primary-container flex-shrink-0 flex items-center justify-center">
+<span class="material-symbols-outlined text-on-primary-container text-sm">smart_toy</span>
+</div>
+<div class="bg-surface-container-high p-md rounded-tr-xl rounded-br-xl rounded-bl-xl border border-outline-variant">
+<p class="text-body-md text-on-surface">你好，我是你的AI面试官。今天我们将针对你的项目背景进行深度沟通。首先，请简单介绍一下你自己。</p>
+</div>
+</div>
+<!-- User Message -->
+<div class="flex items-start gap-sm max-w-[85%] ml-auto flex-row-reverse">
+<div class="w-8 h-8 rounded-lg bg-secondary flex-shrink-0 flex items-center justify-center">
+<span class="material-symbols-outlined text-on-secondary text-sm">person</span>
+</div>
+<div class="bg-primary text-on-primary p-md rounded-tl-xl rounded-br-xl rounded-bl-xl shadow-sm">
+<p class="text-body-md">我有5年的B2B产品设计经验，擅长通过数据驱动决策。曾主导过三款企业级Saas产品的核心链路重构。</p>
+</div>
+</div>
+<!-- AI Message -->
+<div class="flex items-start gap-sm max-w-[85%]">
+<div class="w-8 h-8 rounded-lg bg-primary-container flex-shrink-0 flex items-center justify-center">
+<span class="material-symbols-outlined text-on-primary-container text-sm">smart_toy</span>
+</div>
+<div class="bg-surface-container-high p-md rounded-tr-xl rounded-br-xl rounded-bl-xl border border-outline-variant">
+<p class="text-body-md text-on-surface">非常亮眼的经历。那么在主导重构的过程中，如果团队内部产生了严重的技术分歧，你会如何平衡各方意见？</p>
+</div>
+</div>
+<!-- User Transcription Placeholder -->
+<div class="flex items-start gap-sm max-w-[85%] ml-auto flex-row-reverse animate-pulse hidden" id="transcription-preview">
+<div class="w-8 h-8 rounded-lg bg-secondary flex-shrink-0 flex items-center justify-center">
+<span class="material-symbols-outlined text-on-secondary text-sm">person</span>
+</div>
+<div class="bg-primary/20 border border-primary/30 text-on-surface-variant p-md rounded-tl-xl rounded-br-xl rounded-bl-xl">
+<p class="text-body-md italic">正在聆听中...</p>
+</div>
+</div>
+</section>
+</main>
+<!-- Bottom Input Bar -->
+<nav class="fixed bottom-0 left-0 w-full bg-surface border-t border-outline-variant p-md z-50">
+<div class="max-w-lg mx-auto">
+<div class="flex items-center gap-md">
+<button class="material-symbols-outlined text-primary p-sm hover:bg-surface-container-low rounded-full transition-colors" id="toggle-input-mode">keyboard</button>
+<div class="flex-1 flex flex-col items-center" id="voice-input-area">
+<button class="w-14 h-14 bg-primary rounded-full flex items-center justify-center text-on-primary shadow-lg active:scale-95 transition-transform duration-150" id="mic-btn">
+<span class="material-symbols-outlined text-2xl" id="mic-icon" style="font-variation-settings: 'FILL' 1;">mic</span>
+</button>
+<span class="text-label-sm text-on-surface-variant mt-xs" id="input-hint">按住 说话</span>
+</div>
+<div class="flex-1 hidden" id="keyboard-input-area">
+<div class="flex items-center gap-sm bg-surface-container-low rounded-full px-md py-sm border border-outline-variant">
+<input class="flex-1 bg-transparent border-none focus:ring-0 text-body-md placeholder:text-on-surface-variant/60" placeholder="输入你的回答..." type="text"/>
+<button class="material-symbols-outlined text-primary font-bold">send</button>
+</div>
+</div>
+<div class="w-10"></div> <!-- Balance spacer -->
+</div>
+</div>
+</nav>
+<!-- Bottom Navigation Bar (Hidden per transactional logic, but keeping component structure reference if needed for other screens) -->
+<!-- Suppressed: This is a Task-Focused sub-page (AI Interview session) -->
+<script>
+        const micBtn = document.getElementById('mic-btn');
+        const micIcon = document.getElementById('mic-icon');
+        const inputHint = document.getElementById('input-hint');
+        const transcriptionPreview = document.getElementById('transcription-preview');
+        const toggleBtn = document.getElementById('toggle-input-mode');
+        const voiceArea = document.getElementById('voice-input-area');
+        const keyboardArea = document.getElementById('keyboard-input-area');
+        const chatViewport = document.getElementById('chat-viewport');
+
+        let isRecording = false;
+        let isKeyboard = false;
+
+        micBtn.addEventListener('mousedown', startRecording);
+        micBtn.addEventListener('touchstart', (e) => { e.preventDefault(); startRecording(); });
+        window.addEventListener('mouseup', stopRecording);
+        window.addEventListener('touchend', stopRecording);
+
+        function startRecording() {
+            if (isKeyboard) return;
+            isRecording = true;
+            micBtn.classList.add('recording-pulse', 'scale-110');
+            micBtn.classList.remove('bg-primary');
+            micBtn.classList.add('bg-primary-container');
+            micIcon.classList.add('text-primary');
+            inputHint.innerText = '正在录音...';
+            transcriptionPreview.classList.remove('hidden');
+            chatViewport.scrollTop = chatViewport.scrollHeight;
+        }
+
+        function stopRecording() {
+            if (!isRecording) return;
+            isRecording = false;
+            micBtn.classList.remove('recording-pulse', 'scale-110', 'bg-primary-container');
+            micBtn.classList.add('bg-primary');
+            micIcon.classList.remove('text-primary');
+            inputHint.innerText = '按住 说话';
+            // Simulate transcription finalization
+            setTimeout(() => {
+                transcriptionPreview.classList.add('hidden');
+            }, 500);
+        }
+
+        toggleBtn.addEventListener('click', () => {
+            isKeyboard = !isKeyboard;
+            if (isKeyboard) {
+                voiceArea.classList.add('hidden');
+                keyboardArea.classList.remove('hidden');
+                toggleBtn.innerText = 'mic';
+            } else {
+                voiceArea.classList.remove('hidden');
+                keyboardArea.classList.add('hidden');
+                toggleBtn.innerText = 'keyboard';
+            }
+        });
+
+        // Auto-scroll to bottom on load
+        chatViewport.scrollTop = chatViewport.scrollHeight;
+    </script>
+</body></html>

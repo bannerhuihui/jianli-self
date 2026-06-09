@@ -1,0 +1,438 @@
+<!DOCTYPE html>
+
+<html lang="zh-CN"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>AI Talent Agent - 生成您的专属简历版本</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:wght@400;500;600;700&amp;family=Courier+Prime&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                    "surface-container": "#e5eeff",
+                    "on-secondary": "#ffffff",
+                    "on-primary": "#ffffff",
+                    "tertiary": "#006242",
+                    "secondary": "#565e74",
+                    "inverse-surface": "#213145",
+                    "secondary-fixed": "#dae2fd",
+                    "primary-fixed": "#dbe1ff",
+                    "inverse-on-surface": "#eaf1ff",
+                    "tertiary-fixed": "#6ffbbe",
+                    "background": "#f8f9ff",
+                    "surface-container-low": "#eff4ff",
+                    "on-primary-container": "#eeefff",
+                    "on-tertiary-fixed-variant": "#005236",
+                    "on-surface": "#0b1c30",
+                    "outline-variant": "#c3c6d7",
+                    "surface-container-lowest": "#ffffff",
+                    "primary": "#004ac6",
+                    "surface-bright": "#f8f9ff",
+                    "on-background": "#0b1c30",
+                    "primary-fixed-dim": "#b4c5ff",
+                    "surface-dim": "#cbdbf5",
+                    "outline": "#737686",
+                    "tertiary-fixed-dim": "#4edea3",
+                    "on-primary-fixed": "#00174b",
+                    "on-secondary-fixed-variant": "#3f465c",
+                    "tertiary-container": "#007d55",
+                    "inverse-primary": "#b4c5ff",
+                    "surface": "#f8f9ff",
+                    "surface-tint": "#0053db",
+                    "error": "#ba1a1a",
+                    "error-container": "#ffdad6",
+                    "on-error": "#ffffff",
+                    "on-tertiary-fixed": "#002113",
+                    "on-error-container": "#93000a",
+                    "secondary-container": "#dae2fd",
+                    "on-tertiary": "#ffffff",
+                    "on-primary-fixed-variant": "#003ea8",
+                    "surface-variant": "#d3e4fe",
+                    "on-secondary-container": "#5c647a",
+                    "on-secondary-fixed": "#131b2e",
+                    "on-surface-variant": "#434655",
+                    "on-tertiary-container": "#bdffdb",
+                    "primary-container": "#2563eb",
+                    "surface-container-highest": "#d3e4fe",
+                    "surface-container-high": "#dce9ff",
+                    "secondary-fixed-dim": "#bec6e0"
+            },
+            "borderRadius": {
+                    "DEFAULT": "0.125rem",
+                    "lg": "0.25rem",
+                    "xl": "0.5rem",
+                    "full": "0.75rem"
+            },
+            "spacing": {
+                    "margin-tablet": "24px",
+                    "margin-desktop": "40px",
+                    "base": "8px",
+                    "gutter": "24px",
+                    "stack-md": "12px",
+                    "margin-mobile": "16px",
+                    "stack-sm": "4px",
+                    "stack-lg": "24px",
+                    "container-max": "1440px"
+            },
+            "fontFamily": {
+                    "label-sm": ["Hanken Grotesk"],
+                    "headline-lg": ["Hanken Grotesk"],
+                    "display-lg": ["Hanken Grotesk"],
+                    "label-md": ["Hanken Grotesk"],
+                    "body-sm": ["Hanken Grotesk"],
+                    "headline-md": ["Hanken Grotesk"],
+                    "headline-lg-mobile": ["Hanken Grotesk"],
+                    "body-lg": ["Hanken Grotesk"],
+                    "code": ["Courier Prime"],
+                    "display-md": ["Hanken Grotesk"],
+                    "body-md": ["Hanken Grotesk"]
+            },
+            "fontSize": {
+                    "label-sm": ["12px", {"lineHeight": "16px", "letterSpacing": "0.02em", "fontWeight": "500"}],
+                    "headline-lg": ["24px", {"lineHeight": "32px", "fontWeight": "600"}],
+                    "display-lg": ["36px", {"lineHeight": "44px", "letterSpacing": "-0.02em", "fontWeight": "700"}],
+                    "label-md": ["14px", {"lineHeight": "16px", "fontWeight": "600"}],
+                    "body-sm": ["14px", {"lineHeight": "20px", "fontWeight": "400"}],
+                    "headline-md": ["20px", {"lineHeight": "28px", "fontWeight": "600"}],
+                    "headline-lg-mobile": ["20px", {"lineHeight": "28px", "fontWeight": "600"}],
+                    "body-lg": ["18px", {"lineHeight": "28px", "fontWeight": "400"}],
+                    "code": ["14px", {"lineHeight": "20px", "fontWeight": "400"}],
+                    "display-md": ["30px", {"lineHeight": "38px", "letterSpacing": "-0.01em", "fontWeight": "700"}],
+                    "body-md": ["16px", {"lineHeight": "24px", "fontWeight": "400"}]
+            }
+          },
+        },
+      }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .glass-panel {
+            background: rgba(255, 255, 255, 0.7);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+        }
+        .bento-grid {
+            display: grid;
+            grid-template-columns: repeat(12, 1fr);
+            gap: 24px;
+        }
+        .resume-preview-container {
+            transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .active-tab-indicator {
+            position: absolute;
+            bottom: -2px;
+            left: 0;
+            height: 2px;
+            background-color: #004ac6;
+            transition: all 0.3s ease;
+        }
+    </style>
+</head>
+<body class="bg-background text-on-surface font-body-md min-h-screen flex flex-col selection:bg-primary-fixed selection:text-on-primary-fixed">
+<!-- TopNavBar -->
+<header class="bg-surface-container-lowest dark:bg-inverse-surface border-b border-outline-variant dark:border-outline sticky top-0 z-50">
+<nav class="flex justify-between items-center w-full px-margin-desktop max-w-container-max mx-auto h-16">
+<div class="flex items-center gap-stack-lg">
+<span class="font-headline-md text-headline-md font-bold text-primary dark:text-primary-fixed-dim">AI Talent Agent</span>
+<div class="hidden md:flex items-center gap-6 ml-10">
+<a class="text-on-surface-variant dark:text-surface-variant pb-1 hover:text-primary dark:hover:text-primary-fixed-dim transition-colors duration-200 font-label-md text-label-md" href="#">首页</a>
+<a class="text-primary dark:text-primary-fixed-dim border-b-2 border-primary dark:border-primary-fixed-dim pb-1 font-bold font-label-md text-label-md" href="#">我的简历</a>
+<a class="text-on-surface-variant dark:text-surface-variant pb-1 hover:text-primary dark:hover:text-primary-fixed-dim transition-colors duration-200 font-label-md text-label-md" href="#">AI 面试</a>
+<a class="text-on-surface-variant dark:text-surface-variant pb-1 hover:text-primary dark:hover:text-primary-fixed-dim transition-colors duration-200 font-label-md text-label-md" href="#">个人画像</a>
+</div>
+</div>
+<div class="flex items-center gap-4">
+<button class="p-2 rounded-full hover:bg-surface-container transition-colors">
+<span class="material-symbols-outlined text-on-surface-variant">notifications</span>
+</button>
+<button class="p-2 rounded-full hover:bg-surface-container transition-colors">
+<span class="material-symbols-outlined text-on-surface-variant">settings</span>
+</button>
+<div class="w-10 h-10 rounded-full bg-secondary-container flex items-center justify-center overflow-hidden border border-outline-variant">
+<img alt="User avatar" class="w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida/AP1WRLsAfLmDDPTEJEaPPKKPOWUHfMLTocBLs8AWRouDzU58VEnBK5ldXWcMsmZaDQuw8hLwr6rc0P0I8rZmT_hr_FONaEJw1dCCcpBXYPFkrFYOtqMyWBt-5jSUx6WBiFSWGQQQjTz80hmddtBmBN4VJJhEcEvh5l8OjHtzvBTUOO0QpGm4k5zZKyNcvtINDlABeU2me6uDktajfaoyssW7Spl7SORRyAepiMC-ytGpiLmR3kJ163VCdYWyhQ"/>
+</div>
+</div>
+</nav>
+</header>
+<!-- Main Content -->
+<main class="flex-grow w-full max-w-container-max mx-auto px-margin-desktop py-stack-lg">
+<!-- Header Section -->
+<section class="mb-10 flex flex-col md:flex-row md:items-end justify-between gap-6">
+<div>
+<nav class="flex items-center gap-2 text-on-surface-variant mb-2">
+<span class="font-label-sm text-label-sm">我的简历</span>
+<span class="material-symbols-outlined text-[16px]">chevron_right</span>
+<span class="font-label-sm text-label-sm text-primary">导出生成</span>
+</nav>
+<h1 class="font-display-md text-display-md text-on-surface">生成您的专属简历版本</h1>
+<p class="text-on-surface-variant font-body-md mt-2">基于 AI 深度分析，为您提供多维度的求职解决方案。</p>
+</div>
+<div class="flex gap-3">
+<button class="flex items-center gap-2 px-6 py-2.5 rounded-xl border border-outline-variant hover:bg-surface-container transition-all group">
+<span class="material-symbols-outlined text-on-surface-variant group-hover:text-primary">content_copy</span>
+<span class="font-label-md text-label-md text-on-surface-variant group-hover:text-primary">复制内容</span>
+</button>
+<button class="flex items-center gap-2 px-6 py-2.5 rounded-xl border border-outline-variant hover:bg-surface-container transition-all group">
+<span class="material-symbols-outlined text-on-surface-variant group-hover:text-primary">description</span>
+<span class="font-label-md text-label-md text-on-surface-variant group-hover:text-primary">导出 Word</span>
+</button>
+<button class="flex items-center gap-2 px-6 py-2.5 rounded-xl bg-primary-container text-white hover:opacity-90 transition-all shadow-sm">
+<span class="material-symbols-outlined">download</span>
+<span class="font-label-md text-label-md">导出 PDF</span>
+</button>
+</div>
+</section>
+<!-- Version Selection & Preview Bento -->
+<div class="bento-grid">
+<!-- Selection Cards - Left Column (4 cols) -->
+<aside class="col-span-12 lg:col-span-4 flex flex-col gap-6">
+<!-- ATS Version Card -->
+<label class="block cursor-pointer">
+<input checked="" class="hidden peer" name="resume_type" type="radio" value="ats"/>
+<div class="p-6 rounded-xl border border-outline-variant bg-white peer-checked:border-primary peer-checked:bg-primary-fixed/20 transition-all hover:shadow-md relative overflow-hidden group">
+<div class="flex items-start justify-between mb-4">
+<div class="p-3 bg-surface-container rounded-lg text-primary">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">terminal</span>
+</div>
+<div class="px-3 py-1 bg-tertiary/10 text-tertiary rounded-full font-label-sm text-label-sm">高通过率</div>
+</div>
+<h3 class="font-headline-md text-headline-md text-on-surface mb-2">ATS 版本</h3>
+<p class="text-on-surface-variant font-body-sm">针对招聘系统算法优化，高通过率，结构化文本优先。去除了复杂的图形样式，确保解析无误。</p>
+<div class="mt-4 flex items-center text-primary opacity-0 peer-checked:opacity-100 transition-opacity">
+<span class="font-label-md text-label-md">当前选中</span>
+<span class="material-symbols-outlined ml-1">check_circle</span>
+</div>
+</div>
+</label>
+<!-- HR Version Card -->
+<label class="block cursor-pointer">
+<input class="hidden peer" name="resume_type" type="radio" value="hr"/>
+<div class="p-6 rounded-xl border border-outline-variant bg-white peer-checked:border-primary peer-checked:bg-primary-fixed/20 transition-all hover:shadow-md relative overflow-hidden group">
+<div class="flex items-start justify-between mb-4">
+<div class="p-3 bg-surface-container rounded-lg text-primary">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">palette</span>
+</div>
+<div class="px-3 py-1 bg-primary/10 text-primary rounded-full font-label-sm text-label-sm">视觉优先</div>
+</div>
+<h3 class="font-headline-md text-headline-md text-on-surface mb-2">HR 版本</h3>
+<p class="text-on-surface-variant font-body-sm">视觉美观，重点突出，适合人工阅读。通过优雅的排版和色彩，第一眼抓住 HR 的注意力。</p>
+<div class="mt-4 flex items-center text-primary opacity-0 peer-checked:opacity-100 transition-opacity">
+<span class="font-label-md text-label-md">当前选中</span>
+<span class="material-symbols-outlined ml-1">check_circle</span>
+</div>
+</div>
+</label>
+<!-- More Info -->
+<div class="bg-surface-container-low p-6 rounded-xl border border-outline-variant">
+<h4 class="font-label-md text-label-md text-on-surface mb-4">关于导出</h4>
+<p class="text-on-surface-variant font-body-sm mb-4">所有版本均由 AI 针对您的目标岗位进行深度优化，确保在不同筛选环节中展现最佳状态。</p>
+<div class="flex items-center gap-2 text-primary font-label-sm text-label-sm">
+<span class="material-symbols-outlined text-[18px]">info</span>
+<span>查看简历优化规则</span>
+</div>
+</div>
+</aside>
+<!-- Preview Area - Right Column (8 cols) -->
+<section class="col-span-12 lg:col-span-8 bg-white border border-outline-variant rounded-xl overflow-hidden flex flex-col shadow-sm">
+<div class="h-14 border-b border-outline-variant bg-surface-container-lowest px-6 flex items-center justify-between">
+<div class="flex gap-6 relative">
+<button class="text-primary font-bold font-label-md text-label-md pb-1 relative">
+                            预览界面
+                            <div class="active-tab-indicator w-full"></div>
+</button>
+<button class="text-on-surface-variant font-label-md text-label-md hover:text-on-surface transition-colors pb-1">渲染日志</button>
+</div>
+<div class="flex items-center gap-4">
+<div class="flex items-center gap-2 text-on-surface-variant">
+<span class="material-symbols-outlined text-[18px]">zoom_out</span>
+<span class="font-label-sm text-label-sm">85%</span>
+<span class="material-symbols-outlined text-[18px]">zoom_in</span>
+</div>
+<div class="w-px h-6 bg-outline-variant"></div>
+<button class="material-symbols-outlined text-on-surface-variant hover:text-on-surface">fullscreen</button>
+</div>
+</div>
+<div class="flex-grow p-8 bg-surface-dim/20 flex overflow-x-auto relative min-h-[600px]">
+<!-- ATS Preview (Monochrome/Text Focus) -->
+<div class="resume-preview-container mx-auto w-[450px] h-[630px] bg-white shadow-xl flex flex-col p-10 border border-outline-variant shrink-0 overflow-hidden" id="ats-preview">
+<div class="mb-6">
+<h2 class="text-2xl font-bold uppercase tracking-tight text-black">张伟 (Felix)</h2>
+<p class="text-[12px] text-gray-600 mt-1">高级全栈工程师 | 北京, 中国 | felix.zhang@example.com</p>
+</div>
+<div class="space-y-6">
+<div>
+<h3 class="text-[12px] font-bold border-b border-black mb-1 uppercase">核心总结</h3>
+<p class="text-[10px] leading-relaxed text-gray-800">拥有 8 年以上构建可扩展 SaaS 架构的经验。精通 React, Node.js 和分布式系统。在大型科技公司有成功领导跨职能团队的记录。</p>
+</div>
+<div>
+<h3 class="text-[12px] font-bold border-b border-black mb-1 uppercase">工作经历</h3>
+<div class="mb-3">
+<div class="flex justify-between items-baseline">
+<span class="text-[11px] font-bold">科技巨头解决方案 - 资深负责人</span>
+<span class="text-[10px]">2020 - 至今</span>
+</div>
+<ul class="list-disc list-inside text-[10px] text-gray-800 space-y-1 mt-1">
+<li>使用 Golang 构建了每分钟处理 100 万次以上请求的微服务架构。</li>
+<li>领导分布在 3 个时区的 15 名开发人员组成的跨职能团队。</li>
+<li>通过系统重构将核心服务的延迟降低了 35%。</li>
+</ul>
+</div>
+</div>
+<div>
+<h3 class="text-[12px] font-bold border-b border-black mb-1 uppercase">专业技能</h3>
+<p class="text-[10px] text-gray-800">JavaScript, TypeScript, Python, Go, Kubernetes, AWS, SQL, NoSQL.</p>
+</div>
+</div>
+<div class="mt-auto pt-4 border-t border-gray-100 flex justify-between items-center">
+<span class="text-[9px] text-gray-400">ATS 优化版本 v2.4</span>
+<div class="px-2 py-0.5 bg-gray-100 text-[9px] font-bold text-gray-600 rounded">文本优先模式</div>
+</div>
+</div>
+<!-- HR Preview (Modern/Visual Focus) -->
+<div class="resume-preview-container mx-auto w-[450px] h-[630px] bg-white shadow-xl flex shrink-0 overflow-hidden relative hidden" id="hr-preview">
+<div class="w-1/3 bg-on-surface h-full p-6 text-white flex flex-col">
+<div class="w-20 h-20 rounded-full bg-primary-fixed overflow-hidden mb-6 border-2 border-primary-fixed/50 mx-auto">
+<img alt="用户头像" class="w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida/AP1WRLuAKmd4ruLSGfRdFxdc5T1tGQ3uHvPtpuTfpuWFewr8NP-oBmRboG9Fghd_KnFB2gGWtga4VNUINoBvM7LHsjlKc3axY3NO0vuVR6bfzVa1Cm5CULIhZMEjo5qhrs8OWKC3uCRAcdXyt1rzj-i7zwKYdGxZw_zbLllRmMNKmDj_1gcvyyi6ty9UMcIVBUwom0ljvcdDv6xfjWPO282QD8dOGbbGM0vkxzllQ3ahnJ3n4EKJXU_qd0bg97E"/>
+</div>
+<h2 class="text-xl font-bold leading-tight text-center">张伟</h2>
+<p class="text-[11px] text-primary-fixed-dim mb-8 text-center">高级全栈工程师</p>
+<div class="space-y-6">
+<section>
+<h4 class="text-[10px] font-bold text-primary-fixed-dim uppercase tracking-widest mb-3">联系方式</h4>
+<div class="flex flex-col gap-3 opacity-90">
+<div class="flex items-center gap-2 text-[10px]">
+<span class="material-symbols-outlined text-[14px]">mail</span>
+<span>felix.z@ai.com</span>
+</div>
+<div class="flex items-center gap-2 text-[10px]">
+<span class="material-symbols-outlined text-[14px]">phone</span>
+<span>138-0000-0000</span>
+</div>
+</div>
+</section>
+<section>
+<h4 class="text-[10px] font-bold text-primary-fixed-dim uppercase tracking-widest mb-3">技能雷达</h4>
+<div class="w-full aspect-square bg-white/5 rounded-lg flex items-center justify-center p-2">
+<div class="w-full h-full relative">
+<div class="absolute inset-0 border border-white/20 rounded-full"></div>
+<div class="absolute inset-3 border border-white/20 rounded-full"></div>
+<div class="absolute inset-0 flex items-center justify-center">
+<div class="w-4/5 h-4/5 bg-primary/40" style="clip-path: polygon(50% 0%, 100% 38%, 82% 100%, 18% 100%, 0% 38%);"></div>
+</div>
+</div>
+</div>
+</section>
+</div>
+</div>
+<div class="flex-grow p-10 flex flex-col">
+<h3 class="text-primary font-bold text-md mb-4 border-b-2 border-primary-fixed w-max pr-4">个人总结</h3>
+<p class="text-[11px] leading-relaxed text-on-surface-variant mb-8 italic">“致力于通过人工智能与前沿工程实践解决复杂商业问题，拥有卓越的技术前瞻性与团队领导力。”</p>
+<h3 class="text-primary font-bold text-md mb-4 border-b-2 border-primary-fixed w-max pr-4">核心项目</h3>
+<div class="space-y-6">
+<div class="relative pl-4 border-l-2 border-outline-variant">
+<div class="absolute -left-[6px] top-1.5 w-2.5 h-2.5 rounded-full bg-primary"></div>
+<h4 class="text-[12px] font-bold">云端分布式架构重构</h4>
+<p class="text-[10px] text-on-surface-variant mt-1.5">负责公司核心系统的微服务转型，提升了 40% 的吞吐效率，并发处理能力增长 3 倍。</p>
+</div>
+<div class="relative pl-4 border-l-2 border-outline-variant">
+<div class="absolute -left-[6px] top-1.5 w-2.5 h-2.5 rounded-full bg-outline"></div>
+<h4 class="text-[12px] font-bold">AI 智能人才评估系统</h4>
+<p class="text-[10px] text-on-surface-variant mt-1.5">主导开发基于 NLP 的简历解析引擎，针对千万级数据建模，准确率达到 98.5%。</p>
+</div>
+</div>
+<div class="mt-auto flex justify-between items-center">
+<div class="flex gap-1.5">
+<div class="w-2.5 h-2.5 rounded-full bg-primary"></div>
+<div class="w-2.5 h-2.5 rounded-full bg-primary-fixed"></div>
+<div class="w-2.5 h-2.5 rounded-full bg-secondary-fixed"></div>
+</div>
+<span class="text-[9px] text-outline italic">Created by AI Talent Agent</span>
+</div>
+</div>
+</div>
+</div>
+<!-- Preview Controls -->
+<div class="h-16 bg-white border-t border-outline-variant flex items-center justify-center gap-6">
+<button class="flex items-center gap-2 text-on-surface-variant hover:text-primary transition-colors">
+<span class="material-symbols-outlined">first_page</span>
+<span class="font-label-sm text-label-sm">第一页</span>
+</button>
+<div class="flex items-center gap-4 bg-surface-container rounded-full px-4 py-1">
+<button class="material-symbols-outlined text-[20px] text-on-surface-variant">chevron_left</button>
+<span class="font-label-md text-label-md text-on-surface">1 / 1</span>
+<button class="material-symbols-outlined text-[20px] text-on-surface-variant">chevron_right</button>
+</div>
+<button class="flex items-center gap-2 text-on-surface-variant hover:text-primary transition-colors">
+<span class="font-label-sm text-label-sm">最后一页</span>
+<span class="material-symbols-outlined">last_page</span>
+</button>
+</div>
+</section>
+</div>
+<!-- Evidence & Confidence Indicator -->
+<section class="mt-8 p-6 bg-white border border-outline-variant rounded-xl flex items-center justify-between shadow-sm">
+<div class="flex items-center gap-8">
+<div class="flex flex-col">
+<span class="font-label-sm text-label-sm text-on-surface-variant">AI 岗位匹配度预测</span>
+<div class="flex items-center gap-2 mt-1">
+<span class="font-display-md text-display-md text-primary">94.8%</span>
+<div class="px-2 py-0.5 bg-tertiary/10 text-tertiary font-label-sm text-label-sm rounded-md">极高匹配</div>
+</div>
+</div>
+<div class="w-px h-12 bg-outline-variant"></div>
+<div class="flex flex-col">
+<span class="font-label-sm text-label-sm text-on-surface-variant">针对性建议岗位</span>
+<div class="flex gap-2 mt-1">
+<span class="px-4 py-1.5 border border-outline-variant rounded-full font-label-md text-label-md text-on-surface">后端架构师</span>
+<span class="px-4 py-1.5 border border-outline-variant rounded-full font-label-md text-label-md text-on-surface">技术专家</span>
+</div>
+</div>
+</div>
+<button class="flex items-center gap-2 text-primary font-bold font-label-md text-label-md hover:underline decoration-2 underline-offset-4">
+                查看优化证据
+                <span class="material-symbols-outlined">arrow_forward</span>
+</button>
+</section>
+</main>
+<!-- Footer -->
+<footer class="bg-surface-container dark:bg-on-secondary-fixed w-full py-stack-lg px-margin-desktop border-t border-outline-variant dark:border-outline mt-auto">
+<div class="max-w-container-max mx-auto flex flex-col md:flex-row justify-between items-center gap-6">
+<div class="flex flex-col items-center md:items-start gap-2">
+<span class="font-headline-sm text-headline-sm font-semibold text-secondary dark:text-secondary-fixed-dim">AI Talent Agent</span>
+<p class="font-body-sm text-body-sm text-on-secondary-fixed-variant dark:text-secondary-fixed-dim">© 2024 AI Talent Agent. 保留所有权利。</p>
+</div>
+<div class="flex flex-wrap justify-center gap-x-8 gap-y-2">
+<a class="font-label-sm text-label-sm text-on-secondary-fixed-variant dark:text-secondary-fixed-dim hover:text-primary dark:hover:text-primary-fixed-dim underline transition-all" href="#">ATS 集成</a>
+<a class="font-label-sm text-label-sm text-on-secondary-fixed-variant dark:text-secondary-fixed-dim hover:text-primary dark:hover:text-primary-fixed-dim underline transition-all" href="#">Excel 支持</a>
+<a class="font-label-sm text-label-sm text-on-secondary-fixed-variant dark:text-secondary-fixed-dim hover:text-primary dark:hover:text-primary-fixed-dim underline transition-all" href="#">飞书连接器</a>
+<a class="font-label-sm text-label-sm text-on-secondary-fixed-variant dark:text-secondary-fixed-dim hover:text-primary dark:hover:text-primary-fixed-dim underline transition-all" href="#">企业微信同步</a>
+<a class="font-label-sm text-label-sm text-on-secondary-fixed-variant dark:text-secondary-fixed-dim hover:text-primary dark:hover:text-primary-fixed-dim underline transition-all" href="#">隐私政策</a>
+<a class="font-label-sm text-label-sm text-on-secondary-fixed-variant dark:text-secondary-fixed-dim hover:text-primary dark:hover:text-primary-fixed-dim underline transition-all" href="#">服务条款</a>
+</div>
+</div>
+</footer>
+<script>
+        const resumeRadios = document.querySelectorAll('input[name="resume_type"]');
+        const atsPreview = document.getElementById('ats-preview');
+        const hrPreview = document.getElementById('hr-preview');
+
+        resumeRadios.forEach(radio => {
+            radio.addEventListener('change', (e) => {
+                if(e.target.value === 'hr') {
+                    atsPreview.classList.add('hidden');
+                    hrPreview.classList.remove('hidden');
+                } else {
+                    hrPreview.classList.add('hidden');
+                    atsPreview.classList.remove('hidden');
+                }
+            });
+        });
+    </script>
+</body></html>

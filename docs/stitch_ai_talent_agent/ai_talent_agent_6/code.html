@@ -1,0 +1,494 @@
+<!DOCTYPE html>
+
+<html lang="zh-CN"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>AI Talent Agent - 人才画像</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:wght@400;500;600;700&amp;family=Courier+Prime&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "surface-container": "#e5eeff",
+                        "on-secondary": "#ffffff",
+                        "on-primary": "#ffffff",
+                        "tertiary": "#006242",
+                        "secondary": "#565e74",
+                        "inverse-surface": "#213145",
+                        "secondary-fixed": "#dae2fd",
+                        "primary-fixed": "#dbe1ff",
+                        "inverse-on-surface": "#eaf1ff",
+                        "tertiary-fixed": "#6ffbbe",
+                        "background": "#f8f9ff",
+                        "surface-container-low": "#f2f4f6",
+                        "on-primary-container": "#eeefff",
+                        "on-tertiary-fixed-variant": "#005236",
+                        "on-surface": "#0b1c30",
+                        "outline-variant": "#c3c6d7",
+                        "surface-container-lowest": "#ffffff",
+                        "primary": "#004ac6",
+                        "surface-bright": "#f8f9ff",
+                        "on-background": "#0b1c30",
+                        "primary-fixed-dim": "#b4c5ff",
+                        "surface-dim": "#cbdbf5",
+                        "outline": "#737686",
+                        "tertiary-fixed-dim": "#4edea3",
+                        "on-primary-fixed": "#00174b",
+                        "on-secondary-fixed-variant": "#3f465c",
+                        "tertiary-container": "#007d55",
+                        "inverse-primary": "#b4c5ff",
+                        "surface": "#f8f9ff",
+                        "surface-tint": "#0053db",
+                        "error": "#ba1a1a",
+                        "error-container": "#ffdad6",
+                        "on-error": "#ffffff",
+                        "on-tertiary-fixed": "#002113",
+                        "on-error-container": "#93000a",
+                        "secondary-container": "#dae2fd",
+                        "on-tertiary": "#ffffff",
+                        "on-primary-fixed-variant": "#003ea8",
+                        "surface-variant": "#d3e4fe",
+                        "on-secondary-container": "#5c647a",
+                        "on-secondary-fixed": "#131b2e",
+                        "on-surface-variant": "#434655",
+                        "on-tertiary-container": "#bdffdb",
+                        "primary-container": "#2563eb",
+                        "surface-container-highest": "#d3e4fe",
+                        "surface-container-high": "#dce9ff",
+                        "secondary-fixed-dim": "#bec6e0"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.5rem",
+                        "lg": "0.5rem",
+                        "xl": "1rem",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "margin-desktop": "40px",
+                        "base": "8px",
+                        "gutter": "24px",
+                        "stack-md": "12px",
+                        "stack-lg": "24px",
+                        "container-max": "1440px"
+                    },
+                    "fontFamily": {
+                        "body-md": ["Hanken Grotesk"],
+                        "headline-md": ["Hanken Grotesk"],
+                        "display-md": ["Hanken Grotesk"]
+                    },
+                    "boxShadow": {
+                        "premium": "0 4px 20px -2px rgba(0, 74, 198, 0.08)"
+                    }
+                }
+            }
+        }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        body {
+            width: 1440px;
+            margin: 0 auto;
+            overflow-x: hidden;
+        }
+        .radar-grid {
+            stroke: #e2e8f0;
+            stroke-width: 1;
+            fill: none;
+        }
+        .radar-area {
+            fill: rgba(0, 74, 198, 0.15);
+            stroke: #004ac6;
+            stroke-width: 2;
+        }
+    </style>
+</head>
+<body class="bg-background text-on-surface font-body-md min-h-screen flex flex-col">
+<!-- Header -->
+<header class="bg-surface-container-lowest border-b border-outline-variant sticky top-0 z-50">
+<div class="flex justify-between items-center w-full px-margin-desktop h-20">
+<div class="flex items-center gap-10">
+<div class="flex flex-col">
+<h1 class="text-2xl font-bold text-on-surface">陈思远 <span class="text-on-surface-variant font-normal text-lg">Leo Chen</span></h1>
+<div class="flex items-center gap-3 mt-1">
+<span class="text-sm text-primary font-semibold">资深后端架构师</span>
+<span class="w-1 h-1 bg-outline-variant rounded-full"></span>
+<span class="text-sm text-outline">更新时间: 2024年10月24日</span>
+</div>
+</div>
+<nav class="flex gap-8 items-center h-full">
+<a class="text-on-surface-variant hover:text-primary font-medium" href="#">首页</a>
+<a class="text-on-surface-variant hover:text-primary font-medium" href="#">简历分析</a>
+<a class="text-primary border-b-2 border-primary py-7 font-bold" href="#">个人画像</a>
+<a class="text-on-surface-variant hover:text-primary font-medium" href="#">AI面试录像</a>
+</nav>
+</div>
+<div class="flex items-center gap-4">
+<button class="flex items-center gap-2 border border-outline text-on-surface-variant px-4 py-2.5 rounded-lg hover:bg-surface-container transition-all font-semibold text-sm">
+<span class="material-symbols-outlined text-xl">download</span>
+                    导出人才画像
+                </button>
+<div class="h-8 w-px bg-outline-variant mx-2"></div>
+<img alt="User avatar" class="w-10 h-10 rounded-full border border-outline-variant" src="https://lh3.googleusercontent.com/aida/AP1WRLvGDwqsZvMSw7fxdH7HvnSomw3BH444PyRDFkOy8wth-KlUCEfGaUucsGjNz-pZuWLxkL6O2pqH5YuxsYhEGYQfImjMczSgcdbW1l6OEtZO55fhCpvxGfI1DkdYnZiiRoka3QhOIxNFC8FoJmvUvg2ZYMy8UUo3RBSA9yIvc_GuxpqMYZtWQyVGlKFC0OPCEwY-DJrTcjMFs8hJ3OkEvOBKFM2fomEXccPgOmSVjss3PG-yJQozmS8VAQ"/>
+</div>
+</div>
+</header>
+<main class="flex-grow w-full px-margin-desktop py-stack-lg space-y-8">
+<!-- Top Section: Radar Chart + Summary -->
+<section class="grid grid-cols-12 gap-6 bg-surface-container-lowest border border-outline-variant rounded-xl p-8 shadow-premium">
+<!-- Left Side: 8-axis Radar Chart -->
+<div class="col-span-4 flex flex-col items-center justify-center border-r border-outline-variant pr-8">
+<div class="w-full aspect-square relative">
+<svg class="w-full h-full" viewbox="0 0 400 400">
+<!-- Radar Background Grids -->
+<polygon class="radar-grid" points="200,40 340,120 340,280 200,360 60,280 60,120"></polygon>
+<polygon class="radar-grid" points="200,80 305,140 305,260 200,320 95,260 95,140"></polygon>
+<polygon class="radar-grid" points="200,120 270,160 270,240 200,280 130,240 130,160"></polygon>
+<polygon class="radar-grid" points="200,160 235,180 235,220 200,240 165,220 165,180"></polygon>
+<!-- Axis Lines -->
+<line class="radar-grid" x1="200" x2="200" y1="200" y2="40"></line>
+<line class="radar-grid" x1="200" x2="340" y1="200" y2="120"></line>
+<line class="radar-grid" x1="200" x2="340" y1="200" y2="280"></line>
+<line class="radar-grid" x1="200" x2="200" y1="200" y2="360"></line>
+<line class="radar-grid" x1="200" x2="60" y1="200" y2="280"></line>
+<line class="radar-grid" x1="200" x2="60" y1="200" y2="120"></line>
+<!-- Active Area -->
+<polygon class="radar-area" points="200,50 310,130 330,270 200,340 110,260 80,140"></polygon>
+</svg>
+<div class="absolute inset-0 flex items-center justify-center pointer-events-none">
+<div class="text-center bg-white/80 backdrop-blur-sm px-4 py-2 rounded-lg border border-primary/20">
+<span class="block text-xs text-outline font-bold uppercase tracking-wider">综合得分</span>
+<span class="text-3xl font-bold text-primary">94</span>
+</div>
+</div>
+</div>
+<div class="mt-4 grid grid-cols-2 gap-x-6 gap-y-1 text-[11px] text-outline font-medium w-full px-4">
+<div class="flex items-center gap-1"><span class="w-2 h-2 rounded-full bg-primary"></span> 学习能力</div>
+<div class="flex items-center gap-1"><span class="w-2 h-2 rounded-full bg-primary"></span> 逻辑能力</div>
+<div class="flex items-center gap-1"><span class="w-2 h-2 rounded-full bg-primary"></span> 创新能力</div>
+<div class="flex items-center gap-1"><span class="w-2 h-2 rounded-full bg-primary"></span> 抗压能力</div>
+<div class="flex items-center gap-1"><span class="w-2 h-2 rounded-full bg-primary"></span> 执行能力</div>
+<div class="flex items-center gap-1"><span class="w-2 h-2 rounded-full bg-primary"></span> 沟通能力</div>
+</div>
+</div>
+<!-- Right Side: Content -->
+<div class="col-span-8 pl-8 flex flex-col gap-8">
+<div>
+<h2 class="text-xl font-bold mb-3 flex items-center gap-2">
+<span class="material-symbols-outlined text-primary">analytics</span>
+                        综合评估摘要
+                    </h2>
+<p class="text-body-md text-on-surface-variant leading-relaxed bg-surface-container-low/50 p-4 rounded-lg">
+                        该候选人具备极强的分布式架构设计能力，在处理EB级海量数据方面有实战成功案例。技术热情高，学习能力卓越，属于典型的技术领军型人才。其逻辑严密且创新驱动，是团队中不可多得的技术骨干。
+                    </p>
+</div>
+<div class="grid grid-cols-2 gap-6">
+<!-- Core Strengths -->
+<div class="space-y-4">
+<h3 class="text-md font-bold text-tertiary flex items-center gap-2">
+<span class="material-symbols-outlined text-sm">stars</span>
+                            核心优势
+                        </h3>
+<ul class="space-y-3">
+<li class="flex items-start gap-2 text-sm bg-tertiary/5 p-3 rounded-lg border border-tertiary/10">
+<span class="material-symbols-outlined text-tertiary text-lg">check_circle</span>
+<span>持有3项云计算领域相关技术专利，具备卓越的底层技术创新能力</span>
+</li>
+<li class="flex items-start gap-2 text-sm bg-tertiary/5 p-3 rounded-lg border border-tertiary/10">
+<span class="material-symbols-outlined text-tertiary text-lg">check_circle</span>
+<span>在腾讯云负责EB级分布式系统，拥有极强的大规模工程实战经验</span>
+</li>
+</ul>
+</div>
+<!-- Potential Risks -->
+<div class="space-y-4">
+<h3 class="text-md font-bold text-amber-600 flex items-center gap-2">
+<span class="material-symbols-outlined text-sm">report</span>
+                            潜在风险
+                        </h3>
+<ul class="space-y-3">
+<li class="flex items-start gap-2 text-sm bg-amber-50 p-3 rounded-lg border border-amber-100">
+<span class="material-symbols-outlined text-amber-500 text-lg">error_outline</span>
+<span>职业稳定性：五年内有四次跳槽经历，需进一步深度确认其核心离职动机</span>
+</li>
+<li class="flex items-start gap-2 text-sm bg-amber-50 p-3 rounded-lg border border-amber-100">
+<span class="material-symbols-outlined text-amber-500 text-lg">error_outline</span>
+<span>管理范畴：长期深耕核心开发，缺乏带领30人以上中大型团队的经验</span>
+</li>
+</ul>
+</div>
+</div>
+</div>
+</section>
+<!-- Middle Section: 8 Dimensions Grid -->
+<section class="grid grid-cols-4 gap-6">
+<!-- 学习能力 -->
+<div class="bg-surface-container-lowest border border-outline-variant rounded-xl p-6 shadow-sm hover:shadow-premium transition-all">
+<div class="flex justify-between items-start mb-4">
+<h3 class="font-bold text-on-surface">学习能力</h3>
+<span class="text-[10px] px-2 py-0.5 bg-tertiary/10 text-tertiary rounded-full font-bold">高置信度</span>
+</div>
+<div class="flex items-baseline gap-1 mb-3">
+<span class="text-3xl font-bold text-primary">4.8</span>
+<span class="text-xs text-outline">/ 5.0</span>
+</div>
+<p class="text-xs text-on-surface-variant mb-6 min-h-[40px] leading-relaxed">积极参与开源社区，在短时间内掌握多门复杂中间件技术并落地应用。</p>
+<button class="w-full py-2.5 bg-surface-container-low text-primary text-xs font-bold rounded-lg hover:bg-surface-container transition-colors flex items-center justify-center gap-1" onclick="toggleDrawer()">
+                    查看证据 <span class="material-symbols-outlined text-sm">arrow_forward</span>
+</button>
+</div>
+<!-- 逻辑能力 -->
+<div class="bg-surface-container-lowest border border-outline-variant rounded-xl p-6 shadow-sm hover:shadow-premium transition-all">
+<div class="flex justify-between items-start mb-4">
+<h3 class="font-bold text-on-surface">逻辑能力</h3>
+<span class="text-[10px] px-2 py-0.5 bg-tertiary/10 text-tertiary rounded-full font-bold">极高置信</span>
+</div>
+<div class="flex items-baseline gap-1 mb-3">
+<span class="text-3xl font-bold text-primary">5.0</span>
+<span class="text-xs text-outline">/ 5.0</span>
+</div>
+<p class="text-xs text-on-surface-variant mb-6 min-h-[40px] leading-relaxed">面试中对分布式事务及Nebula系统的逻辑拆解极其清晰，丝丝入扣。</p>
+<button class="w-full py-2.5 bg-surface-container-low text-primary text-xs font-bold rounded-lg hover:bg-surface-container transition-colors flex items-center justify-center gap-1" onclick="toggleDrawer()">
+                    查看证据 <span class="material-symbols-outlined text-sm">arrow_forward</span>
+</button>
+</div>
+<!-- 沟通能力 -->
+<div class="bg-surface-container-lowest border border-outline-variant rounded-xl p-6 shadow-sm hover:shadow-premium transition-all">
+<div class="flex justify-between items-start mb-4">
+<h3 class="font-bold text-on-surface">沟通能力</h3>
+<span class="text-[10px] px-2 py-0.5 bg-secondary-container text-on-secondary-container rounded-full font-bold">中等置信</span>
+</div>
+<div class="flex items-baseline gap-1 mb-3">
+<span class="text-3xl font-bold text-primary">4.0</span>
+<span class="text-xs text-outline">/ 5.0</span>
+</div>
+<p class="text-xs text-on-surface-variant mb-6 min-h-[40px] leading-relaxed">能够流畅表达复杂方案，但偶尔在跨部门沟通中过度关注底层技术细节。</p>
+<button class="w-full py-2.5 bg-surface-container-low text-primary text-xs font-bold rounded-lg hover:bg-surface-container transition-colors flex items-center justify-center gap-1" onclick="toggleDrawer()">
+                    查看证据 <span class="material-symbols-outlined text-sm">arrow_forward</span>
+</button>
+</div>
+<!-- 执行能力 -->
+<div class="bg-surface-container-lowest border border-outline-variant rounded-xl p-6 shadow-sm hover:shadow-premium transition-all">
+<div class="flex justify-between items-start mb-4">
+<h3 class="font-bold text-on-surface">执行能力</h3>
+<span class="text-[10px] px-2 py-0.5 bg-tertiary/10 text-tertiary rounded-full font-bold">高置信度</span>
+</div>
+<div class="flex items-baseline gap-1 mb-3">
+<span class="text-3xl font-bold text-primary">4.5</span>
+<span class="text-xs text-outline">/ 5.0</span>
+</div>
+<p class="text-xs text-on-surface-variant mb-6 min-h-[40px] leading-relaxed">在腾讯云期间多次临危受命，在高压环境下保质保量完成核心项目。</p>
+<button class="w-full py-2.5 bg-surface-container-low text-primary text-xs font-bold rounded-lg hover:bg-surface-container transition-colors flex items-center justify-center gap-1" onclick="toggleDrawer()">
+                    查看证据 <span class="material-symbols-outlined text-sm">arrow_forward</span>
+</button>
+</div>
+<!-- 创新能力 -->
+<div class="bg-surface-container-lowest border border-outline-variant rounded-xl p-6 shadow-sm hover:shadow-premium transition-all">
+<div class="flex justify-between items-start mb-4">
+<h3 class="font-bold text-on-surface">创新能力</h3>
+<span class="text-[10px] px-2 py-0.5 bg-tertiary/10 text-tertiary rounded-full font-bold">高置信度</span>
+</div>
+<div class="flex items-baseline gap-1 mb-3">
+<span class="text-3xl font-bold text-primary">4.9</span>
+<span class="text-xs text-outline">/ 5.0</span>
+</div>
+<p class="text-xs text-on-surface-variant mb-6 min-h-[40px] leading-relaxed">独立提出自研冷热分离方案，为公司节省数百万存储成本，极具创造力。</p>
+<button class="w-full py-2.5 bg-surface-container-low text-primary text-xs font-bold rounded-lg hover:bg-surface-container transition-colors flex items-center justify-center gap-1" onclick="toggleDrawer()">
+                    查看证据 <span class="material-symbols-outlined text-sm">arrow_forward</span>
+</button>
+</div>
+<!-- 领导力 -->
+<div class="bg-surface-container-lowest border border-outline-variant rounded-xl p-6 shadow-sm hover:shadow-premium transition-all">
+<div class="flex justify-between items-start mb-4">
+<h3 class="font-bold text-on-surface">领导力</h3>
+<span class="text-[10px] px-2 py-0.5 bg-secondary-container text-on-secondary-container rounded-full font-bold">中等置信</span>
+</div>
+<div class="flex items-baseline gap-1 mb-3">
+<span class="text-3xl font-bold text-primary">3.5</span>
+<span class="text-xs text-outline">/ 5.0</span>
+</div>
+<p class="text-xs text-on-surface-variant mb-6 min-h-[40px] leading-relaxed">有过15人团队带教经验，但尚未深度负责跨事业部的战略级管理工作。</p>
+<button class="w-full py-2.5 bg-surface-container-low text-primary text-xs font-bold rounded-lg hover:bg-surface-container transition-colors flex items-center justify-center gap-1" onclick="toggleDrawer()">
+                    查看证据 <span class="material-symbols-outlined text-sm">arrow_forward</span>
+</button>
+</div>
+<!-- 抗压能力 -->
+<div class="bg-surface-container-lowest border border-outline-variant rounded-xl p-6 shadow-sm hover:shadow-premium transition-all">
+<div class="flex justify-between items-start mb-4">
+<h3 class="font-bold text-on-surface">抗压能力</h3>
+<span class="text-[10px] px-2 py-0.5 bg-tertiary/10 text-tertiary rounded-full font-bold">高置信度</span>
+</div>
+<div class="flex items-baseline gap-1 mb-3">
+<span class="text-3xl font-bold text-primary">4.2</span>
+<span class="text-xs text-outline">/ 5.0</span>
+</div>
+<p class="text-xs text-on-surface-variant mb-6 min-h-[40px] leading-relaxed">在高强度生产事故复盘及应急处理中保持冷静，逻辑不乱，输出稳定。</p>
+<button class="w-full py-2.5 bg-surface-container-low text-primary text-xs font-bold rounded-lg hover:bg-surface-container transition-colors flex items-center justify-center gap-1" onclick="toggleDrawer()">
+                    查看证据 <span class="material-symbols-outlined text-sm">arrow_forward</span>
+</button>
+</div>
+<!-- 职业稳定性 -->
+<div class="bg-amber-50/30 border border-amber-200 rounded-xl p-6 shadow-sm hover:shadow-premium transition-all">
+<div class="flex justify-between items-start mb-4">
+<h3 class="font-bold text-amber-700">职业稳定性</h3>
+<span class="text-[10px] px-2 py-0.5 bg-amber-100 text-amber-700 rounded-full font-bold">高置信度</span>
+</div>
+<div class="flex items-baseline gap-1 mb-3">
+<span class="text-3xl font-bold text-amber-600">2.0</span>
+<span class="text-xs text-outline">/ 5.0</span>
+</div>
+<p class="text-xs text-amber-800/80 mb-6 min-h-[40px] leading-relaxed">近期职业变动过于频繁，简历分析显示平均在职时间不足18个月，需警惕。</p>
+<button class="w-full py-2.5 bg-amber-100 text-amber-700 text-xs font-bold rounded-lg hover:bg-amber-200 transition-colors flex items-center justify-center gap-1" onclick="toggleDrawer()">
+                    风险溯源 <span class="material-symbols-outlined text-sm">arrow_forward</span>
+</button>
+</div>
+</section>
+<!-- Bottom Section: Preferences & Evidence Entry -->
+<section class="grid grid-cols-2 gap-6">
+<!-- Occupational Preferences -->
+<div class="bg-surface-container-lowest border border-outline-variant rounded-xl p-8 flex flex-col h-full shadow-sm">
+<h2 class="text-lg font-bold flex items-center gap-2 mb-6">
+<span class="material-symbols-outlined text-primary">psychology_alt</span>
+                    职业偏好与岗位推荐
+                </h2>
+<div class="space-y-6 flex-grow">
+<div class="grid grid-cols-2 gap-4">
+<div class="p-4 bg-surface-container-low rounded-lg">
+<span class="text-[10px] text-outline font-bold uppercase tracking-wider block mb-3">动力驱动点</span>
+<div class="flex flex-wrap gap-2">
+<span class="px-2 py-1 bg-white rounded border border-outline-variant text-[11px] font-medium">技术挑战性</span>
+<span class="px-2 py-1 bg-white rounded border border-outline-variant text-[11px] font-medium">架构自主权</span>
+<span class="px-2 py-1 bg-white rounded border border-outline-variant text-[11px] font-medium">开源社区贡献</span>
+</div>
+</div>
+<div class="p-4 bg-surface-container-low rounded-lg">
+<span class="text-[10px] text-outline font-bold uppercase tracking-wider block mb-3">推荐岗位方向</span>
+<div class="flex flex-wrap gap-2">
+<span class="px-2 py-1 bg-primary text-white rounded text-[11px] font-bold">资深架构专家</span>
+<span class="px-2 py-1 bg-primary text-white rounded text-[11px] font-bold">技术平台负责人</span>
+</div>
+</div>
+</div>
+<div class="p-4 border-l-4 border-primary bg-primary/5 rounded-r-lg">
+<p class="text-sm text-on-surface-variant leading-relaxed">
+<strong class="text-primary">AI 专家建议：</strong> 候选人更倾向于底层技术钻研而非业务流程堆砌。建议安排参与核心中间件、云原生架构或大规模数据平台级项目的研发，能最大限度发挥其技术潜能。
+                        </p>
+</div>
+</div>
+</div>
+<!-- Evidence Chain Entry -->
+<div class="bg-surface-container-lowest border border-outline-variant rounded-xl p-8 flex flex-col h-full shadow-sm">
+<h2 class="text-lg font-bold flex items-center gap-2 mb-6">
+<span class="material-symbols-outlined text-primary">history_edu</span>
+                    证据链入口 / 溯源中心
+                </h2>
+<div class="space-y-4">
+<div class="group flex items-center justify-between p-4 border border-outline-variant rounded-lg hover:border-primary hover:bg-primary/5 cursor-pointer transition-all" onclick="toggleDrawer()">
+<div class="flex items-center gap-4">
+<div class="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center text-primary">
+<span class="material-symbols-outlined">description</span>
+</div>
+<div>
+<p class="text-sm font-bold group-hover:text-primary transition-colors">原始简历溯源</p>
+<p class="text-[11px] text-outline mt-0.5">基于简历语境提取的 14 个核心能力证明</p>
+</div>
+</div>
+<span class="material-symbols-outlined text-outline group-hover:text-primary transition-colors">chevron_right</span>
+</div>
+<div class="group flex items-center justify-between p-4 border border-outline-variant rounded-lg hover:border-primary hover:bg-primary/5 cursor-pointer transition-all" onclick="toggleDrawer()">
+<div class="flex items-center gap-4">
+<div class="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center text-primary">
+<span class="material-symbols-outlined">videocam</span>
+</div>
+<div>
+<p class="text-sm font-bold group-hover:text-primary transition-colors">面试语料库分析</p>
+<p class="text-[11px] text-outline mt-0.5">AI 深度识别的逻辑思维与实时沟通关键片段</p>
+</div>
+</div>
+<span class="material-symbols-outlined text-outline group-hover:text-primary transition-colors">chevron_right</span>
+</div>
+<div class="group flex items-center justify-between p-4 border border-outline-variant rounded-lg hover:border-primary hover:bg-primary/5 cursor-pointer transition-all" onclick="toggleDrawer()">
+<div class="flex items-center gap-4">
+<div class="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center text-primary">
+<span class="material-symbols-outlined">language</span>
+</div>
+<div>
+<p class="text-sm font-bold group-hover:text-primary transition-colors">外部公开数据交叉比对</p>
+<p class="text-[11px] text-outline mt-0.5">GitHub 活跃度、技术专利及行业影响力的多维度分析</p>
+</div>
+</div>
+<span class="material-symbols-outlined text-outline group-hover:text-primary transition-colors">chevron_right</span>
+</div>
+</div>
+</div>
+</section>
+</main>
+<!-- Footer -->
+<footer class="w-full py-8 px-margin-desktop border-t border-outline-variant mt-auto bg-surface-container-lowest">
+<div class="flex justify-between items-center">
+<div class="flex flex-col">
+<span class="text-lg font-bold text-primary">AI Talent Agent</span>
+<p class="text-xs text-outline mt-1">© 2024 AI Talent Agent. 专业化、智能化的人才评估平台</p>
+</div>
+<div class="flex gap-8">
+<a class="text-xs text-on-surface-variant hover:text-primary transition-all font-medium" href="#">隐私权政策</a>
+<a class="text-xs text-on-surface-variant hover:text-primary transition-all font-medium" href="#">服务条款</a>
+<a class="text-xs text-on-surface-variant hover:text-primary transition-all font-medium" href="#">联系技术支持</a>
+</div>
+</div>
+</footer>
+<!-- Side Drawer -->
+<aside class="fixed right-0 top-0 h-full w-[480px] bg-white shadow-2xl z-[60] transform translate-x-full transition-transform duration-300 border-l border-outline-variant overflow-y-auto" id="evidence-drawer">
+<div class="p-8">
+<div class="flex justify-between items-center mb-10">
+<h2 class="text-2xl font-bold">证据链详情</h2>
+<button class="material-symbols-outlined text-on-surface-variant hover:bg-surface-container p-2 rounded-full" onclick="toggleDrawer()">close</button>
+</div>
+<div class="space-y-10">
+<section>
+<h3 class="text-xs font-bold text-primary uppercase tracking-widest mb-4 border-b border-primary/10 pb-2">原始简历片段</h3>
+<div class="bg-surface-container-low p-6 rounded-lg font-code text-sm text-on-surface-variant leading-relaxed border border-outline-variant/30">
+                        "2021-2023: 架构师 @ 腾讯云<br/>
+                        主导了自研分布式存储系统 Nebula 的冷热数据分离方案设计，将存储成本降低了40%，并支持了EB级数据的弹性扩展..."
+                    </div>
+</section>
+<section>
+<h3 class="text-xs font-bold text-primary uppercase tracking-widest mb-4 border-b border-primary/10 pb-2">AI 推理路径</h3>
+<div class="space-y-6">
+<div class="flex gap-4">
+<div class="w-1 bg-primary rounded-full"></div>
+<div>
+<p class="text-sm font-bold text-on-surface">能力识别点</p>
+<p class="text-xs text-on-surface-variant mt-1">识别到“方案主导”、“成本优化”、“EB级扩展”等关键词，映射至【创新】与【执行】维度。</p>
+</div>
+</div>
+<div class="flex gap-4">
+<div class="w-1 bg-primary rounded-full"></div>
+<div>
+<p class="text-sm font-bold text-on-surface">置信度校验</p>
+<p class="text-xs text-on-surface-variant mt-1">腾讯云 Nebula 系统架构真实性已通过行业知识库及面试语料库深度互校验确认。</p>
+</div>
+</div>
+</div>
+</section>
+<section>
+<h3 class="text-xs font-bold text-primary uppercase tracking-widest mb-4 border-b border-primary/10 pb-2">多维数据佐证</h3>
+<div class="aspect-video rounded-xl overflow-hidden border border-outline-variant relative">
+<img alt="Data Visual" class="w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida/AP1WRLsIBCJN2AspmsTYsxVYD1usPvds1KpQbvrnTKUpnqHf1ZrsVR4YAK1Hq_uHCFUvNJu4h7efeztaYzPQGAvb6kquEIqnz0gi5eknR4LkAcJs60gvQC-w63GAitV6xyPy7bIiCC1q1EXxWs8jfdfBfuTybbXO61a7UkqAbzmHy_65Boz8rmtrdbJ0dBsmsmBn0YIl474asEBhwrT4AgHjWAD4t_0j9BBE6qADyqMbVjxYRt5Q97EfDw9yMA"/>
+</div>
+</section>
+</div>
+</div>
+</aside>
+<script>
+        function toggleDrawer() {
+            const drawer = document.getElementById('evidence-drawer');
+            drawer.classList.toggle('translate-x-full');
+        }
+    </script>
+</body></html>

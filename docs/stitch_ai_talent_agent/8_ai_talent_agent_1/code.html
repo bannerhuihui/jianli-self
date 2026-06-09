@@ -1,0 +1,539 @@
+<!DOCTYPE html>
+
+<html class="light" lang="zh-CN"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>人才画像 - 智聘 TalentAgent</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@400;500;700&amp;family=Inter:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "error": "#ba1a1a",
+                        "tertiary-container": "#0074a6",
+                        "tertiary-fixed-dim": "#89ceff",
+                        "surface-container-lowest": "#ffffff",
+                        "secondary-fixed-dim": "#b7c8e1",
+                        "secondary-container": "#d0e1fb",
+                        "on-surface-variant": "#434655",
+                        "surface-tint": "#0053db",
+                        "on-tertiary-container": "#e4f2ff",
+                        "surface-container-highest": "#e0e3e5",
+                        "primary-container": "#2563eb",
+                        "background": "#f7f9fb",
+                        "inverse-primary": "#b4c5ff",
+                        "on-tertiary": "#ffffff",
+                        "on-surface": "#191c1e",
+                        "on-primary-container": "#eeefff",
+                        "on-primary-fixed": "#00174b",
+                        "on-error-container": "#93000a",
+                        "on-tertiary-fixed": "#001e2f",
+                        "on-secondary-fixed": "#0b1c30",
+                        "surface-dim": "#d8dadc",
+                        "primary-fixed": "#dbe1ff",
+                        "on-primary-fixed-variant": "#003ea8",
+                        "on-error": "#ffffff",
+                        "primary-fixed-dim": "#b4c5ff",
+                        "on-secondary-container": "#54647a",
+                        "secondary": "#505f76",
+                        "error-container": "#ffdad6",
+                        "on-tertiary-fixed-variant": "#004c6e",
+                        "on-secondary": "#ffffff",
+                        "outline-variant": "#c3c6d7",
+                        "surface-bright": "#f7f9fb",
+                        "surface-variant": "#e0e3e5",
+                        "outline": "#737686",
+                        "surface-container": "#eceef0",
+                        "secondary-fixed": "#d3e4fe",
+                        "primary": "#004ac6",
+                        "on-background": "#191c1e",
+                        "on-primary": "#ffffff",
+                        "inverse-on-surface": "#eff1f3",
+                        "surface-container-low": "#f2f4f6",
+                        "surface": "#f7f9fb",
+                        "surface-container-high": "#e6e8ea",
+                        "inverse-surface": "#2d3133",
+                        "on-secondary-fixed-variant": "#38485d",
+                        "tertiary": "#005a82",
+                        "tertiary-fixed": "#c9e6ff"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "sm": "8px",
+                        "xl": "32px",
+                        "md": "16px",
+                        "margin": "24px",
+                        "lg": "24px",
+                        "xs": "4px",
+                        "2xl": "48px",
+                        "gutter": "24px",
+                        "base": "4px"
+                    },
+                    "fontFamily": {
+                        "headline-md": ["Noto Sans SC, Inter, sans-serif"],
+                        "headline-sm": ["Noto Sans SC, Inter, sans-serif"],
+                        "headline-lg-mobile": ["Noto Sans SC, Inter, sans-serif"],
+                        "body-sm": ["Noto Sans SC, Inter, sans-serif"],
+                        "headline-lg": ["Noto Sans SC, Inter, sans-serif"],
+                        "body-lg": ["Noto Sans SC, Inter, sans-serif"],
+                        "body-md": ["Noto Sans SC, Inter, sans-serif"],
+                        "label-md": ["Noto Sans SC, Inter, sans-serif"],
+                        "label-sm": ["Noto Sans SC, Inter, sans-serif"]
+                    },
+                    "fontSize": {
+                        "headline-md": ["24px", {"lineHeight": "1.3", "fontWeight": "600"}],
+                        "headline-sm": ["20px", {"lineHeight": "1.4", "fontWeight": "600"}],
+                        "headline-lg-mobile": ["24px", {"lineHeight": "1.2", "fontWeight": "600"}],
+                        "body-sm": ["12px", {"lineHeight": "1.6", "fontWeight": "400"}],
+                        "headline-lg": ["30px", {"lineHeight": "1.2", "fontWeight": "600"}],
+                        "body-lg": ["16px", {"lineHeight": "1.6", "fontWeight": "400"}],
+                        "body-md": ["14px", {"lineHeight": "1.6", "fontWeight": "400"}],
+                        "label-md": ["14px", {"lineHeight": "1", "fontWeight": "500"}],
+                        "label-sm": ["12px", {"lineHeight": "1", "fontWeight": "500"}]
+                    }
+                }
+            }
+        }
+    </script>
+<style>
+        .radar-chart-container {
+            position: relative;
+            width: 100%;
+            padding-top: 100%;
+        }
+        .radar-chart-canvas {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+        }
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        body {
+            background-color: #f7f9fb;
+            -webkit-tap-highlight-color: transparent;
+            min-height: max(884px, 100dvh);
+        }
+    </style>
+</head>
+<body class="font-body-md text-on-surface">
+<!-- Top AppBar -->
+<header class="bg-surface dark:bg-inverse-surface border-b border-outline-variant dark:border-outline docked full-width top-0 sticky z-50 flex justify-between items-center px-margin py-sm w-full">
+<div class="flex items-center gap-3">
+<div class="w-8 h-8 rounded-full bg-primary-container flex items-center justify-center overflow-hidden">
+<img alt="用户头像" class="w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida/AP1WRLtqoMcomYygjd57hD_AOqJYtMmG2LVx7uBz3rXE8mmkzYWxDyf8jCvUGCrFXVdr9FJBfmBThXaW_xrLvuub_ZJcKB_6KhN7SV3fKDOaSVAMwKAnEab_P0SLat28ipgReFYLDRWd4eaPJsp96uQwJNV6pJ3PEVuNuVakqHhXSWXl9v9tnRXqjIG1bM8d1JKZZMhIpECFZBnvf5oOpuFCpF62ogh5Xq1ADLaf8uj0qOXpK2-kEqD9BIoQaFs"/>
+</div>
+<h1 class="font-headline-sm text-headline-sm font-bold text-primary dark:text-primary-fixed-dim">智聘 TalentAgent</h1>
+</div>
+<button class="text-primary dark:text-inverse-primary p-2">
+<span class="material-symbols-outlined">menu</span>
+</button>
+</header>
+<main class="px-margin pt-lg pb-32">
+<!-- Candidate Header -->
+<section class="mb-lg">
+<div class="flex justify-between items-start mb-sm">
+<div>
+<h2 class="font-headline-lg-mobile text-headline-lg-mobile text-on-surface">张明远</h2>
+<p class="font-body-sm text-body-sm text-on-surface-variant">高级产品经理候选人 · 8年经验</p>
+</div>
+<button class="bg-primary text-on-primary px-md py-sm rounded-lg flex items-center gap-xs shadow-sm active:scale-95 transition-transform">
+<span class="material-symbols-outlined text-[18px]">download</span>
+<span class="font-label-md text-label-md">导出报告</span>
+</button>
+</div>
+<div class="flex gap-xs flex-wrap">
+<span class="bg-primary-fixed text-on-primary-fixed px-sm py-xs rounded text-[10px] font-bold uppercase tracking-wider">TOP 5%</span>
+<span class="bg-secondary-container text-on-secondary-container px-sm py-xs rounded text-[10px] font-bold uppercase tracking-wider">高稳定性</span>
+<span class="bg-tertiary-fixed text-on-tertiary-fixed px-sm py-xs rounded text-[10px] font-bold uppercase tracking-wider">领导潜力</span>
+</div>
+</section>
+<!-- Radar Chart Visual -->
+<section class="bg-surface-container-lowest border border-outline-variant rounded-xl p-md mb-lg shadow-sm">
+<h3 class="font-label-md text-label-md text-on-surface-variant mb-md flex items-center gap-xs">
+<span class="material-symbols-outlined text-[16px]">analytics</span>
+                核心胜任力模型 (8个轴)
+            </h3>
+<div class="radar-chart-container">
+<canvas class="radar-chart-canvas" id="radarChart"></canvas>
+</div>
+<div class="mt-md flex justify-center gap-md">
+<div class="flex items-center gap-xs">
+<div class="w-3 h-3 rounded-full bg-primary"></div>
+<span class="text-[12px] text-on-surface-variant">当前候选人评分</span>
+</div>
+<div class="flex items-center gap-xs">
+<div class="w-3 h-3 rounded-full bg-outline-variant"></div>
+<span class="text-[12px] text-on-surface-variant">岗位基准线</span>
+</div>
+</div>
+</section>
+<!-- Detailed Dimension Analysis -->
+<section class="space-y-md">
+<h3 class="font-label-md text-label-md text-on-surface-variant mb-xs">维度深度分析 (8项指标)</h3>
+<!-- 1. 学习能力 -->
+<div class="bg-white border border-outline-variant rounded-xl p-md shadow-sm">
+<div class="flex justify-between items-start mb-sm">
+<div class="flex items-center gap-sm">
+<div class="w-10 h-10 rounded-lg bg-primary-container/10 flex items-center justify-center text-primary">
+<span class="material-symbols-outlined">auto_stories</span>
+</div>
+<div>
+<h4 class="font-label-md text-label-md">学习能力</h4>
+<p class="text-[10px] text-on-surface-variant">掌握新业务与工具的速度</p>
+</div>
+</div>
+<div class="text-right">
+<div class="text-headline-sm font-bold text-primary leading-none">4.8</div>
+<span class="inline-block mt-1 px-1.5 py-0.5 rounded text-[10px] bg-tertiary-fixed text-on-tertiary-fixed font-bold">置信度: 极高</span>
+</div>
+</div>
+<div class="bg-surface-container p-sm rounded-lg">
+<span class="text-[11px] font-bold text-on-surface-variant block mb-1">证据来源:</span>
+<ul class="space-y-1">
+<li class="flex items-start gap-xs text-body-sm text-on-surface">
+<span class="material-symbols-outlined text-[14px] mt-0.5 text-primary">verified</span>
+<span>面试 Q3 回答：详尽描述了在3个月内从0建立AI营销系统的路径。</span>
+</li>
+<li class="flex items-start gap-xs text-body-sm text-on-surface">
+<span class="material-symbols-outlined text-[14px] mt-0.5 text-primary">verified</span>
+<span>简历工作经历：过往三次转行均在入职首季度达成核心KPI。</span>
+</li>
+</ul>
+</div>
+</div>
+<!-- 2. 逻辑能力 -->
+<div class="bg-white border border-outline-variant rounded-xl p-md shadow-sm">
+<div class="flex justify-between items-start mb-sm">
+<div class="flex items-center gap-sm">
+<div class="w-10 h-10 rounded-lg bg-primary-container/10 flex items-center justify-center text-primary">
+<span class="material-symbols-outlined">psychology</span>
+</div>
+<div>
+<h4 class="font-label-md text-label-md">逻辑能力</h4>
+<p class="text-[10px] text-on-surface-variant">结构化思维与问题拆解</p>
+</div>
+</div>
+<div class="text-right">
+<div class="text-headline-sm font-bold text-primary leading-none">4.5</div>
+<span class="inline-block mt-1 px-1.5 py-0.5 rounded text-[10px] bg-secondary-fixed text-on-secondary-fixed font-bold">置信度: 高</span>
+</div>
+</div>
+<div class="bg-surface-container p-sm rounded-lg">
+<span class="text-[11px] font-bold text-on-surface-variant block mb-1">证据来源:</span>
+<ul class="space-y-1">
+<li class="flex items-start gap-xs text-body-sm text-on-surface">
+<span class="material-symbols-outlined text-[14px] mt-0.5 text-primary">verified</span>
+<span>笔试测评：在复杂场景拆解题中得分率为前3%。</span>
+</li>
+</ul>
+</div>
+</div>
+<!-- 3. 沟通能力 -->
+<div class="bg-white border border-outline-variant rounded-xl p-md shadow-sm">
+<div class="flex justify-between items-start mb-sm">
+<div class="flex items-center gap-sm">
+<div class="w-10 h-10 rounded-lg bg-primary-container/10 flex items-center justify-center text-primary">
+<span class="material-symbols-outlined">forum</span>
+</div>
+<div>
+<h4 class="font-label-md text-label-md">沟通能力</h4>
+<p class="text-[10px] text-on-surface-variant">信息传达与跨部门协同</p>
+</div>
+</div>
+<div class="text-right">
+<div class="text-headline-sm font-bold text-primary leading-none">4.0</div>
+<span class="inline-block mt-1 px-1.5 py-0.5 rounded text-[10px] bg-secondary-fixed text-on-secondary-fixed font-bold">置信度: 高</span>
+</div>
+</div>
+<div class="bg-surface-container p-sm rounded-lg">
+<span class="text-[11px] font-bold text-on-surface-variant block mb-1">证据来源:</span>
+<ul class="space-y-1">
+<li class="flex items-start gap-xs text-body-sm text-on-surface">
+<span class="material-symbols-outlined text-[14px] mt-0.5 text-primary">verified</span>
+<span>面试反馈：表达条理清晰，能够针对不同背景的人群调整沟通策略。</span>
+</li>
+</ul>
+</div>
+</div>
+<!-- 4. 执行能力 -->
+<div class="bg-white border border-outline-variant rounded-xl p-md shadow-sm">
+<div class="flex justify-between items-start mb-sm">
+<div class="flex items-center gap-sm">
+<div class="w-10 h-10 rounded-lg bg-primary-container/10 flex items-center justify-center text-primary">
+<span class="material-symbols-outlined">task_alt</span>
+</div>
+<div>
+<h4 class="font-label-md text-label-md">执行能力</h4>
+<p class="text-[10px] text-on-surface-variant">目标达成与资源调度效率</p>
+</div>
+</div>
+<div class="text-right">
+<div class="text-headline-sm font-bold text-primary leading-none">4.2</div>
+<span class="inline-block mt-1 px-1.5 py-0.5 rounded text-[10px] bg-tertiary-fixed text-on-tertiary-fixed font-bold">置信度: 极高</span>
+</div>
+</div>
+<div class="bg-surface-container p-sm rounded-lg">
+<span class="text-[11px] font-bold text-on-surface-variant block mb-1">证据来源:</span>
+<ul class="space-y-1">
+<li class="flex items-start gap-xs text-body-sm text-on-surface">
+<span class="material-symbols-outlined text-[14px] mt-0.5 text-primary">verified</span>
+<span>简历：在任职期间，所有季度重点项目的按时交付率达 100%。</span>
+</li>
+</ul>
+</div>
+</div>
+<!-- 5. 创新能力 -->
+<div class="bg-white border border-outline-variant rounded-xl p-md shadow-sm">
+<div class="flex justify-between items-start mb-sm">
+<div class="flex items-center gap-sm">
+<div class="w-10 h-10 rounded-lg bg-primary-container/10 flex items-center justify-center text-primary">
+<span class="material-symbols-outlined">lightbulb</span>
+</div>
+<div>
+<h4 class="font-label-md text-label-md">创新能力</h4>
+<p class="text-[10px] text-on-surface-variant">差异化思维与创新实践</p>
+</div>
+</div>
+<div class="text-right">
+<div class="text-headline-sm font-bold text-primary leading-none">3.8</div>
+<span class="inline-block mt-1 px-1.5 py-0.5 rounded text-[10px] bg-secondary-container text-on-secondary-container font-bold">置信度: 中</span>
+</div>
+</div>
+<div class="bg-surface-container p-sm rounded-lg">
+<span class="text-[11px] font-bold text-on-surface-variant block mb-1">证据来源:</span>
+<ul class="space-y-1">
+<li class="flex items-start gap-xs text-body-sm text-on-surface">
+<span class="material-symbols-outlined text-[14px] mt-0.5 text-primary">verified</span>
+<span>项目经历：主导了部门首个“零代码”流程自动化工具的应用，节省人力 15%。</span>
+</li>
+</ul>
+</div>
+</div>
+<!-- 6. 领导能力 -->
+<div class="bg-white border border-outline-variant rounded-xl p-md shadow-sm">
+<div class="flex justify-between items-start mb-sm">
+<div class="flex items-center gap-sm">
+<div class="w-10 h-10 rounded-lg bg-primary-container/10 flex items-center justify-center text-primary">
+<span class="material-symbols-outlined">groups</span>
+</div>
+<div>
+<h4 class="font-label-md text-label-md">领导能力</h4>
+<p class="text-[10px] text-on-surface-variant">团队驱动与愿景传递</p>
+</div>
+</div>
+<div class="text-right">
+<div class="text-headline-sm font-bold text-primary leading-none">4.2</div>
+<span class="inline-block mt-1 px-1.5 py-0.5 rounded text-[10px] bg-secondary-container text-on-secondary-container font-bold">置信度: 中</span>
+</div>
+</div>
+<div class="bg-surface-container p-sm rounded-lg">
+<span class="text-[11px] font-bold text-on-surface-variant block mb-1">证据来源:</span>
+<ul class="space-y-1">
+<li class="flex items-start gap-xs text-body-sm text-on-surface">
+<span class="material-symbols-outlined text-[14px] mt-0.5 text-primary">verified</span>
+<span>背调反馈：前下属评价其具备极强的向上管理及资源协调能力，能清晰拆解团队目标。</span>
+</li>
+</ul>
+</div>
+</div>
+<!-- 7. 抗压能力 -->
+<div class="bg-white border border-outline-variant rounded-xl p-md shadow-sm">
+<div class="flex justify-between items-start mb-sm">
+<div class="flex items-center gap-sm">
+<div class="w-10 h-10 rounded-lg bg-primary-container/10 flex items-center justify-center text-primary">
+<span class="material-symbols-outlined">timer</span>
+</div>
+<div>
+<h4 class="font-label-md text-label-md">抗压能力</h4>
+<p class="text-[10px] text-on-surface-variant">逆境中的情绪调节与产出</p>
+</div>
+</div>
+<div class="text-right">
+<div class="text-headline-sm font-bold text-primary leading-none">4.5</div>
+<span class="inline-block mt-1 px-1.5 py-0.5 rounded text-[10px] bg-secondary-fixed text-on-secondary-fixed font-bold">置信度: 高</span>
+</div>
+</div>
+<div class="bg-surface-container p-sm rounded-lg">
+<span class="text-[11px] font-bold text-on-surface-variant block mb-1">证据来源:</span>
+<ul class="space-y-1">
+<li class="flex items-start gap-xs text-body-sm text-on-surface">
+<span class="material-symbols-outlined text-[14px] mt-0.5 text-primary">verified</span>
+<span>面试反馈：描述了在紧急公关危机中，连续 72 小时工作并最终扭转局面的案例。</span>
+</li>
+</ul>
+</div>
+</div>
+<!-- 8. 职业稳定性 -->
+<div class="bg-white border border-outline-variant rounded-xl p-md shadow-sm">
+<div class="flex justify-between items-start mb-sm">
+<div class="flex items-center gap-sm">
+<div class="w-10 h-10 rounded-lg bg-primary-container/10 flex items-center justify-center text-primary">
+<span class="material-symbols-outlined">event_available</span>
+</div>
+<div>
+<h4 class="font-label-md text-label-md">职业稳定性</h4>
+<p class="text-[10px] text-on-surface-variant">长期职业规划与岗位忠诚度</p>
+</div>
+</div>
+<div class="text-right">
+<div class="text-headline-sm font-bold text-primary leading-none">4.7</div>
+<span class="inline-block mt-1 px-1.5 py-0.5 rounded text-[10px] bg-tertiary-fixed text-on-tertiary-fixed font-bold">置信度: 极高</span>
+</div>
+</div>
+<div class="bg-surface-container p-sm rounded-lg">
+<span class="text-[11px] font-bold text-on-surface-variant block mb-1">证据来源:</span>
+<ul class="space-y-1">
+<li class="flex items-start gap-xs text-body-sm text-on-surface">
+<span class="material-symbols-outlined text-[14px] mt-0.5 text-primary">verified</span>
+<span>简历分析：8年内仅有2份工作经历，每份平均年限超过 3.5 年。</span>
+</li>
+</ul>
+</div>
+</div>
+</section>
+</main>
+<!-- Bottom Navigation Bar -->
+<nav class="fixed bottom-0 left-0 w-full flex justify-around items-center px-4 pb-4 pt-2 bg-surface dark:bg-inverse-surface border-t border-outline-variant dark:border-outline shadow-lg dark:shadow-none z-50">
+<button class="flex flex-col items-center justify-center text-on-surface-variant dark:text-surface-variant px-3 py-1 hover:bg-secondary-container/50 active:scale-95 transition-transform duration-150">
+<span class="material-symbols-outlined">group</span>
+<span class="font-label-sm text-label-sm">人才库</span>
+</button>
+<button class="flex flex-col items-center justify-center text-on-surface-variant dark:text-surface-variant px-3 py-1 hover:bg-secondary-container/50 active:scale-95 transition-transform duration-150">
+<span class="material-symbols-outlined">chat_bubble</span>
+<span class="font-label-sm text-label-sm">AI 面试</span>
+</button>
+<button class="flex flex-col items-center justify-center bg-primary-container dark:bg-primary text-on-primary-container dark:text-on-primary rounded-xl px-3 py-1 active:scale-95 transition-transform duration-150">
+<span class="material-symbols-outlined">analytics</span>
+<span class="font-label-sm text-label-sm">解析</span>
+</button>
+<button class="flex flex-col items-center justify-center text-on-surface-variant dark:text-surface-variant px-3 py-1 hover:bg-secondary-container/50 active:scale-95 transition-transform duration-150">
+<span class="material-symbols-outlined">person</span>
+<span class="font-label-sm text-label-sm">我的</span>
+</button>
+</nav>
+<script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const canvas = document.getElementById('radarChart');
+            if (!canvas) return;
+            const ctx = canvas.getContext('2d');
+            
+            const dimensions = ['学习能力', '逻辑能力', '沟通能力', '执行能力', '创新能力', '领导能力', '抗压能力', '职业稳定性'];
+            const scores = [4.8, 4.5, 4.0, 4.2, 3.8, 4.2, 4.5, 4.7];
+            const baseline = [4.0, 4.0, 4.0, 4.0, 4.0, 4.0, 4.0, 4.0];
+            
+            function draw() {
+                const width = canvas.offsetWidth;
+                const height = canvas.offsetHeight;
+                const dpr = window.devicePixelRatio || 1;
+                canvas.width = width * dpr;
+                canvas.height = height * dpr;
+                ctx.scale(dpr, dpr);
+                
+                const centerX = width / 2;
+                const centerY = height / 2;
+                const radius = Math.min(centerX, centerY) * 0.7; // Adjusted to leave room for labels
+                const angleStep = (Math.PI * 2) / dimensions.length;
+
+                // Draw Grid (Web)
+                ctx.strokeStyle = '#e2e8f0';
+                ctx.lineWidth = 1;
+                for (let i = 1; i <= 5; i++) {
+                    ctx.beginPath();
+                    for (let j = 0; j < dimensions.length; j++) {
+                        const r = (radius / 5) * i;
+                        const x = centerX + r * Math.cos(j * angleStep - Math.PI / 2);
+                        const y = centerY + r * Math.sin(j * angleStep - Math.PI / 2);
+                        if (j === 0) ctx.moveTo(x, y);
+                        else ctx.lineTo(x, y);
+                    }
+                    ctx.closePath();
+                    ctx.stroke();
+                }
+
+                // Draw Axes
+                for (let j = 0; j < dimensions.length; j++) {
+                    const x = centerX + radius * Math.cos(j * angleStep - Math.PI / 2);
+                    const y = centerY + radius * Math.sin(j * angleStep - Math.PI / 2);
+                    ctx.beginPath();
+                    ctx.moveTo(centerX, centerY);
+                    ctx.lineTo(x, y);
+                    ctx.stroke();
+
+                    // Labels
+                    ctx.fillStyle = '#434655';
+                    ctx.font = '500 11px "Noto Sans SC"';
+                    ctx.textAlign = 'center';
+                    const labelRadius = radius + 22;
+                    const lx = centerX + labelRadius * Math.cos(j * angleStep - Math.PI / 2);
+                    const ly = centerY + labelRadius * Math.sin(j * angleStep - Math.PI / 2);
+                    
+                    // Simple multiline logic or offset adjustment
+                    let finalY = ly + 4;
+                    ctx.fillText(dimensions[j], lx, finalY);
+                }
+
+                // Draw Baseline
+                ctx.strokeStyle = '#cbd5e1';
+                ctx.setLineDash([4, 4]);
+                ctx.beginPath();
+                for (let j = 0; j < dimensions.length; j++) {
+                    const r = (radius / 5) * baseline[j];
+                    const x = centerX + r * Math.cos(j * angleStep - Math.PI / 2);
+                    const y = centerY + r * Math.sin(j * angleStep - Math.PI / 2);
+                    if (j === 0) ctx.moveTo(x, y);
+                    else ctx.lineTo(x, y);
+                }
+                ctx.closePath();
+                ctx.stroke();
+                ctx.setLineDash([]);
+
+                // Draw Scores Area
+                ctx.fillStyle = 'rgba(0, 74, 198, 0.15)';
+                ctx.strokeStyle = '#004ac6';
+                ctx.lineWidth = 2;
+                ctx.beginPath();
+                for (let j = 0; j < dimensions.length; j++) {
+                    const r = (radius / 5) * scores[j];
+                    const x = centerX + r * Math.cos(j * angleStep - Math.PI / 2);
+                    const y = centerY + r * Math.sin(j * angleStep - Math.PI / 2);
+                    if (j === 0) ctx.moveTo(x, y);
+                    else ctx.lineTo(x, y);
+                }
+                ctx.closePath();
+                ctx.fill();
+                ctx.stroke();
+
+                // Draw Score Dots
+                for (let j = 0; j < dimensions.length; j++) {
+                    const r = (radius / 5) * scores[j];
+                    const x = centerX + r * Math.cos(j * angleStep - Math.PI / 2);
+                    const y = centerY + r * Math.sin(j * angleStep - Math.PI / 2);
+                    ctx.fillStyle = '#004ac6';
+                    ctx.beginPath();
+                    ctx.arc(x, y, 3.5, 0, Math.PI * 2);
+                    ctx.fill();
+                    // Optional: Inner white dot for better visibility
+                    ctx.fillStyle = '#ffffff';
+                    ctx.beginPath();
+                    ctx.arc(x, y, 1.5, 0, Math.PI * 2);
+                    ctx.fill();
+                }
+            }
+
+            draw();
+            window.addEventListener('resize', draw);
+        });
+    </script>
+</body></html>

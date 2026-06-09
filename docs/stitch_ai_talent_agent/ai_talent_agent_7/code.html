@@ -1,0 +1,274 @@
+<!DOCTYPE html>
+
+<html lang="zh-CN"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@400;500;600;700&amp;family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC,+Inter,+sans-serif:wght@100..900&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                    "error": "#ba1a1a",
+                    "tertiary-container": "#0074a6",
+                    "tertiary-fixed-dim": "#89ceff",
+                    "surface-container-lowest": "#ffffff",
+                    "secondary-fixed-dim": "#b7c8e1",
+                    "secondary-container": "#d0e1fb",
+                    "on-surface-variant": "#434655",
+                    "surface-tint": "#0053db",
+                    "on-tertiary-container": "#e4f2ff",
+                    "surface-container-highest": "#e0e3e5",
+                    "primary-container": "#2563eb",
+                    "background": "#f7f9fb",
+                    "inverse-primary": "#b4c5ff",
+                    "on-tertiary": "#ffffff",
+                    "on-surface": "#191c1e",
+                    "on-primary-container": "#eeefff",
+                    "on-primary-fixed": "#00174b",
+                    "on-error-container": "#93000a",
+                    "on-tertiary-fixed": "#001e2f",
+                    "on-secondary-fixed": "#0b1c30",
+                    "surface-dim": "#d8dadc",
+                    "primary-fixed": "#dbe1ff",
+                    "on-primary-fixed-variant": "#003ea8",
+                    "on-error": "#ffffff",
+                    "primary-fixed-dim": "#b4c5ff",
+                    "on-secondary-container": "#54647a",
+                    "secondary": "#505f76",
+                    "error-container": "#ffdad6",
+                    "on-tertiary-fixed-variant": "#004c6e",
+                    "on-secondary": "#ffffff",
+                    "outline-variant": "#c3c6d7",
+                    "surface-bright": "#f7f9fb",
+                    "surface-variant": "#e0e3e5",
+                    "outline": "#737686",
+                    "surface-container": "#eceef0",
+                    "secondary-fixed": "#d3e4fe",
+                    "primary": "#004ac6",
+                    "on-background": "#191c1e",
+                    "on-primary": "#ffffff",
+                    "inverse-on-surface": "#eff1f3",
+                    "surface-container-low": "#f2f4f6",
+                    "surface": "#f7f9fb",
+                    "surface-container-high": "#e6e8ea",
+                    "inverse-surface": "#2d3133",
+                    "on-secondary-fixed-variant": "#38485d",
+                    "tertiary": "#005a82",
+                    "tertiary-fixed": "#c9e6ff"
+            },
+            "borderRadius": {
+                    "DEFAULT": "0.25rem",
+                    "lg": "0.5rem",
+                    "xl": "0.75rem",
+                    "full": "9999px"
+            },
+            "spacing": {
+                    "sm": "8px",
+                    "xl": "32px",
+                    "md": "16px",
+                    "margin": "24px",
+                    "lg": "24px",
+                    "xs": "4px",
+                    "2xl": "48px",
+                    "gutter": "24px",
+                    "base": "4px"
+            },
+            "fontFamily": {
+                    "headline-md": ["Noto Sans SC, Inter, sans-serif"],
+                    "headline-sm": ["Noto Sans SC, Inter, sans-serif"],
+                    "headline-lg-mobile": ["Noto Sans SC, Inter, sans-serif"],
+                    "body-sm": ["Noto Sans SC, Inter, sans-serif"],
+                    "headline-lg": ["Noto Sans SC, Inter, sans-serif"],
+                    "body-lg": ["Noto Sans SC, Inter, sans-serif"],
+                    "body-md": ["Noto Sans SC, Inter, sans-serif"],
+                    "label-md": ["Noto Sans SC, Inter, sans-serif"],
+                    "label-sm": ["Noto Sans SC, Inter, sans-serif"]
+            },
+            "fontSize": {
+                    "headline-md": ["24px", {"lineHeight": "1.3", "fontWeight": "600"}],
+                    "headline-sm": ["20px", {"lineHeight": "1.4", "fontWeight": "600"}],
+                    "headline-lg-mobile": ["24px", {"lineHeight": "1.2", "fontWeight": "600"}],
+                    "body-sm": ["12px", {"lineHeight": "1.6", "fontWeight": "400"}],
+                    "headline-lg": ["30px", {"lineHeight": "1.2", "fontWeight": "600"}],
+                    "body-lg": ["16px", {"lineHeight": "1.6", "fontWeight": "400"}],
+                    "body-md": ["14px", {"lineHeight": "1.6", "fontWeight": "400"}],
+                    "label-md": ["14px", {"lineHeight": "1", "fontWeight": "500"}],
+                    "label-sm": ["12px", {"lineHeight": "1", "fontWeight": "500"}]
+            }
+          },
+        },
+      }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .progress-line {
+            background: linear-gradient(90deg, #2563eb 50%, #e2e8f0 50%);
+        }
+        .upload-dashed {
+            background-image: url("data:image/svg+xml,%3csvg width='100%25' height='100%25' xmlns='http://www.w3.org/2000/svg'%3e%3crect width='100%25' height='100%25' fill='none' rx='12' ry='12' stroke='%23CBD5E1FF' stroke-width='2' stroke-dasharray='8%2c 8' stroke-dashoffset='0' stroke-linecap='square'/%3e%3c/svg%3e");
+        }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-background text-on-surface font-body-md text-body-md min-h-screen flex flex-col">
+<!-- Top Navigation Shell -->
+<header class="bg-surface sticky top-0 z-50 border-b border-outline-variant flex justify-between items-center px-margin py-sm w-full">
+<div class="flex items-center gap-sm">
+<span class="material-symbols-outlined text-primary">arrow_back</span>
+<h1 class="font-headline-sm text-headline-sm font-bold text-primary">智聘 TalentAgent</h1>
+</div>
+<div class="w-10 h-10 rounded-full bg-primary-container flex items-center justify-center text-on-primary-container font-bold overflow-hidden">
+<img alt="User Avatar" class="w-full h-full object-cover" data-alt="A professional high-resolution 3D avatar profile picture of a young professional in business casual attire. The character has friendly features, styled hair, and is set against a clean, corporate gradient background of light blue and white. The lighting is soft and studio-quality, conveying a sense of trustworthiness and modern tech-savvy capability within a high-end B2B SaaS environment." src="https://lh3.googleusercontent.com/aida/AP1WRLuDIdrZnr92b4i8BZFWksOets7F8cT2uJ6PiWFSQkh0uFvJ065mQ5gm4flFEG0VcYbY0yIacG20vUhRV_5lguENv-GpzSGshzxtFDqfmTh5tqShZQwVovyZKBvZmFZ0lVRSUcQjh9lqkLksCQLhOMEtPr5pXJj4xuud9vdVWBx_xsghpojdrmhGsZKmaRw63CgUw9wU2nn33RtxhwseFa_jmQTj07drQ_FghddSk8UhbB40CT9urgR42MU"/>
+</div>
+</header>
+<main class="flex-grow px-margin pt-xl pb-32">
+<!-- Step Progress -->
+<div class="mb-xl">
+<div class="flex items-center justify-between mb-sm">
+<div class="flex flex-col items-center flex-1">
+<div class="w-8 h-8 rounded-full bg-primary text-on-primary flex items-center justify-center font-bold z-10">1</div>
+<span class="font-label-sm text-label-sm mt-xs text-primary">上传简历</span>
+</div>
+<div class="h-0.5 bg-outline-variant flex-1 -mt-5"></div>
+<div class="flex flex-col items-center flex-1">
+<div class="w-8 h-8 rounded-full bg-surface-container-highest text-on-surface-variant flex items-center justify-center font-bold z-10">2</div>
+<span class="font-label-sm text-label-sm mt-xs text-on-surface-variant">AI 解析</span>
+</div>
+<div class="h-0.5 bg-outline-variant flex-1 -mt-5"></div>
+<div class="flex flex-col items-center flex-1">
+<div class="w-8 h-8 rounded-full bg-surface-container-highest text-on-surface-variant flex items-center justify-center font-bold z-10">3</div>
+<span class="font-label-sm text-label-sm mt-xs text-on-surface-variant">画像生成</span>
+</div>
+</div>
+</div>
+<!-- Headline -->
+<div class="mb-lg">
+<h2 class="font-headline-lg-mobile text-headline-lg-mobile text-on-surface mb-xs">导入简历</h2>
+<p class="text-on-surface-variant font-body-sm text-body-sm">智能提取简历关键信息，秒级生成人才画像。</p>
+</div>
+<!-- Upload Area -->
+<div class="upload-dashed relative bg-surface border-2 border-transparent rounded-xl flex flex-col items-center justify-center py-2xl px-lg mb-lg transition-all duration-300 hover:bg-surface-container-low group" id="drop-area">
+<input accept=".pdf,.doc,.docx" class="hidden" id="fileElem" type="file"/>
+<div class="w-16 h-16 rounded-full bg-primary-fixed flex items-center justify-center mb-md group-hover:scale-110 transition-transform duration-300">
+<span class="material-symbols-outlined text-primary text-4xl">upload_file</span>
+</div>
+<p class="font-headline-sm text-headline-sm text-on-surface mb-xs">点击或拖拽上传简历</p>
+<p class="text-on-surface-variant font-body-sm text-body-sm text-center">支持 PDF, Word 格式 (最大 20MB)</p>
+<button class="absolute inset-0 w-full h-full cursor-pointer opacity-0" onclick="document.getElementById('fileElem').click()"></button>
+</div>
+<!-- Natural Language Warning Card -->
+<div class="bg-tertiary-fixed text-on-tertiary-fixed p-md rounded-xl flex gap-md mb-lg border border-tertiary/10">
+<span class="material-symbols-outlined text-tertiary">info</span>
+<div class="flex-1">
+<p class="font-label-md text-label-md font-bold mb-1">温馨提示</p>
+<p class="font-body-sm text-body-sm leading-relaxed">
+                    复杂的排版可能会影响 AI 解析的准确性，建议使用标准的单栏或双栏格式。
+                </p>
+</div>
+</div>
+<!-- Security Assurance -->
+<div class="flex items-center justify-center gap-xs text-on-surface-variant opacity-75 py-sm">
+<span class="material-symbols-outlined text-sm">lock</span>
+<span class="font-label-sm text-label-sm">您的简历数据已加密，仅用于画像生成</span>
+</div>
+<!-- Recently Uploaded (Optional Visual Density) -->
+<div class="mt-xl">
+<h3 class="font-label-md text-label-md text-on-surface-variant uppercase tracking-wider mb-md">最近解析</h3>
+<div class="space-y-sm">
+<div class="bg-surface p-md rounded-lg border border-outline-variant flex items-center gap-md">
+<div class="w-10 h-10 bg-error-container text-error rounded flex items-center justify-center">
+<span class="material-symbols-outlined">description</span>
+</div>
+<div class="flex-1 overflow-hidden">
+<p class="font-body-md text-body-md truncate font-medium">张思远的简历_2023.pdf</p>
+<p class="font-body-sm text-body-sm text-on-surface-variant">2.4 MB · 1小时前</p>
+</div>
+<span class="material-symbols-outlined text-on-surface-variant">more_vert</span>
+</div>
+</div>
+</div>
+</main>
+<!-- Bottom Actions Shell -->
+<footer class="fixed bottom-0 left-0 w-full bg-surface border-t border-outline-variant px-margin py-md flex gap-md z-50">
+<button class="flex-1 h-12 rounded-lg border border-outline text-secondary font-label-md text-label-md hover:bg-surface-container transition-colors">
+            取消
+        </button>
+<button class="flex-[2] h-12 rounded-lg bg-primary text-on-primary font-label-md text-label-md shadow-lg shadow-primary/20 active:scale-[0.98] transition-all flex items-center justify-center gap-sm" id="start-parse">
+<span>开始解析</span>
+<span class="material-symbols-outlined text-sm">rocket_launch</span>
+</button>
+</footer>
+<script>
+        const dropArea = document.getElementById('drop-area');
+        const startParseBtn = document.getElementById('start-parse');
+
+        ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
+            dropArea.addEventListener(eventName, preventDefaults, false);
+        });
+
+        function preventDefaults(e) {
+            e.preventDefault();
+            e.stopPropagation();
+        }
+
+        ['dragenter', 'dragover'].forEach(eventName => {
+            dropArea.addEventListener(eventName, () => {
+                dropArea.classList.add('bg-primary-container/20');
+                dropArea.classList.add('border-primary');
+            }, false);
+        });
+
+        ['dragleave', 'drop'].forEach(eventName => {
+            dropArea.addEventListener(eventName, () => {
+                dropArea.classList.remove('bg-primary-container/20');
+                dropArea.classList.remove('border-primary');
+            }, false);
+        });
+
+        dropArea.addEventListener('drop', handleDrop, false);
+
+        function handleDrop(e) {
+            const dt = e.dataTransfer;
+            const files = dt.files;
+            handleFiles(files);
+        }
+
+        function handleFiles(files) {
+            if (files.length > 0) {
+                const fileName = files[0].name;
+                dropArea.innerHTML = `
+                    <div class="w-16 h-16 rounded-full bg-secondary-container flex items-center justify-center mb-md">
+                        <span class="material-symbols-outlined text-secondary text-4xl">task</span>
+                    </div>
+                    <p class="font-headline-sm text-headline-sm text-on-surface mb-xs">${fileName}</p>
+                    <p class="text-primary font-label-md text-label-md">准备就绪，点击下方开始解析</p>
+                `;
+            }
+        }
+
+        startParseBtn.addEventListener('click', () => {
+            startParseBtn.innerHTML = `
+                <svg class="animate-spin h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                    <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                    <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                </svg>
+                <span class="ml-2">解析中...</span>
+            `;
+            setTimeout(() => {
+                alert('解析成功，正在跳转画像页面...');
+                window.location.reload();
+            }, 2000);
+        });
+    </script>
+</body></html>

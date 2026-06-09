@@ -1,0 +1,345 @@
+<!DOCTYPE html>
+
+<html lang="zh-CN"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>AI Talent Agent - 上传简历</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:wght@400;500;600;700&amp;family=Courier+Prime&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                    "surface-container": "#e5eeff",
+                    "on-secondary": "#ffffff",
+                    "on-primary": "#ffffff",
+                    "tertiary": "#006242",
+                    "secondary": "#565e74",
+                    "inverse-surface": "#213145",
+                    "secondary-fixed": "#dae2fd",
+                    "primary-fixed": "#dbe1ff",
+                    "inverse-on-surface": "#eaf1ff",
+                    "tertiary-fixed": "#6ffbbe",
+                    "background": "#f8f9ff",
+                    "surface-container-low": "#eff4ff",
+                    "on-primary-container": "#eeefff",
+                    "on-tertiary-fixed-variant": "#005236",
+                    "on-surface": "#0b1c30",
+                    "outline-variant": "#c3c6d7",
+                    "surface-container-lowest": "#ffffff",
+                    "primary": "#004ac6",
+                    "surface-bright": "#f8f9ff",
+                    "on-background": "#0b1c30",
+                    "primary-fixed-dim": "#b4c5ff",
+                    "surface-dim": "#cbdbf5",
+                    "outline": "#737686",
+                    "tertiary-fixed-dim": "#4edea3",
+                    "on-primary-fixed": "#00174b",
+                    "on-secondary-fixed-variant": "#3f465c",
+                    "tertiary-container": "#007d55",
+                    "inverse-primary": "#b4c5ff",
+                    "surface": "#f8f9ff",
+                    "surface-tint": "#0053db",
+                    "error": "#ba1a1a",
+                    "error-container": "#ffdad6",
+                    "on-error": "#ffffff",
+                    "on-tertiary-fixed": "#002113",
+                    "on-error-container": "#93000a",
+                    "secondary-container": "#dae2fd",
+                    "on-tertiary": "#ffffff",
+                    "on-primary-fixed-variant": "#003ea8",
+                    "surface-variant": "#d3e4fe",
+                    "on-secondary-container": "#5c647a",
+                    "on-secondary-fixed": "#131b2e",
+                    "on-surface-variant": "#434655",
+                    "on-tertiary-container": "#bdffdb",
+                    "primary-container": "#2563eb",
+                    "surface-container-highest": "#d3e4fe",
+                    "surface-container-high": "#dce9ff",
+                    "secondary-fixed-dim": "#bec6e0"
+            },
+            "borderRadius": {
+                    "DEFAULT": "0.125rem",
+                    "lg": "0.25rem",
+                    "xl": "0.5rem",
+                    "full": "0.75rem"
+            },
+            "spacing": {
+                    "margin-tablet": "24px",
+                    "margin-desktop": "40px",
+                    "base": "8px",
+                    "gutter": "24px",
+                    "stack-md": "12px",
+                    "margin-mobile": "16px",
+                    "stack-sm": "4px",
+                    "stack-lg": "24px",
+                    "container-max": "1440px"
+            },
+            "fontFamily": {
+                    "label-sm": ["Hanken Grotesk"],
+                    "headline-lg": ["Hanken Grotesk"],
+                    "display-lg": ["Hanken Grotesk"],
+                    "label-md": ["Hanken Grotesk"],
+                    "body-sm": ["Hanken Grotesk"],
+                    "headline-md": ["Hanken Grotesk"],
+                    "headline-lg-mobile": ["Hanken Grotesk"],
+                    "body-lg": ["Hanken Grotesk"],
+                    "code": ["Courier Prime"],
+                    "display-md": ["Hanken Grotesk"],
+                    "body-md": ["Hanken Grotesk"]
+            },
+            "fontSize": {
+                    "label-sm": ["12px", {"lineHeight": "16px", "letterSpacing": "0.02em", "fontWeight": "500"}],
+                    "headline-lg": ["24px", {"lineHeight": "32px", "fontWeight": "600"}],
+                    "display-lg": ["36px", {"lineHeight": "44px", "letterSpacing": "-0.02em", "fontWeight": "700"}],
+                    "label-md": ["14px", {"lineHeight": "16px", "fontWeight": "600"}],
+                    "body-sm": ["14px", {"lineHeight": "20px", "fontWeight": "400"}],
+                    "headline-md": ["20px", {"lineHeight": "28px", "fontWeight": "600"}],
+                    "headline-lg-mobile": ["20px", {"lineHeight": "28px", "fontWeight": "600"}],
+                    "body-lg": ["18px", {"lineHeight": "28px", "fontWeight": "400"}],
+                    "code": ["14px", {"lineHeight": "20px", "fontWeight": "400"}],
+                    "display-md": ["30px", {"lineHeight": "38px", "letterSpacing": "-0.01em", "fontWeight": "700"}],
+                    "body-md": ["16px", {"lineHeight": "24px", "fontWeight": "400"}]
+            }
+          },
+        },
+      }
+    </script>
+<style>
+        body { font-family: 'Hanken Grotesk', sans-serif; background-color: #f8f9ff; }
+        .material-symbols-outlined { font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24; }
+        .drop-zone-active { border-color: #2563eb; background-color: #e5eeff; }
+        .glass-panel { backdrop-filter: blur(12px); background: rgba(255, 255, 255, 0.8); border: 1px solid #e2e8f0; }
+        .scanning-line { height: 2px; background: linear-gradient(90deg, transparent, #2563eb, transparent); animation: scan 3s linear infinite; }
+        @keyframes scan { 0% { transform: translateY(0); } 100% { transform: translateY(320px); } }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col bg-background text-on-surface">
+<!-- TopNavBar -->
+<header class="bg-surface-container-lowest dark:bg-inverse-surface border-b border-outline-variant dark:border-outline sticky top-0 z-50">
+<div class="flex justify-between items-center w-full px-margin-desktop max-w-container-max mx-auto h-16">
+<div class="flex items-center gap-8">
+<span class="font-headline-md text-headline-md font-bold text-primary dark:text-primary-fixed-dim">AI Talent Agent</span>
+<nav class="hidden md:flex gap-6 items-center">
+<a class="text-on-surface-variant dark:text-surface-variant pb-1 hover:text-primary dark:hover:text-primary-fixed-dim transition-colors duration-200 font-label-md text-label-md" href="#">首页</a>
+<a class="text-primary dark:text-primary-fixed-dim border-b-2 border-primary dark:border-primary-fixed-dim pb-1 font-bold font-label-md text-label-md" href="#">我的简历</a>
+<a class="text-on-surface-variant dark:text-surface-variant pb-1 hover:text-primary dark:hover:text-primary-fixed-dim transition-colors duration-200 font-label-md text-label-md" href="#">AI 面试</a>
+<a class="text-on-surface-variant dark:text-surface-variant pb-1 hover:text-primary dark:hover:text-primary-fixed-dim transition-colors duration-200 font-label-md text-label-md" href="#">个人画像</a>
+</nav>
+</div>
+<div class="flex items-center gap-4">
+<button class="p-2 rounded-full hover:bg-surface-container transition-colors"><span class="material-symbols-outlined">notifications</span></button>
+<button class="p-2 rounded-full hover:bg-surface-container transition-colors"><span class="material-symbols-outlined">settings</span></button>
+<div class="w-8 h-8 rounded-full bg-secondary-container flex items-center justify-center overflow-hidden">
+<img alt="User avatar" class="w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida/AP1WRLulKTZXXn3QNkrCgnywhdlVBY41ASj7xMF_yqHNnIYCHswFaimyR_SoZN6lkvZj9n3-1ku1Df1ssJwo_UiaDMQnzAYUnI2r87MqhgkcIhiVR0uRTioILhGoBHa-F1mIAZKo-Tyk7tzo2Imk2qOE9NjVa99e1HlAfrVBtDbl-4W4VTQsLPUrgFu3OzdUqYdpdTCSOVbROEoAG9oqW7lcIaQrsidvJ75mTHCBf-toCvhEEWSM5Rr4tfzPN68"/>
+</div>
+</div>
+</div>
+</header>
+<main class="flex-grow container mx-auto px-margin-mobile md:px-margin-desktop py-stack-lg flex flex-col items-center">
+<!-- Step Indicator -->
+<div class="w-full max-w-4xl mb-stack-lg flex items-center justify-between">
+<div class="flex items-center gap-3">
+<div class="w-8 h-8 rounded-full bg-primary text-white flex items-center justify-center font-bold">1</div>
+<span class="font-headline-md text-headline-md text-primary">第一步：上传您的简历</span>
+</div>
+<div class="hidden md:flex items-center gap-4">
+<div class="h-[1px] w-24 bg-outline-variant"></div>
+<div class="w-8 h-8 rounded-full border border-outline-variant text-outline flex items-center justify-center font-bold">2</div>
+<span class="text-outline font-label-md text-label-md">AI 解析与核对</span>
+<div class="h-[1px] w-24 bg-outline-variant"></div>
+<div class="w-8 h-8 rounded-full border border-outline-variant text-outline flex items-center justify-center font-bold">3</div>
+<span class="text-outline font-label-md text-label-md">生成画像</span>
+</div>
+</div>
+<!-- Main Content Area: Bento-ish Layout -->
+<div class="grid grid-cols-1 lg:grid-cols-12 gap-gutter w-full max-w-6xl">
+<!-- Left Column: Upload Area -->
+<div class="lg:col-span-8 flex flex-col gap-gutter">
+<div class="relative group bg-surface-container-lowest border-2 border-dashed border-outline-variant rounded-xl p-12 flex flex-col items-center justify-center transition-all hover:border-primary hover:bg-surface-container-low cursor-pointer" id="drop-zone">
+<input accept=".pdf,.doc,.docx,.jpg,.jpeg" class="absolute inset-0 w-full h-full opacity-0 cursor-pointer" id="file-input" type="file"/>
+<div class="w-20 h-20 rounded-full bg-primary-fixed text-primary flex items-center justify-center mb-6 group-hover:scale-110 transition-transform">
+<span class="material-symbols-outlined text-4xl" style="font-variation-settings: 'FILL' 1;">upload_file</span>
+</div>
+<h3 class="font-headline-md text-headline-md mb-2">拖拽文件至此 或 <span class="text-primary">点击浏览</span></h3>
+<p class="font-body-md text-body-md text-on-surface-variant">支持 PDF, Word (Doc/Docx) 或 JPG 图片格式 (最大 20MB)</p>
+<!-- Progress Placeholder (Hidden by default) -->
+<div class="hidden w-full mt-8 max-w-sm" id="upload-progress">
+<div class="flex justify-between items-center mb-2">
+<span class="font-label-md text-label-md text-primary">正在上传: Resume_2024.pdf</span>
+<span class="font-label-sm text-label-sm">75%</span>
+</div>
+<div class="h-2 bg-surface-container rounded-full overflow-hidden">
+<div class="h-full bg-primary w-3/4"></div>
+</div>
+</div>
+</div>
+<!-- UX Warning -->
+<div class="bg-error-container/20 border border-error/20 p-6 rounded-xl flex gap-4 items-start">
+<span class="material-symbols-outlined text-error" style="font-variation-settings: 'FILL' 1;">warning</span>
+<div>
+<h4 class="font-label-md text-label-md text-on-error-container mb-1">温馨提示</h4>
+<p class="font-body-sm text-body-sm text-on-error-container">检测到您的简历使用了复杂的排版布局。为了确保 AI 解析的准确性，建议使用标准的单栏或双栏格式，并尽量避免使用背景图片或过多复杂的表格装饰。</p>
+</div>
+</div>
+</div>
+<!-- Right Column: Parsing Instructions -->
+<div class="lg:col-span-4 flex flex-col gap-gutter">
+<div class="glass-panel p-8 rounded-xl relative overflow-hidden h-full">
+<div class="relative z-10">
+<h3 class="font-headline-md text-headline-md mb-4 flex items-center gap-2">
+<span class="material-symbols-outlined text-primary">psychology</span>
+                            AI 深度解析
+                        </h3>
+<p class="font-body-md text-body-md text-on-surface-variant mb-6 leading-relaxed">
+                            我们将通过 AI 技术深度解析您的经历，并生成初步的人才画像。系统会自动识别以下关键信息：
+                        </p>
+<ul class="space-y-4">
+<li class="flex items-center gap-3 text-on-surface">
+<span class="material-symbols-outlined text-tertiary text-sm">check_circle</span>
+<span class="font-label-md text-label-md">核心技能与技术栈</span>
+</li>
+<li class="flex items-center gap-3 text-on-surface">
+<span class="material-symbols-outlined text-tertiary text-sm">check_circle</span>
+<span class="font-label-md text-label-md">职业发展轨迹分析</span>
+</li>
+<li class="flex items-center gap-3 text-on-surface">
+<span class="material-symbols-outlined text-tertiary text-sm">check_circle</span>
+<span class="font-label-md text-label-md">项目成就与影响力</span>
+</li>
+</ul>
+<div class="mt-12 bg-primary/5 p-4 rounded-lg border border-primary/10">
+<p class="font-label-sm text-label-sm text-primary mb-2 italic">“AI 助理正在就位，准备为您打造专业档案。”</p>
+</div>
+</div>
+<!-- Decorative Element -->
+<div class="absolute bottom-0 right-0 opacity-10 pointer-events-none transform translate-x-1/4 translate-y-1/4">
+<span class="material-symbols-outlined text-[200px]" style="font-variation-settings: 'wght' 100;">data_object</span>
+</div>
+</div>
+</div>
+</div>
+<!-- Action Area -->
+<div class="w-full max-w-6xl mt-10 flex flex-col md:flex-row items-center justify-between gap-6 border-t border-outline-variant pt-stack-lg">
+<div class="flex items-center gap-2 text-on-surface-variant">
+<span class="material-symbols-outlined">security</span>
+<span class="font-label-sm text-label-sm">您的简历数据已加密，仅用于画像生成</span>
+</div>
+<div class="flex gap-4">
+<button class="px-8 py-3 rounded-xl font-label-md text-label-md border border-outline text-on-surface-variant hover:bg-surface-container transition-all">取消</button>
+<button class="px-10 py-3 rounded-xl font-label-md text-label-md bg-primary text-white shadow-lg hover:shadow-xl hover:bg-primary-container active:scale-95 transition-all flex items-center gap-2" id="start-parsing">
+<span class="material-symbols-outlined">auto_awesome</span>
+                    开始解析
+                </button>
+</div>
+</div>
+</main>
+<!-- Footer -->
+<footer class="w-full py-stack-lg px-margin-desktop border-t border-outline-variant dark:border-outline mt-auto bg-surface-container dark:bg-on-secondary-fixed">
+<div class="max-w-container-max mx-auto flex flex-col md:flex-row justify-between items-center gap-6">
+<div class="flex flex-col gap-2">
+<span class="font-headline-sm text-headline-sm font-semibold text-secondary dark:text-secondary-fixed-dim">AI Talent Agent</span>
+<span class="font-body-sm text-body-sm text-on-secondary-fixed-variant dark:text-secondary-fixed-dim">© 2024 AI Talent Agent. 版权所有。</span>
+</div>
+<div class="flex flex-wrap justify-center gap-6">
+<a class="font-label-sm text-label-sm text-on-secondary-fixed-variant dark:text-secondary-fixed-dim hover:text-primary dark:hover:text-primary-fixed-dim underline transition-all" href="#">ATS 集成</a>
+<a class="font-label-sm text-label-sm text-on-secondary-fixed-variant dark:text-secondary-fixed-dim hover:text-primary dark:hover:text-primary-fixed-dim underline transition-all" href="#">Excel 支持</a>
+<a class="font-label-sm text-label-sm text-on-secondary-fixed-variant dark:text-secondary-fixed-dim hover:text-primary dark:hover:text-primary-fixed-dim underline transition-all" href="#">飞书连接器</a>
+<a class="font-label-sm text-label-sm text-on-secondary-fixed-variant dark:text-secondary-fixed-dim hover:text-primary dark:hover:text-primary-fixed-dim underline transition-all" href="#">隐私政策</a>
+<a class="font-label-sm text-label-sm text-on-secondary-fixed-variant dark:text-secondary-fixed-dim hover:text-primary dark:hover:text-primary-fixed-dim underline transition-all" href="#">服务条款</a>
+</div>
+</div>
+</footer>
+<!-- Parsing Overlay -->
+<div class="fixed inset-0 bg-black/50 backdrop-blur-md z-[100] hidden flex items-center justify-center" id="parsing-overlay">
+<div class="bg-surface-container-lowest p-10 rounded-2xl max-w-md w-full shadow-2xl flex flex-col items-center text-center">
+<div class="w-24 h-32 border-2 border-primary-fixed rounded-lg relative overflow-hidden mb-8">
+<div class="scanning-line absolute w-full top-0"></div>
+<div class="absolute inset-0 flex flex-col gap-2 p-2 opacity-30">
+<div class="h-1 bg-outline-variant w-3/4"></div>
+<div class="h-1 bg-outline-variant w-full"></div>
+<div class="h-1 bg-outline-variant w-1/2"></div>
+<div class="h-1 bg-outline-variant w-5/6"></div>
+<div class="h-1 bg-outline-variant w-2/3"></div>
+</div>
+</div>
+<h3 class="font-headline-md text-headline-md mb-2">AI 正在深度解析中...</h3>
+<p class="font-body-md text-body-md text-on-surface-variant mb-6">我们正在扫描您的简历细节，提取核心技能与项目经验。这通常需要 5-10 秒。</p>
+<div class="w-full bg-surface-container rounded-full h-1.5 overflow-hidden">
+<div class="bg-primary h-full w-0 transition-all duration-300" id="parsing-bar"></div>
+</div>
+<div class="mt-4 font-label-sm text-label-sm text-primary uppercase tracking-widest">处理数据资产</div>
+</div>
+</div>
+<script>
+        const dropZone = document.getElementById('drop-zone');
+        const fileInput = document.getElementById('file-input');
+        const startParsingBtn = document.getElementById('start-parsing');
+        const parsingOverlay = document.getElementById('parsing-overlay');
+        const parsingBar = document.getElementById('parsing-bar');
+        const progressSection = document.getElementById('upload-progress');
+
+        // Drag and drop handlers
+        ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
+            dropZone.addEventListener(eventName, preventDefaults, false);
+        });
+
+        function preventDefaults(e) {
+            e.preventDefault();
+            e.stopPropagation();
+        }
+
+        ['dragenter', 'dragover'].forEach(eventName => {
+            dropZone.addEventListener(eventName, () => dropZone.classList.add('drop-zone-active'), false);
+        });
+
+        ['dragleave', 'drop'].forEach(eventName => {
+            dropZone.addEventListener(eventName, () => dropZone.classList.remove('drop-zone-active'), false);
+        });
+
+        dropZone.addEventListener('drop', handleDrop, false);
+
+        function handleDrop(e) {
+            const dt = e.dataTransfer;
+            const files = dt.files;
+            handleFiles(files);
+        }
+
+        fileInput.addEventListener('change', function() {
+            handleFiles(this.files);
+        });
+
+        function handleFiles(files) {
+            if(files.length > 0) {
+                const fileName = files[0].name;
+                progressSection.classList.remove('hidden');
+                progressSection.querySelector('span:first-child').textContent = `已就绪: ${fileName}`;
+                // Simulate quick upload
+                setTimeout(() => {
+                    progressSection.querySelector('.bg-primary').style.width = '100%';
+                    progressSection.querySelector('span:last-child').textContent = '100%';
+                }, 500);
+            }
+        }
+
+        startParsingBtn.addEventListener('click', () => {
+            parsingOverlay.classList.remove('hidden');
+            let progress = 0;
+            const interval = setInterval(() => {
+                progress += Math.random() * 15;
+                if (progress > 100) {
+                    progress = 100;
+                    clearInterval(interval);
+                    setTimeout(() => {
+                        alert('解析完成！即将进入预览页面。');
+                        parsingOverlay.classList.add('hidden');
+                    }, 500);
+                }
+                parsingBar.style.width = progress + '%';
+            }, 400);
+        });
+    </script>
+</body></html>
