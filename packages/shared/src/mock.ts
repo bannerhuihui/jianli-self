@@ -112,13 +112,44 @@ export const mockResumeVersionTexts: Record<ResumeVersionKey, string> = {
   ].join('\n'),
 };
 
+export interface MatchDisplayExtra {
+  avatar: string;
+  company: string;
+  reasons: string[];
+  tags: string[];
+}
+
+export const mockMatchExtras: Record<string, MatchDisplayExtra> = {
+  'c-001': {
+    avatar:
+      'https://lh3.googleusercontent.com/aida/AP1WRLuqVcWtoRILIou0Vy6NNPh9-16prkvuj-SwxzRgLEH5oUXaS6qa81-N-pOWiK0LE_NwqsO5cRj3xIkzYElKu9G_M-danPB2YtdJrwpLW_WvB3niHBoSM22eQUk4wWq1kEAoN1KRba2RcE8NMG_hHr45RtscWtslVTee5lHgcswA6OIwIx1Z79vg0P9r0GBbyndoawnhXoUwBeXYxXCFRU8C-G4q-bdgS_HWCV7a3XAQ2Z-eqrABLvhdKw',
+    company: '字节跳动',
+    reasons: [
+      '具备深厚的超大规模集群调度经验，曾主导万级节点迁移项目。',
+      '技术栈与JD 100% 契合，擅长 Go / C++ 及 PyTorch 优化。',
+      '候选人近期对“云原生+AI”方向有明确求职意愿，与岗位目标高度同步。',
+    ],
+    tags: ['高活跃', '大厂背景'],
+  },
+  'c-002': {
+    avatar:
+      'https://lh3.googleusercontent.com/aida/AP1WRLs_LxjyyIJAFR_y0TwwE06SVyS0qtr51rgdTBWnh7CoVRPTyJ--xsOcj0PO1VjhwQ2-lJ5k7mYNhYroDLOSDqUOnUb51GoksaX-guk0QIW-vDL0hNsTBxmWAesWMSHytDdrufrslI_HSGE2QA5RZLKuBdDez--aphhJJ0-CyMchNE_jJPijURQ5mx5GB7eM4HmJJtkwwpy2JpV02Mo5oP4kHSVqXqctVt1pqgirPgsQP8wZEDYVfJAXcA',
+    company: '阿里云',
+    reasons: [
+      '在分布式系统一致性协议领域有学术突破，发表多篇顶会论文。',
+      '深刻理解云原生架构，对于高性能算力分配有独到见解。',
+    ],
+    tags: ['博士专家', '名校校友'],
+  },
+};
+
 export const mockMatches: MatchResult[] = [
   {
     candidate: { id: 'c-001', name: '林子杰', title: '资深架构师', location: '上海', experienceYears: 12, education: '清华大学 · 硕士' },
     totalScore: 94,
     breakdown: { experience: 96, skills: 92, profile: 98, careerPreference: 88 },
     reasons: ['具备大型分布式系统经验', '技术栈与 JD 高度匹配', '近期求职意向明确'],
-    risks: ['英语口语待验证'],
+    risks: ['英文口语'],
     interviewQuestions: ['请说明一次分布式系统一致性问题的解决方案。', '请介绍你如何推动跨团队技术方案落地。'],
   },
   {
@@ -126,7 +157,7 @@ export const mockMatches: MatchResult[] = [
     totalScore: 88,
     breakdown: { experience: 85, skills: 94, profile: 99, careerPreference: 75 },
     reasons: ['系统设计能力突出', '算法与工程结合经验强', '学术背景扎实'],
-    risks: ['到岗时间待确认'],
+    risks: ['职涯跳槽频率'],
     interviewQuestions: ['请确认近期到岗时间和岗位方向偏好。', '请说明一次高性能系统优化经历。'],
   },
 ];

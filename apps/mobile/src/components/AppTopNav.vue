@@ -1,25 +1,32 @@
 <template>
   <view class="top-nav">
-    <view class="brand">
-      <text class="brand-title">{{ title || 'AI Talent Agent' }}</text>
-      <text v-if="subtitle" class="brand-subtitle">{{ subtitle }}</text>
-    </view>
-    <view class="nav-links desktop-only">
-      <navigator
-        v-for="item in normalizedItems"
-        :key="item.label"
-        :url="item.url"
-        class="nav-link"
-        :class="{ active: item.label === active }"
-      >
-        {{ item.label }}
-      </navigator>
+    <view class="nav-inner">
+      <view class="nav-left">
+        <text class="brand-title">{{ title || 'AI Talent Agent' }}</text>
+        <view class="nav-links desktop-only">
+          <navigator
+            v-for="item in normalizedItems"
+            :key="item.label"
+            :url="item.url"
+            class="nav-link"
+            :class="{ active: item.label === active }"
+          >
+            {{ item.label }}
+          </navigator>
+        </view>
+      </view>
+      <view v-if="showActions" class="nav-actions desktop-only">
+        <view class="action-icon"><AppIcon name="notifications" :size="24" color="currentColor" /></view>
+        <view class="action-icon"><AppIcon name="settings" :size="24" color="currentColor" /></view>
+        <image class="user-avatar" src="https://lh3.googleusercontent.com/aida/AP1WRLu30TAtDshHijIOAoQ0uMx6rISLB5HBhsRBmYwnoecXp4U_My3590PLluvURJ1MN4KaMpTgJvq8XvlHOsrWnVcb6gqO7PQy1ekAOuJSZG_S4SX-zPn8fTkyRbgiawKLuyS8o6w0Nv_s9DwTvc1vno23ghD2SXqLvSnzuQDRuVVwAx6xoX8puBhkbumIe7qN8KZShafTJ2kUh3RW2pTFJwCfBMR-phVm5ux0pU3xMWg-dcqSiho0lf3IYSY" mode="aspectFill" />
+      </view>
     </view>
   </view>
 </template>
 
 <script setup lang="ts">
 import { computed } from 'vue';
+import AppIcon from './AppIcon.vue';
 
 type NavItem = string | {
   label: string;
@@ -28,15 +35,16 @@ type NavItem = string | {
 
 const props = withDefaults(defineProps<{
   title?: string;
-  subtitle?: string;
   active?: string;
   items?: NavItem[];
+  showActions?: boolean;
 }>(), {
   items: () => [
     { label: '首页', url: '/pages/index/index' },
     { label: '求职者流程', url: '/pages/candidate/upload/index' },
     { label: 'HR 工作台', url: '/pages/hr/job/index' },
   ],
+  showActions: true,
 });
 
 const normalizedItems = computed(() => props.items.map((item) => {
@@ -51,26 +59,92 @@ const normalizedItems = computed(() => props.items.map((item) => {
 .top-nav {
   position: sticky;
   top: 0;
-  z-index: 20;
+  z-index: 50;
+  border-bottom: 2rpx solid #c3c6d7;
+  background: #ffffff;
+}
+.nav-inner {
   display: flex;
   align-items: center;
-  justify-content: flex-start;
-  gap: 32rpx;
-  min-height: 92rpx;
+  justify-content: space-between;
+  width: 100%;
+  max-width: 1440px;
+  min-height: 128rpx;
+  margin: 0 auto;
   padding: 0 32rpx;
-  border-bottom: 2rpx solid #c3c6d7;
-  background: rgba(255, 255, 255, 0.94);
+  box-sizing: border-box;
 }
-.brand { display: flex; flex-direction: column; gap: 6rpx; flex-shrink: 0; }
-.brand-title { color: #004ac6; font-size: 34rpx; font-weight: 900; letter-spacing: -0.5rpx; }
-.brand-subtitle { color: #565e74; font-size: 24rpx; }
-.nav-links { flex: 1; justify-content: center; gap: 52rpx; }
-.nav-link { color: #343849; font-size: 30rpx; font-weight: 900; padding: 32rpx 0 26rpx; border-bottom: 5rpx solid transparent; text-decoration: none; }
-.nav-link.active { color: #004ac6; border-bottom-color: #004ac6; }
+.nav-left {
+  display: flex;
+  align-items: center;
+  gap: 64rpx;
+  min-width: 0;
+}
+.brand-title {
+  flex-shrink: 0;
+  color: #004ac6;
+  font-size: 40rpx;
+  font-weight: 700;
+  line-height: 1.4;
+}
+.nav-links {
+  gap: 48rpx;
+  align-items: center;
+}
+.nav-link {
+  color: #434655;
+  font-size: 28rpx;
+  font-weight: 600;
+  line-height: 1.14;
+  padding: 0 0 8rpx;
+  border-bottom: 4rpx solid transparent;
+  text-decoration: none;
+}
+.nav-link.active {
+  color: #004ac6;
+  font-weight: 700;
+  border-bottom-color: #004ac6;
+}
+.nav-actions {
+  display: flex;
+  align-items: center;
+  gap: 32rpx;
+  flex-shrink: 0;
+}
+.action-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 48rpx;
+  height: 48rpx;
+  color: #434655;
+  transition: color 0.2s ease;
+  cursor: pointer;
+}
+.action-icon:hover { color: #004ac6; }
+.user-avatar {
+  width: 64rpx;
+  height: 64rpx;
+  border-radius: 999rpx;
+  border: 2rpx solid #c3c6d7;
+  background: #e5eeff;
+}
+
 @media (min-width: 768px) {
-  .top-nav { min-height: 78px; padding: 0 48px; gap: 72px; }
-  .brand-title { font-size: 28px; }
-  .nav-links { justify-content: flex-start; gap: 48px; }
-  .nav-link { font-size: 20px; padding: 28px 0 22px; border-bottom-width: 4px; }
+  .nav-inner {
+    min-height: 64px;
+    padding: 0 80px;
+  }
+  .nav-left { gap: 64px; }
+  .brand-title { font-size: 20px; line-height: 28px; }
+  .nav-links { gap: 48px; }
+  .nav-link {
+    font-size: 14px;
+    line-height: 16px;
+    padding-bottom: 4px;
+    border-bottom-width: 2px;
+  }
+  .nav-actions { gap: 16px; }
+  .user-avatar { width: 32px; height: 32px; }
 }
 </style>

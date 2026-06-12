@@ -1,0 +1,5 @@
+app:
+  agents:
+    mock-delay-ms: 200
+  auth:
+    jwt-secret: test-secret-key-with-at-least-32-chars

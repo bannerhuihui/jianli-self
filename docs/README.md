@@ -52,6 +52,12 @@
 16. `STITCH_UI_GUIDE.md`
    - 理解如何使用 Stitch 分批生成全套 UI。
 
+17. `API_CONTRACT.md`
+   - 理解第一版后端 HTTP API、鉴权扩展与求职者流程接口。
+
+18. `FRONTEND_ARCHITECTURE.md`
+   - 理解前端主线、共享层与 Java 后端边界。
+
 ## 文档职责边界
 
 | 文档 | 职责 |
@@ -72,6 +78,8 @@
 | `DESIGN_PRINCIPLES.md` | 定义 UI 气质、视觉方向和信息层级 |
 | `UI_MVP_SCOPE.md` | 定义第一轮 UI 原型范围 |
 | `STITCH_UI_GUIDE.md` | 定义使用 Stitch 生成 UI 的流程和提示词 |
+| `API_CONTRACT.md` | 定义 REST API、鉴权、异步任务与 `packages/domain` 对齐 |
+| `FRONTEND_ARCHITECTURE.md` | 定义 uni-app 主线、身份策略与后端预留 |
 
 ## 维护原则
 
@@ -84,4 +92,5 @@
 - 页面、组件或交互变化时，更新 `USER_FLOW.md`、`PAGE_SPEC.md` 和 `UI_COMPONENTS.md`。
 - UI 文案变化时，更新 `UI_CONTENT.md`。
 - 使用 Stitch 生成 UI 前，先检查 `UI_MVP_SCOPE.md` 和 `STITCH_UI_GUIDE.md`。
+- 后端接口或鉴权变化时，先更新 `API_CONTRACT.md`，再同步 `packages/domain` 与 `packages/api`。
 

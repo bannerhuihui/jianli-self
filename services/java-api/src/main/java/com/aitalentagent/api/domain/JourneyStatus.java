@@ -1,0 +1,14 @@
+package com.aitalentagent.api.domain;
+
+public enum JourneyStatus {
+    CREATED,
+    RESUME_UPLOADED,
+    RESUME_PARSING,
+    RESUME_REVIEW,
+    INTERVIEW_ACTIVE,
+    INTERVIEW_COMPLETED,
+    PROFILE_GENERATING,
+    PROFILE_READY,
+    RESUME_GENERATING,
+    COMPLETED
+}

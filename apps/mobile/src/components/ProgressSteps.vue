@@ -1,6 +1,20 @@
+<!--
+  流程步骤条：仅负责展示当前进度。
+  当传入 routes + navigable 时，可点击已到达的步骤进行跳转（见 utils/navigation.ts）。
+-->
 <template>
   <view class="steps" :style="{ gridTemplateColumns: `repeat(${steps.length}, 1fr)` }">
-    <view v-for="(step, index) in steps" :key="step" class="step" :class="{ active: index <= activeIndex }">
+    <view
+      v-for="(step, index) in steps"
+      :key="step"
+      class="step"
+      :class="{
+        active: index <= activeIndex,
+        current: index === activeIndex,
+        navigable: navigable && !!routes?.length,
+      }"
+      @tap="onStepTap(index)"
+    >
       <view class="dot">{{ index + 1 }}</view>
       <text class="label">{{ step }}</text>
     </view>
@@ -8,16 +22,25 @@
 </template>
 
 <script setup lang="ts">
-defineProps<{
+import { navigateFlowStep } from '../utils/navigation';
+
+const props = defineProps<{
   steps: string[];
   activeIndex: number;
+  routes?: readonly string[];
+  navigable?: boolean;
 }>();
+
+function onStepTap(index: number) {
+  if (!props.navigable || !props.routes?.length) return;
+  navigateFlowStep(props.routes, index, props.activeIndex);
+}
 </script>
 
 <style lang="scss" scoped>
+// 列数由模板内联 style 动态设置，此处不写死 repeat(4)
 .steps {
   display: grid;
-  grid-template-columns: repeat(4, 1fr);
   gap: 12rpx;
 }
 .step {
@@ -50,5 +73,11 @@ defineProps<{
 .active .label {
   color: #004ac6;
   font-weight: 800;
+}
+.current .dot {
+  box-shadow: 0 0 0 4rpx rgba(0, 74, 198, 0.16);
+}
+.step.navigable {
+  cursor: pointer;
 }
 </style>

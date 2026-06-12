@@ -1,0 +1,158 @@
+@import './variables';
+
+// ---------------------------------------------------------------------------
+// 全站按钮体系（flow-btn）
+// - 求职者 / HR 主流程操作统一使用 flow-btn--* 修饰类
+// - hr-primary-action / hr-secondary-action 保留为别名，避免大范围重命名
+// ---------------------------------------------------------------------------
+
+.flow-btn,
+.hr-primary-action,
+.hr-secondary-action {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 16rpx;
+  margin: 0;
+  min-height: 72rpx;
+  padding: 0 32rpx;
+  border-radius: 16rpx;
+  font-size: 28rpx;
+  font-weight: 600;
+  line-height: 1;
+  box-sizing: border-box;
+  &::after { border: none; }
+}
+
+.flow-btn--primary,
+.hr-primary-action {
+  border: none;
+  background: $primary;
+  color: #fff;
+  box-shadow: 0 4rpx 16rpx rgba(0, 74, 198, 0.12);
+}
+
+.flow-btn--primary-gradient,
+.hr-primary-action--gradient {
+  background: linear-gradient(135deg, #004ac6 0%, #2563eb 100%);
+}
+
+.flow-btn--secondary,
+.hr-secondary-action {
+  border: 2rpx solid $outline;
+  background: #fff;
+  color: $muted;
+}
+
+.flow-btn--secondary-surface,
+.hr-secondary-action--surface {
+  border-color: $outline-variant;
+  background: $surface-container;
+  color: $text;
+}
+
+// 成功态主按钮（如访谈完成）
+.flow-btn--success {
+  border: none;
+  background: $tertiary-container;
+  color: #fff;
+  box-shadow: 0 8rpx 24rpx rgba(0, 125, 85, 0.25);
+}
+
+.flow-btn--danger {
+  border: 2rpx solid $error;
+  background: #fff;
+  color: $error;
+}
+
+.flow-btn--ghost {
+  border: none;
+  background: $surface-low;
+  color: $primary;
+}
+
+.flow-btn--link {
+  padding: 0;
+  min-height: auto;
+  background: transparent;
+  color: $primary;
+  font-size: 26rpx;
+  font-weight: 600;
+}
+
+// 布局修饰
+.flow-btn--block { width: 100%; }
+.flow-btn--emphasis {
+  min-height: 96rpx;
+  font-size: 40rpx;
+  line-height: 1.4;
+  box-shadow: 0 16rpx 40rpx rgba(0, 74, 198, 0.2);
+}
+.flow-btn--compact {
+  min-height: 72rpx;
+  font-size: 24rpx;
+}
+
+.flow-btn[disabled],
+.flow-btn--primary[disabled],
+.flow-btn--secondary[disabled] {
+  opacity: 0.55;
+}
+
+// 分段切换（访谈页 文字/语音）
+.flow-segment {
+  min-height: 64rpx;
+  padding: 0 24rpx;
+  border-radius: 8rpx;
+  color: $muted;
+  background: transparent;
+  font-size: 24rpx;
+  font-weight: 600;
+  &::after { border: none; }
+}
+.flow-segment--active {
+  background: $primary;
+  color: #fff;
+  box-shadow: 0 4rpx 12rpx rgba(0, 74, 198, 0.18);
+}
+
+// 旧版全局类名兼容（人才画像等页已使用）
+.primary-button,
+.secondary-button,
+.ghost-button {
+  @extend .flow-btn;
+}
+.primary-button { @extend .flow-btn--primary; }
+.secondary-button { @extend .flow-btn--secondary; }
+.ghost-button { @extend .flow-btn--ghost; }
+
+@media (min-width: 768px) {
+  .flow-btn,
+  .hr-primary-action,
+  .hr-secondary-action {
+    min-height: 40px;
+    padding: 0 16px;
+    font-size: 14px;
+    border-radius: 8px;
+  }
+
+  .hr-primary-action,
+  .flow-btn--primary { padding: 0 24px; }
+
+  .flow-btn--emphasis {
+    min-height: 56px;
+    font-size: 20px;
+    border-radius: 12px;
+  }
+
+  .flow-btn--compact {
+    min-height: 40px;
+    font-size: 14px;
+    border-radius: 8px;
+  }
+
+  .flow-segment {
+    min-height: 36px;
+    font-size: 14px;
+  }
+}

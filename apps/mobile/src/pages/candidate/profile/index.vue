@@ -1,9 +1,9 @@
 <template>
-  <view class="page profile-page">
+  <view class="page candidate-flow-page profile-page">
     <AppTopNav active="求职者流程" />
 
     <view class="container profile-container">
-      <ProgressSteps :steps="candidateSteps" :active-index="3" />
+      <ProgressSteps v-bind="createFlowStepsProps(CANDIDATE_FLOW, 3)" navigable />
 
       <view class="overview-card">
         <view class="radar-panel">
@@ -88,20 +88,21 @@
         </view>
       </view>
 
-      <navigator url="/pages/candidate/resume/index" class="primary-button next-button">生成简历版本</navigator>
+      <navigator url="/pages/candidate/resume/index" class="flow-btn flow-btn--primary flow-btn--block">生成简历版本</navigator>
     </view>
   </view>
 </template>
 
 <script setup lang="ts">
 import { mockTalentProfile } from '@ai-talent-agent/shared';
+import { CANDIDATE_FLOW } from '../../../constants/flows';
+import { createFlowStepsProps } from '../../../utils/flow-steps';
 import AppTag from '../../../components/AppTag.vue';
 import AppTopNav from '../../../components/AppTopNav.vue';
 import AppIcon from '../../../components/AppIcon.vue';
 import ConfidenceBadge from '../../../components/ConfidenceBadge.vue';
 import ProgressSteps from '../../../components/ProgressSteps.vue';
 
-const candidateSteps = ['上传简历', '简历校对', 'AI 访谈', '人才画像', '简历生成'];
 const profile = mockTalentProfile;
 const evidenceEntries = [
   { icon: 'paperclip', title: '原始简历溯源', desc: '基于简历语境提取的 14 个核心能力证明' },
@@ -111,7 +112,6 @@ const evidenceEntries = [
 </script>
 
 <style lang="scss" scoped>
-.profile-page { min-height: 100vh; background: #f8f9ff; color: #0b1c30; }
 .profile-container { display: flex; flex-direction: column; gap: 32rpx; }
 .overview-card { display: grid; gap: 32rpx; border: 2rpx solid #c3c6d7; border-radius: 24rpx; padding: 32rpx; background: #fff; box-shadow: 0 8rpx 40rpx rgba(0, 74, 198, 0.08); }
 .radar-panel { display: flex; flex-direction: column; align-items: center; gap: 28rpx; }

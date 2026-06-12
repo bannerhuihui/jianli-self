@@ -1,0 +1,39 @@
+@import './variables';
+
+// 流程页通用壳：HR 与求职者侧共用背景与文字色。
+.hr-page,
+.candidate-flow-page {
+  min-height: 100vh;
+  background: $background;
+  color: $text;
+}
+
+// 流程页常见标题层级（按需叠加在页面容器内）。
+.flow-page-title {
+  display: block;
+  color: $text;
+  font-size: 60rpx;
+  font-weight: 700;
+  line-height: 1.27;
+  letter-spacing: -0.01em;
+}
+
+.flow-page-desc {
+  display: block;
+  margin-top: 8rpx;
+  color: $muted;
+  font-size: 32rpx;
+  line-height: 1.5;
+}
+
+@media (min-width: 768px) {
+  .flow-page-title {
+    font-size: 30px;
+    line-height: 38px;
+  }
+
+  .flow-page-desc {
+    font-size: 16px;
+    line-height: 24px;
+  }
+}

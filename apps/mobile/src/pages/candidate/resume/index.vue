@@ -1,20 +1,33 @@
 <template>
-  <view class="page resume-page">
+  <view class="page candidate-flow-page resume-page">
     <AppTopNav active="求职者流程" />
 
     <view class="container resume-container">
-      <ProgressSteps :steps="candidateSteps" :active-index="4" />
+      <ProgressSteps v-bind="createFlowStepsProps(CANDIDATE_FLOW, 4)" navigable />
 
       <section class="resume-header">
         <view>
-          <view class="breadcrumb"><text>我的简历</text><text>›</text><text class="current">导出生成</text></view>
+          <view class="breadcrumb">
+            <text>我的简历</text>
+            <AppIcon name="chevron_right" :size="16" color="#565e74" />
+            <text class="current">导出生成</text>
+          </view>
           <text class="page-title">生成您的专属简历版本</text>
           <text class="page-desc">基于 AI 深度分析，为您提供多维度的求职解决方案。</text>
         </view>
         <view class="export-actions">
-          <button class="export-button" :disabled="exporting" @tap="copyCurrent">复制内容</button>
-          <button class="export-button" :disabled="exporting" @tap="exportWord">导出 Word</button>
-          <button class="export-primary" :disabled="exporting" @tap="exportPdf">{{ exporting ? '导出中...' : '导出 PDF' }}</button>
+          <button class="flow-btn flow-btn--secondary" :disabled="exporting" @tap="copyCurrent">
+            <AppIcon name="content_copy" :size="20" color="#434655" />
+            <text>复制内容</text>
+          </button>
+          <button class="flow-btn flow-btn--secondary" :disabled="exporting" @tap="exportWord">
+            <AppIcon name="description" :size="20" color="#434655" />
+            <text>导出 Word</text>
+          </button>
+          <button class="flow-btn flow-btn--primary" :disabled="exporting" @tap="exportPdf">
+            <AppIcon name="download" :size="20" color="#ffffff" />
+            <text>{{ exporting ? '导出中...' : '导出 PDF' }}</text>
+          </button>
         </view>
       </section>
 
@@ -28,18 +41,26 @@
             @tap="selectVersion(version.key)"
           >
             <view class="version-top">
-              <view class="version-icon"><AppIcon :name="version.icon" :size="24" color="#004ac6" /></view>
+              <view class="version-icon">
+                <AppIcon :name="version.icon" :size="24" color="#004ac6" :filled="version.filled" />
+              </view>
               <AppTag :label="version.badge" :tone="version.tone" />
             </view>
             <text class="version-title">{{ version.title }}</text>
             <text class="version-desc">{{ version.desc }}</text>
-            <view v-if="selectedVersion === version.key" class="selected-row"><text>当前选中</text><text>✓</text></view>
+            <view v-if="selectedVersion === version.key" class="selected-row">
+              <text>当前选中</text>
+              <AppIcon name="check_circle" :size="18" color="#004ac6" filled />
+            </view>
           </view>
 
           <view class="export-note">
             <text class="note-title">关于导出</text>
             <text class="note-desc">所有版本均由 AI 针对您的目标岗位进行深度优化，确保在不同筛选环节中展现最佳状态。</text>
-            <view class="rule-link">查看简历优化规则</view>
+            <view class="rule-link">
+              <AppIcon name="info" :size="18" color="#004ac6" />
+              <text>查看简历优化规则</text>
+            </view>
           </view>
         </aside>
 
@@ -49,12 +70,17 @@
               <text class="tab active">预览界面</text>
               <text class="tab">渲染日志</text>
             </view>
-            <view class="zoom desktop-only"><text>-</text><text>85%</text><text>+</text><text>□</text></view>
+            <view class="zoom desktop-only">
+              <AppIcon name="zoom_out" :size="18" color="#565e74" />
+              <text>85%</text>
+              <AppIcon name="zoom_in" :size="18" color="#565e74" />
+              <AppIcon name="fullscreen" :size="18" color="#565e74" />
+            </view>
           </view>
 
           <view v-if="generateError" class="preview-error">
             <StatePanel tone="error" icon="info" icon-color="#ba1a1a" title="生成失败" description="当前版本暂时无法渲染，请重试或切换其他版本。">
-              <button class="export-primary retry-btn" @tap="regenerate">重新生成</button>
+              <button class="flow-btn flow-btn--primary retry-btn" @tap="regenerate">重新生成</button>
             </StatePanel>
           </view>
 
@@ -164,7 +190,10 @@
           <text class="metric-label">针对性建议岗位</text>
           <view class="role-tags"><AppTag label="后端架构师" tone="gray" /><AppTag label="技术专家" tone="gray" /></view>
         </view>
-        <button class="evidence-link" @tap="showEvidence">查看优化证据 →</button>
+        <button class="evidence-link" @tap="showEvidence">
+          <text>查看优化证据</text>
+          <AppIcon name="arrow_forward" :size="18" color="#004ac6" />
+        </button>
       </section>
     </view>
   </view>
@@ -172,6 +201,8 @@
 
 <script setup lang="ts">
 import { computed, ref } from 'vue';
+import { CANDIDATE_FLOW } from '../../../constants/flows';
+import { createFlowStepsProps } from '../../../utils/flow-steps';
 import { mockResumeVersionTexts, type ResumeVersionKey } from '@ai-talent-agent/shared';
 import AppTag from '../../../components/AppTag.vue';
 import AppTopNav from '../../../components/AppTopNav.vue';
@@ -180,7 +211,6 @@ import ProgressSteps from '../../../components/ProgressSteps.vue';
 import StatePanel from '../../../components/StatePanel.vue';
 import { copyText, runAsyncAction, showToast, simulateDelay } from '../../../utils/feedback';
 
-const candidateSteps = ['上传简历', '简历校对', 'AI 访谈', '人才画像', '简历生成'];
 const selectedVersion = ref<ResumeVersionKey>('ats');
 const generating = ref(false);
 const generateError = ref(false);
@@ -192,7 +222,8 @@ const versions = [
     title: 'ATS 版本',
     badge: '高通过率',
     tone: 'green' as const,
-    icon: 'compose',
+    icon: 'terminal',
+    filled: true,
     desc: '针对招聘系统算法优化，结构化文本优先，确保解析无误。',
   },
   {
@@ -200,7 +231,8 @@ const versions = [
     title: 'HR 版本',
     badge: '视觉优先',
     tone: 'blue' as const,
-    icon: 'font',
+    icon: 'palette',
+    filled: true,
     desc: '视觉美观、重点突出，适合 HR 人工快速阅读。',
   },
   {
@@ -208,7 +240,8 @@ const versions = [
     title: '平台简介',
     badge: '投递专用',
     tone: 'gray' as const,
-    icon: 'contact',
+    icon: 'language',
+    filled: false,
     desc: '适合招聘网站、内推平台和猎头渠道的短简介版本。',
   },
   {
@@ -216,7 +249,8 @@ const versions = [
     title: '邮件正文',
     badge: '可直接发送',
     tone: 'amber' as const,
-    icon: 'email',
+    icon: 'mail',
+    filled: false,
     desc: '用于邮件自荐或 HR 转发的正文模板，突出匹配亮点。',
   },
 ];
@@ -272,7 +306,6 @@ function showEvidence() {
 </script>
 
 <style lang="scss" scoped>
-.resume-page { min-height: 100vh; background: #f8f9ff; color: #0b1c30; }
 .resume-container { display: flex; flex-direction: column; gap: 40rpx; }
 .resume-header { display: flex; flex-direction: column; gap: 28rpx; }
 .breadcrumb { display: flex; align-items: center; gap: 12rpx; margin-bottom: 12rpx; color: #565e74; font-size: 24rpx; }
@@ -280,9 +313,6 @@ function showEvidence() {
 .page-title { display: block; color: #0b1c30; font-size: 52rpx; font-weight: 900; line-height: 1.2; }
 .page-desc { display: block; margin-top: 14rpx; color: #565e74; font-size: 28rpx; line-height: 1.7; }
 .export-actions { display: flex; flex-wrap: wrap; gap: 16rpx; }
-.export-button, .export-primary { min-height: 76rpx; border-radius: 18rpx; padding: 0 28rpx; font-size: 26rpx; font-weight: 900; }
-.export-button { border: 2rpx solid #c3c6d7; background: #fff; color: #434655; }
-.export-primary { background: #2563eb; color: #fff; box-shadow: 0 8rpx 22rpx rgba(0,74,198,0.16); }
 .resume-grid { display: grid; gap: 32rpx; }
 .version-column { display: flex; flex-direction: column; gap: 24rpx; }
 .version-card { position: relative; display: flex; flex-direction: column; gap: 18rpx; border: 2rpx solid #c3c6d7; border-radius: 24rpx; padding: 32rpx; background: #fff; }
@@ -291,17 +321,18 @@ function showEvidence() {
 .version-icon { display: flex; align-items: center; justify-content: center; width: 72rpx; height: 72rpx; border-radius: 16rpx; background: #e5eeff; color: #004ac6; font-size: 24rpx; font-weight: 900; }
 .version-title { color: #0b1c30; font-size: 34rpx; font-weight: 900; }
 .version-desc { color: #565e74; font-size: 26rpx; line-height: 1.65; }
-.selected-row { display: flex; align-items: center; gap: 8rpx; color: #004ac6; font-size: 26rpx; font-weight: 900; }
+.selected-row { display: flex; align-items: center; gap: 8rpx; color: #004ac6; font-size: 26rpx; font-weight: 600; }
+.rule-link { display: flex; align-items: center; gap: 12rpx; }
 .export-note { border: 2rpx solid #c3c6d7; border-radius: 24rpx; padding: 32rpx; background: #eff4ff; }
 .note-title { display: block; color: #0b1c30; font-weight: 900; margin-bottom: 18rpx; }
 .note-desc { display: block; color: #565e74; font-size: 26rpx; line-height: 1.65; }
-.rule-link { margin-top: 22rpx; color: #004ac6; font-size: 24rpx; font-weight: 900; }
+.rule-link { margin-top: 22rpx; color: #004ac6; font-size: 24rpx; font-weight: 600; }
 .preview-panel { overflow: hidden; display: flex; flex-direction: column; border: 2rpx solid #c3c6d7; border-radius: 24rpx; background: #fff; box-shadow: 0 6rpx 22rpx rgba(0,74,198,0.04); }
 .preview-toolbar { display: flex; align-items: center; justify-content: space-between; gap: 20rpx; min-height: 96rpx; padding: 0 32rpx; border-bottom: 2rpx solid #c3c6d7; background: #fff; }
 .tabs { display: flex; gap: 36rpx; }
 .tab { color: #565e74; font-size: 26rpx; font-weight: 900; }
 .tab.active { color: #004ac6; }
-.zoom { gap: 22rpx; color: #565e74; font-weight: 900; }
+.zoom { display: flex; align-items: center; gap: 16rpx; color: #565e74; font-weight: 600; }
 .preview-loading, .preview-error { min-height: 760rpx; display: flex; align-items: center; justify-content: center; padding: 48rpx; background: rgba(203,219,245,0.22); }
 .retry-btn { margin-top: 12rpx; min-height: 72rpx; padding: 0 32rpx; }
 .preview-stage { overflow-x: auto; min-height: 760rpx; padding: 48rpx; background: rgba(203,219,245,0.22); }
@@ -352,7 +383,15 @@ function showEvidence() {
 .metric-value { color: #004ac6; font-size: 48rpx; font-weight: 900; }
 .divider { width: 2rpx; height: 96rpx; background: #c3c6d7; }
 .role-tags { display: flex; flex-wrap: wrap; gap: 12rpx; margin-top: 12rpx; }
-.evidence-link { align-self: flex-start; color: #004ac6; background: transparent; font-weight: 900; }
+.evidence-link {
+  display: flex;
+  align-items: center;
+  gap: 8rpx;
+  align-self: flex-start;
+  color: #004ac6;
+  background: transparent;
+  font-weight: 600;
+}
 @media (min-width: 768px) {
   .resume-header { flex-direction: row; justify-content: space-between; align-items: flex-end; }
   .resume-grid { grid-template-columns: 4fr 8fr; }

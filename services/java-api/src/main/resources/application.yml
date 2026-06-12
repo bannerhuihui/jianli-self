@@ -1,0 +1,29 @@
+server:
+  port: 8080
+
+spring:
+  servlet:
+    multipart:
+      max-file-size: 20MB
+      max-request-size: 20MB
+
+app:
+  agents:
+    mode: mock
+    mock-delay-ms: 3000
+  auth:
+    jwt-secret: change-me-in-production-use-long-random-string
+    access-token-ttl-seconds: 604800
+    refresh-token-ttl-seconds: 2592000
+  invite:
+    enabled: false
+    code: beta-2026
+  cors:
+    allowed-origins:
+      - http://localhost:5173
+      - http://127.0.0.1:5173
+      - http://localhost:8081
+
+logging:
+  level:
+    com.aitalentagent: INFO
