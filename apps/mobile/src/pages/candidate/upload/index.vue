@@ -18,14 +18,14 @@
             </view>
           </view>
           <text class="parsing-title">AI 正在深度解析中...</text>
-          <text class="parsing-desc">我们正在扫描您的简历细节，提取核心技能与项目经验。这通常需要 5-10 秒。</text>
+          <text class="parsing-desc">我们正在扫描您的简历细节，提取核心技能与项目经验。这通常需要 1-2 分钟，请耐心等待。</text>
           <view class="parsing-track"><view class="parsing-bar" /></view>
           <text class="parsing-tag">处理数据资产</text>
         </view>
       </view>
 
       <view v-else-if="phase === 'error'" class="state-wrap">
-        <StatePanel tone="error" icon="warning" icon-color="#ba1a1a" title="简历解析失败" description="未能从当前文件中稳定提取结构化信息。可能是扫描件、复杂排版或文件损坏导致。">
+        <StatePanel tone="error" icon="warning" icon-color="#ba1a1a" title="简历解析失败" :description="errorMessage">
           <view class="state-actions">
             <button class="flow-btn flow-btn--secondary" @tap="phase = 'selected'">重新选择文件</button>
             <button class="flow-btn flow-btn--primary" @tap="retryParse">重试解析</button>
@@ -38,19 +38,41 @@
         <view class="upload-grid">
           <view class="left-column">
             <view class="drop-zone" :class="{ active: fileName }" @tap="selectFile">
-              <view class="upload-icon-wrap">
-                <AppIcon name="upload_file" :size="40" color="#004ac6" filled />
-              </view>
-              <text class="upload-title">拖拽文件至此 或 <text class="upload-link">点击浏览</text></text>
-              <text class="upload-desc">支持 PDF、Word、Docx 或 JPG 图片格式，最大 20MB</text>
-
-              <view v-if="fileName && uploadProgress > 0" class="progress-card">
-                <view class="progress-head">
-                  <text>正在上传: {{ fileName }}</text>
-                  <text>{{ uploadProgress }}%</text>
+              <template v-if="!fileName">
+                <view class="upload-icon-wrap">
+                  <AppIcon name="upload_file" :size="40" color="#004ac6" filled />
                 </view>
-                <view class="progress-track"><view class="progress-value" :style="{ width: `${uploadProgress}%` }" /></view>
-              </view>
+                <text class="upload-title">拖拽文件至此 或 <text class="upload-link">点击浏览</text></text>
+                <text class="upload-desc">支持 PDF、Word、Docx 或 JPG 图片格式，最大 20MB</text>
+              </template>
+
+              <template v-else>
+                <view class="selected-file">
+                  <view class="file-icon">
+                    <AppIcon name="description" :size="40" color="#004ac6" filled />
+                  </view>
+                  <view class="file-info">
+                    <text class="file-name">{{ fileName }}</text>
+                    <view class="file-status">
+                      <AppIcon name="check_circle" :size="18" color="#006242" filled />
+                      <text>文件已就绪，点击下方「开始解析」</text>
+                    </view>
+                  </view>
+                </view>
+
+                <view v-if="uploadProgress > 0" class="progress-card">
+                  <view class="progress-head">
+                    <text>正在上传: {{ fileName }}</text>
+                    <text>{{ uploadProgress }}%</text>
+                  </view>
+                  <view class="progress-track"><view class="progress-value" :style="{ width: `${uploadProgress}%` }" /></view>
+                </view>
+
+                <button class="flow-btn flow-btn--link reselect-btn" @tap.stop="selectFile">
+                  <AppIcon name="autorenew" :size="16" color="#004ac6" />
+                  <text>重新选择文件</text>
+                </button>
+              </template>
             </view>
 
             <view class="warning-card">
@@ -76,7 +98,6 @@
                 </view>
               </view>
               <view class="quote-box">“AI 助理正在就位，准备为您打造专业档案。”</view>
-              <text class="demo-link" @tap="enableFailDemo">查看解析失败示例</text>
             </view>
           </view>
         </view>
@@ -88,9 +109,9 @@
           </view>
           <view class="action-buttons">
             <navigator url="/pages/index/index" class="flow-btn flow-btn--secondary">取消</navigator>
-            <button class="flow-btn flow-btn--primary" @tap="startParse">
+            <button class="flow-btn flow-btn--primary" :disabled="!filePath" @tap="startParse">
               <AppIcon name="auto_awesome" :size="18" color="#ffffff" />
-              <text>开始解析</text>
+              <text>{{ filePath ? '开始解析' : '请先选择文件' }}</text>
             </button>
           </view>
         </view>
@@ -101,47 +122,74 @@
 
 <script setup lang="ts">
 import { ref } from 'vue';
+import { ApiClientError, uploadAndParseResume } from '@ai-talent-agent/api';
 import { CANDIDATE_FLOW } from '../../../constants/flows';
 import { createFlowStepsProps } from '../../../utils/flow-steps';
 import AppTopNav from '../../../components/AppTopNav.vue';
 import AppIcon from '../../../components/AppIcon.vue';
 import ProgressSteps from '../../../components/ProgressSteps.vue';
 import StatePanel from '../../../components/StatePanel.vue';
-import { showToast, simulateDelay } from '../../../utils/feedback';
+import { showToast } from '../../../utils/feedback';
 
 const checks = ['核心技能与技术栈', '职业发展轨迹分析', '项目成就与影响力'];
 
 type UploadPhase = 'idle' | 'selected' | 'parsing' | 'error';
 const phase = ref<UploadPhase>('idle');
 const fileName = ref('');
+const filePath = ref('');
 const uploadProgress = ref(0);
-const simulateFail = ref(false);
+const parsing = ref(false);
+const errorMessage = ref('未能从当前文件中稳定提取结构化信息。可能是扫描件、复杂排版或文件损坏导致。');
 
 function selectFile() {
-  fileName.value = 'Resume_2024.pdf';
-  uploadProgress.value = 75;
-  phase.value = 'selected';
-  showToast('文件已选择', 'success');
-}
-
-function enableFailDemo() {
-  simulateFail.value = true;
-  showToast('下次解析将模拟失败');
+  uni.chooseFile({
+    count: 1,
+    type: 'all',
+    extension: ['.pdf', '.doc', '.docx'],
+    success: (res) => {
+      const files = Array.isArray(res.tempFiles) ? res.tempFiles : [res.tempFiles];
+      const file = files[0] as { name?: string; path?: string } | undefined;
+      if (!file || !file.path) {
+        showToast('未选择文件');
+        return;
+      }
+      fileName.value = file.name || 'resume.pdf';
+      filePath.value = file.path;
+      uploadProgress.value = 0;
+      phase.value = 'selected';
+      showToast('文件已选择', 'success');
+    },
+    fail: () => {
+      showToast('选择文件失败');
+    },
+  });
 }
 
 async function startParse() {
-  if (!fileName.value) {
+  if (!filePath.value) {
     showToast('请先选择简历文件');
     return;
   }
+
   phase.value = 'parsing';
-  await simulateDelay(1600);
-  if (simulateFail.value) {
+  parsing.value = true;
+  uploadProgress.value = 0;
+
+  try {
+    await uploadAndParseResume(filePath.value, {
+      onUploadProgress: (percent) => {
+        uploadProgress.value = percent;
+      },
+    });
+    uni.navigateTo({ url: '/pages/candidate/review/index' });
+  } catch (error) {
     phase.value = 'error';
-    simulateFail.value = false;
-    return;
+    if (error instanceof ApiClientError) {
+      errorMessage.value = error.message;
+    }
+  } finally {
+    parsing.value = false;
   }
-  uni.navigateTo({ url: '/pages/candidate/review/index' });
 }
 
 function retryParse() {
@@ -269,6 +317,40 @@ function retryParse() {
 .progress-head text:last-child { font-size: 24rpx; font-weight: 500; }
 .progress-track { height: 8rpx; overflow: hidden; border-radius: 999rpx; background: #e5eeff; }
 .progress-value { height: 100%; background: #004ac6; transition: width 0.3s ease; }
+
+.selected-file {
+  display: flex;
+  align-items: center;
+  gap: 24rpx;
+  width: 100%;
+  max-width: 560rpx;
+  padding: 32rpx;
+  border: 2rpx solid #004ac6;
+  border-radius: 20rpx;
+  background: #fff;
+  box-shadow: 0 8rpx 24rpx rgba(0, 74, 198, 0.1);
+  text-align: left;
+}
+.file-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  width: 96rpx;
+  height: 96rpx;
+  border-radius: 16rpx;
+  background: #dbe1ff;
+}
+.file-info { flex: 1; display: flex; flex-direction: column; gap: 10rpx; min-width: 0; }
+.file-name {
+  color: #0b1c30;
+  font-size: 32rpx;
+  font-weight: 600;
+  line-height: 1.3;
+  word-break: break-all;
+}
+.file-status { display: flex; align-items: center; gap: 8rpx; color: #006242; font-size: 24rpx; line-height: 1.3; }
+.reselect-btn { margin-top: 32rpx; gap: 8rpx; }
 
 .warning-card {
   display: flex;

@@ -1,4 +1,4 @@
-@import './variables';
+@use './variables' as *;
 
 // 流程页通用壳：HR 与求职者侧共用背景与文字色。
 .hr-page,

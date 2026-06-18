@@ -28,15 +28,23 @@
         <view class="time-box">
           <view class="time-row">
             <text>剩余预计时长</text>
-            <text class="time-value">15 分钟</text>
+            <text class="time-value">{{ estimatedMinutes }} 分钟</text>
           </view>
-          <view class="small-track"><view class="small-value" /></view>
+          <view class="small-track"><view class="small-value" :style="{ width: `${Math.round(interviewProgress * 100)}%` }" /></view>
         </view>
       </aside>
 
       <section class="chat-main">
         <StatePanel
-          v-if="showLowConfidence"
+          v-if="isLoadingSession"
+          tone="info"
+          icon="hourglass_top"
+          icon-color="#004ac6"
+          title="正在加载访谈会话"
+          description="请稍候，我们正在同步你的历史问答。"
+        />
+        <StatePanel
+          v-else-if="showLowConfidence"
           tone="warning"
           icon="info"
           icon-color="#b45309"
@@ -54,8 +62,13 @@
                   :color="message.role === 'ai' ? '#004ac6' : '#565e74'"
                 />
               </view>
-              <view class="bubble" :class="message.role">
+              <view class="bubble" :class="[message.role, { thinking: message.thinking }]">
                 <text>{{ message.content }}</text>
+                <text v-if="message.thinking" class="thinking-dots">
+                  <text class="dot dot-1">.</text>
+                  <text class="dot dot-2">.</text>
+                  <text class="dot dot-3">.</text>
+                </text>
               </view>
             </view>
           </scroll-view>
@@ -68,9 +81,10 @@
                   :value="draftAnswer"
                   placeholder="输入您的回答..."
                   :disabled="isGenerating"
+                  :maxlength="MAX_INPUT_CHARS"
                   @input="onDraftInput"
                 />
-                <text class="char-count">已输入 {{ charCount }} 字</text>
+                <text class="char-count">{{ charCount }}/{{ MAX_INPUT_CHARS }}</text>
               </view>
               <view class="input-actions">
                 <view class="input-actions-left">
@@ -89,9 +103,11 @@
 
         <view class="quick-actions">
           <button class="flow-btn flow-btn--danger" @tap="abortInterview">中止面试</button>
-          <button class="flow-btn flow-btn--success" :disabled="isGenerating" @tap="finishInterview">
+          <button class="flow-btn flow-btn--success" :disabled="isGenerating || !canGenerateProfile" @tap="finishInterview">
             <AppIcon name="analytics" :size="18" color="#ffffff" />
-            <text>{{ isGenerating ? '正在生成画像...' : '结束面试并生成画像' }}</text>
+            <text>
+              {{ isGenerating ? '正在生成画像...' : (canGenerateProfile ? '结束面试并生成画像' : '继续回答以补全证据') }}
+            </text>
           </button>
         </view>
       </section>
@@ -100,14 +116,17 @@
         <view class="glass-panel insight-card">
           <view class="panel-title-row">
             <AppIcon name="track_changes" :size="18" color="#004ac6" />
-            <text class="panel-title">目标胜任力标签</text>
+            <text class="panel-title">目标胜任力标签（{{ stage }}）</text>
           </view>
           <view class="tag-list">
-            <text class="competency-pill active">团队领导力 (L4)</text>
-            <text class="competency-pill active">技术洞察 (L3)</text>
-            <text class="competency-pill">冲突解决 (L2)</text>
-            <text class="competency-pill">抗压能力</text>
-            <text class="competency-pill">沟通表达</text>
+            <text
+              v-for="item in (missingEvidence.length ? missingEvidence : ['证据完整度已满足，可进入画像'])"
+              :key="item"
+              class="competency-pill"
+              :class="{ active: missingEvidence.length > 0 }"
+            >
+              {{ item }}
+            </text>
           </view>
         </view>
 
@@ -116,7 +135,7 @@
             <AppIcon name="search_insights" :size="18" color="#004ac6" />
             <text class="panel-title">实时反馈建议</text>
           </view>
-          <text class="feedback-desc">AI 正在识别您的"冲突解决"能力。建议增加：</text>
+          <text class="feedback-desc">AI 正在根据你的回答补全证据链。建议增加：</text>
           <view class="suggestion-list">
             <view v-for="item in suggestions" :key="item" class="suggestion-item">
               <AppIcon name="add_circle" :size="16" color="#004ac6" />
@@ -219,22 +238,45 @@
 </template>
 
 <script setup lang="ts">
-import { computed, ref } from 'vue';
+import { computed, onMounted, ref } from 'vue';
+import {
+  ApiClientError,
+  completeInterview,
+  confirmStructuredResume,
+  ensureActiveJourneyId,
+  getInterviewSession,
+  startProfileGeneration,
+  submitInterviewTurn,
+  waitForTask,
+  skipInterviewQuestion,
+} from '@ai-talent-agent/api';
 import { CANDIDATE_FLOW } from '../../../constants/flows';
 import { createFlowStepsProps } from '../../../utils/flow-steps';
 import AppIcon from '../../../components/AppIcon.vue';
 import AppTopNav from '../../../components/AppTopNav.vue';
 import ProgressSteps from '../../../components/ProgressSteps.vue';
 import StatePanel from '../../../components/StatePanel.vue';
-import { runAsyncAction, showToast, simulateDelay } from '../../../utils/feedback';
+import { showToast } from '../../../utils/feedback';
 
 const mode = ref<'chat' | 'voice'>('chat');
-const draftAnswer = ref('我会先把差异拆成成本、风险和交付周期，再通过小范围验证降低争议。');
+const MAX_INPUT_CHARS = 2000;
+const draftAnswer = ref('');
 const isGenerating = ref(false);
+const isLoadingSession = ref(false);
+const journeyId = ref('');
+const stage = ref('experience_exploration');
+const missingEvidence = ref<string[]>([]);
+const canGenerateProfile = ref(false);
+const interviewProgress = ref(0);
 const answeredCount = ref(2);
 const skippedCount = ref(0);
 const totalSteps = 10;
-const currentStep = computed(() => Math.min(answeredCount.value + skippedCount.value + 1, totalSteps));
+const currentStep = computed(() => {
+  const byProgress = Math.ceil(interviewProgress.value * totalSteps);
+  const byTurns = answeredCount.value + skippedCount.value + 1;
+  return Math.min(totalSteps, Math.max(1, Math.max(byProgress, byTurns)));
+});
+const estimatedMinutes = computed(() => Math.max(1, Math.ceil((1 - interviewProgress.value) * 20)));
 
 const stepNames = ['自我介绍', '核心技能考核', '团队冲突处理', '项目难点攻克', '未来职业规划'];
 const stepItems = computed(() => stepNames.map((name, index) => {
@@ -246,55 +288,133 @@ const stepItems = computed(() => stepNames.map((name, index) => {
   return { index: stepNo, name, state };
 }));
 
-const charCount = computed(() => draftAnswer.value.trim().length);
+const charCount = computed(() => draftAnswer.value.length);
 const completenessScore = computed(() => Math.min(95, 48 + answeredCount.value * 12 - skippedCount.value * 8));
 const showLowConfidence = computed(() => completenessScore.value < 65 && answeredCount.value + skippedCount.value >= 2);
 
-type ChatMessage = { id: string; role: 'ai' | 'user'; content: string };
-const messages = ref<ChatMessage[]>([
-  { id: 'm1', role: 'ai', content: '好的，接下来请结合您的项目经历，谈谈您在团队合作中遇到冲突时是如何处理的？' },
-  { id: 'm2', role: 'user', content: '在我上一个负责的电商平台重构项目中，曾与技术负责人就架构选择产生了分歧。我主张使用微服务架构以应对未来的流量增长，而他担心引入过多复杂度。' },
-  { id: 'm3', role: 'ai', content: '这是一个很典型的架构分歧。请具体描述一下你是如何推动讨论并最终达成一致的？在这个过程中你使用了哪些数据或事实来支持你的观点？' },
-]);
-
-const followUpQuestions = [
-  '请分享一次你在高压交付下如何保持团队节奏的经历。',
-  '你未来 3 年的职业方向更偏向技术专家还是管理路线？',
-];
+type ChatMessage = { id: string; role: 'ai' | 'user'; content: string; thinking?: boolean };
+const messages = ref<ChatMessage[]>([]);
 
 const suggestions = ['如何量化评估方案优劣的细节', '最终落地后的业务反馈数据'];
 
-function onDraftInput(event: { detail: { value: string } }) {
-  draftAnswer.value = event.detail.value;
+function onDraftInput(event: any) {
+  draftAnswer.value = String(event.detail.value ?? '').slice(0, MAX_INPUT_CHARS);
 }
 
-function pushMessage(role: 'ai' | 'user', content: string) {
-  messages.value.push({ id: `m-${Date.now()}`, role, content });
+function pushMessage(role: 'ai' | 'user', content: string, options: { thinking?: boolean } = {}) {
+  messages.value.push({ id: `m-${Date.now()}-${Math.random().toString(16).slice(2, 8)}`, role, content, thinking: options.thinking });
 }
 
-function sendAnswer() {
-  const text = draftAnswer.value.trim();
+function hydrateFromSession(session: {
+  turns: Array<{ id: string; role: string; content: string }>;
+  canGenerateProfile: boolean;
+  missingEvidence: string[];
+  stage: string;
+  progress?: number;
+}) {
+  messages.value = session.turns.map((turn) => ({
+    id: turn.id,
+    role: turn.role === 'agent' ? 'ai' : 'user',
+    content: turn.content,
+    thinking: false,
+  }));
+  answeredCount.value = session.turns.filter((turn) => turn.role === 'user').length;
+  skippedCount.value = 0;
+  canGenerateProfile.value = session.canGenerateProfile;
+  missingEvidence.value = session.missingEvidence;
+  stage.value = session.stage;
+  interviewProgress.value = Math.max(0, Math.min(1, session.progress ?? 0));
+}
+
+async function initInterview() {
+  isLoadingSession.value = true;
+  try {
+    journeyId.value = await ensureActiveJourneyId();
+    try {
+      await confirmStructuredResume(journeyId.value);
+    } catch (error) {
+      if (!(error instanceof ApiClientError) || error.code !== 'JOURNEY_STATE_INVALID') {
+        throw error;
+      }
+    }
+    const session = await getInterviewSession(journeyId.value);
+    hydrateFromSession(session);
+  } catch (error) {
+    const message = error instanceof ApiClientError ? error.message : '加载访谈失败';
+    showToast(message, 'error');
+  } finally {
+    isLoadingSession.value = false;
+  }
+}
+
+onMounted(() => {
+  initInterview();
+});
+
+async function sendAnswer() {
+  const text = draftAnswer.value.trim().slice(0, MAX_INPUT_CHARS);
   if (!text) {
     showToast('请先输入回答');
     return;
   }
-  pushMessage('user', text);
-  draftAnswer.value = '';
-  answeredCount.value += 1;
-  const nextQuestion = followUpQuestions[answeredCount.value - 3];
-  if (nextQuestion) {
-    pushMessage('ai', nextQuestion);
-  } else {
-    pushMessage('ai', '感谢补充。如需继续，可回答更多问题；也可结束访谈生成人才画像。');
+  if (!journeyId.value) {
+    showToast('旅程未初始化', 'error');
+    return;
   }
-  showToast('回答已发送', 'success');
+  isGenerating.value = true;
+  draftAnswer.value = '';
+  pushMessage('user', text);
+  pushMessage('ai', 'AI 正在思考中...', { thinking: true });
+  const thinkingId = messages.value[messages.value.length - 1]?.id;
+  try {
+    const response = await submitInterviewTurn(journeyId.value, text);
+    if (thinkingId) {
+      const idx = messages.value.findIndex((item) => item.id === thinkingId);
+      if (idx >= 0) {
+        messages.value[idx] = {
+          ...messages.value[idx],
+          content: response.agentTurn.content,
+          thinking: false,
+        };
+      } else {
+        pushMessage('ai', response.agentTurn.content);
+      }
+    } else {
+      pushMessage('ai', response.agentTurn.content);
+    }
+    answeredCount.value += 1;
+    canGenerateProfile.value = response.canGenerateProfile;
+    missingEvidence.value = response.missingEvidence;
+    stage.value = response.stage;
+    interviewProgress.value = Math.max(interviewProgress.value, Math.min(1, currentStep.value / totalSteps));
+  } catch (error) {
+    if (thinkingId) {
+      messages.value = messages.value.filter((item) => item.id !== thinkingId);
+    }
+    const message = error instanceof ApiClientError ? error.message : '发送失败';
+    showToast(message, 'error');
+  } finally {
+    isGenerating.value = false;
+  }
 }
 
-function skipQuestion() {
-  skippedCount.value += 1;
-  pushMessage('user', '（跳过此题）');
-  pushMessage('ai', '已记录跳过。你可以继续回答下一题，或在信息不足时先结束访谈。');
-  showToast('已跳过，置信度可能降低');
+async function skipQuestion() {
+  if (!journeyId.value) {
+    showToast('旅程未初始化', 'error');
+    return;
+  }
+  isGenerating.value = true;
+  try {
+    const session = await skipInterviewQuestion(journeyId.value);
+    skippedCount.value += 1;
+    hydrateFromSession(session);
+    showToast('已跳过，置信度可能降低');
+  } catch (error) {
+    const message = error instanceof ApiClientError ? error.message : '跳过失败';
+    showToast(message, 'error');
+  } finally {
+    isGenerating.value = false;
+  }
 }
 
 function abortInterview() {
@@ -311,6 +431,10 @@ function abortInterview() {
 }
 
 async function finishInterview() {
+  if (!journeyId.value) {
+    showToast('旅程未初始化', 'error');
+    return;
+  }
   if (completenessScore.value < 55) {
     uni.showModal({
       title: '信息可能不足',
@@ -327,10 +451,23 @@ async function finishInterview() {
 
 async function navigateToProfile() {
   isGenerating.value = true;
-  const ok = await runAsyncAction(
-    () => simulateDelay(1400),
-    { loading: '生成画像中', success: '人才画像已生成' },
-  );
+  let ok = false;
+  try {
+    uni.showLoading({ title: '生成画像中', mask: true });
+    await completeInterview(journeyId.value);
+    const accepted = await startProfileGeneration(journeyId.value);
+    const task = await waitForTask(accepted.taskId, { timeoutMs: 180000 });
+    if (task.status === 'failed') {
+      throw new ApiClientError(task.error?.code ?? 'TASK_FAILED', task.error?.message ?? '画像生成失败');
+    }
+    ok = true;
+    showToast('人才画像已生成', 'success');
+  } catch (error) {
+    const message = error instanceof ApiClientError ? error.message : '画像生成失败';
+    showToast(message, 'error');
+  } finally {
+    uni.hideLoading();
+  }
   isGenerating.value = false;
   if (ok) uni.navigateTo({ url: '/pages/candidate/profile/index' });
 }
@@ -459,7 +596,7 @@ function toggleMic() {
   background: #c3c6d7;
   overflow: hidden;
 }
-.small-value { width: 30%; height: 100%; background: #004ac6; border-radius: 999rpx; }
+.small-value { height: 100%; background: #004ac6; border-radius: 999rpx; transition: width 0.35s ease; }
 
 .chat-main {
   display: flex;
@@ -522,6 +659,26 @@ function toggleMic() {
   border-bottom-right-radius: 4rpx;
   background: #004ac6;
   color: #fff;
+}
+.bubble.thinking {
+  color: #2563eb;
+}
+.thinking-dots {
+  display: inline-flex;
+  margin-left: 6rpx;
+  color: #2563eb;
+}
+.thinking-dots .dot {
+  display: inline-block;
+  width: 10rpx;
+  animation: dot-bounce 1.2s infinite ease-in-out;
+}
+.thinking-dots .dot-1 { animation-delay: 0s; }
+.thinking-dots .dot-2 { animation-delay: 0.2s; }
+.thinking-dots .dot-3 { animation-delay: 0.4s; }
+@keyframes dot-bounce {
+  0%, 80%, 100% { opacity: 0.2; transform: translateY(0); }
+  40% { opacity: 1; transform: translateY(-4rpx); }
 }
 
 .chat-input-area {

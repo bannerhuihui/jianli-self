@@ -5,7 +5,7 @@ import com.aitalentagent.api.common.Ids;
 import com.aitalentagent.api.config.AppProperties;
 import com.aitalentagent.api.domain.UserAccount;
 import com.aitalentagent.api.auth.TokenService;
-import com.aitalentagent.api.repository.InMemoryStore;
+import com.aitalentagent.api.repository.AppStore;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
@@ -15,11 +15,11 @@ import java.util.Optional;
 @Service
 public class AuthService {
 
-    private final InMemoryStore store;
+    private final AppStore store;
     private final TokenService tokenService;
     private final AppProperties appProperties;
 
-    public AuthService(InMemoryStore store, TokenService tokenService, AppProperties appProperties) {
+    public AuthService(AppStore store, TokenService tokenService, AppProperties appProperties) {
         this.store = store;
         this.tokenService = tokenService;
         this.appProperties = appProperties;

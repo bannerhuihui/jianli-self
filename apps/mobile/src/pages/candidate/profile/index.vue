@@ -94,6 +94,9 @@
 </template>
 
 <script setup lang="ts">
+import { computed, onMounted, ref } from 'vue';
+import type { ApiTalentProfile } from '@ai-talent-agent/api';
+import { getTalentProfileForActiveJourney } from '@ai-talent-agent/api';
 import { mockTalentProfile } from '@ai-talent-agent/shared';
 import { CANDIDATE_FLOW } from '../../../constants/flows';
 import { createFlowStepsProps } from '../../../utils/flow-steps';
@@ -102,13 +105,31 @@ import AppTopNav from '../../../components/AppTopNav.vue';
 import AppIcon from '../../../components/AppIcon.vue';
 import ConfidenceBadge from '../../../components/ConfidenceBadge.vue';
 import ProgressSteps from '../../../components/ProgressSteps.vue';
+import { showToast } from '../../../utils/feedback';
 
-const profile = mockTalentProfile;
-const evidenceEntries = [
-  { icon: 'paperclip', title: '原始简历溯源', desc: '基于简历语境提取的 14 个核心能力证明' },
-  { icon: 'chat', title: '面试语料库分析', desc: 'AI 深度识别的逻辑思维与实时沟通关键片段' },
-  { icon: 'bars', title: '外部公开数据交叉比对', desc: '公开项目、技术影响力和行业背景的多维度分析' },
-];
+const profile = ref<ApiTalentProfile>(mockTalentProfile as unknown as ApiTalentProfile);
+
+const evidenceEntries = computed(() => {
+  const evidence = profile.value.evidence ?? [];
+  if (evidence.length === 0) {
+    return [
+      { icon: 'paperclip', title: '原始简历溯源', desc: '暂未返回证据链详情，建议继续访谈补充信息。' },
+    ];
+  }
+  return evidence.slice(0, 6).map((item) => ({
+    icon: item.source === 'interview' ? 'chat' : 'paperclip',
+    title: `${item.source === 'interview' ? '面试' : '简历'}证据 ${item.id}`,
+    desc: item.snippet || '无片段内容',
+  }));
+});
+
+onMounted(async () => {
+  try {
+    profile.value = await getTalentProfileForActiveJourney();
+  } catch (error) {
+    showToast('画像加载失败，显示示例数据', 'none');
+  }
+});
 </script>
 
 <style lang="scss" scoped>

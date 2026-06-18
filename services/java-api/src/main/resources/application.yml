@@ -6,6 +6,8 @@ spring:
     multipart:
       max-file-size: 20MB
       max-request-size: 20MB
+  config:
+    import: optional:file:./application-local.yml
 
 app:
   agents:
@@ -23,6 +25,20 @@ app:
       - http://localhost:5173
       - http://127.0.0.1:5173
       - http://localhost:8081
+  llm:
+    volcengine:
+      api-key: ${VOLCENGINE_API_KEY:}
+      base-url: https://ark.cn-beijing.volces.com/api/v3
+      endpoints:
+        resume: ${VOLCENGINE_ENDPOINT_RESUME:}
+        interview: ${VOLCENGINE_ENDPOINT_INTERVIEW:}
+        profile: ${VOLCENGINE_ENDPOINT_PROFILE:}
+        resume-builder: ${VOLCENGINE_ENDPOINT_RESUME_BUILDER:}
+      agent-options:
+        resume-temperature: 0.2
+        interview-temperature: 0.5
+        profile-temperature: 0.3
+        resume-builder-temperature: 0.5
 
 logging:
   level:

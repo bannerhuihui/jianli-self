@@ -1,6 +1,6 @@
-@import './variables';
-@import './layout';
-@import './buttons';
+@use './variables' as *;
+@use './layout';
+@use './buttons';
 
 .material-symbols-outlined {
   font-family: 'Material Symbols Outlined';

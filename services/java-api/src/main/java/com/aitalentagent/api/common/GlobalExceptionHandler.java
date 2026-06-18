@@ -40,6 +40,8 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(Exception.class)
     public ResponseEntity<ErrorResponse> handleGeneric(Exception ex, HttpServletRequest request) {
         String requestId = requestId(request);
+        org.slf4j.LoggerFactory.getLogger(GlobalExceptionHandler.class)
+                .error("Unhandled exception", ex);
         ErrorBody body = new ErrorBody("INTERNAL_ERROR", "服务端错误", Map.of());
         return ResponseEntity.internalServerError().body(ErrorResponse.of(body, requestId));
     }

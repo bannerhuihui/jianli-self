@@ -137,8 +137,9 @@ const tips = [
   { index: 3, title: '不限格式', desc: '您可以直接粘贴现有的 JD 文本，AI 会自动为您整理。' },
 ];
 
-function onJdInput(event: { detail: { value: string } }) {
-  jdText.value = event.detail.value;
+function onJdInput(event: Event) {
+  const detail = (event as unknown as { detail?: { value?: string } }).detail;
+  jdText.value = String(detail?.value ?? '');
 }
 
 function clearInput() {

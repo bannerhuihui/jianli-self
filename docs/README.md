@@ -93,4 +93,5 @@
 - UI 文案变化时，更新 `UI_CONTENT.md`。
 - 使用 Stitch 生成 UI 前，先检查 `UI_MVP_SCOPE.md` 和 `STITCH_UI_GUIDE.md`。
 - 后端接口或鉴权变化时，先更新 `API_CONTRACT.md`，再同步 `packages/domain` 与 `packages/api`。
+- 火山方舟模型或 Endpoint 变化时，更新 `VOLCENGINE_SETUP.md`。
 

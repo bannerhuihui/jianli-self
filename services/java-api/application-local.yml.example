@@ -1,0 +1,36 @@
+# 复制为 application-local.yml 并填入真实值（application-local.yml 已在 .gitignore）
+#
+# 推荐映射（你已开通的模型）：
+#   resume / profile     -> Doubao-Seed-2.0-pro  的 ep-xxx
+#   interview / builder  -> Doubao-Seed-2.0-lite 的 ep-xxx
+# 也可以四个 endpoint 全部填同一个 pro 接入点。
+
+spring:
+  datasource:
+    url: jdbc:postgresql://your-host:5432/test_db
+    username: resume_app
+    password: your-db-password
+  jpa:
+    hibernate:
+      ddl-auto: validate
+    open-in-view: false
+  flyway:
+    enabled: true
+    locations: classpath:db/migration
+
+app:
+  agents:
+    mode: llm
+  storage:
+    type: proxy-oss
+    proxy-oss:
+      upload-url: https://game.jyiai.com/api/ali/oss/upload
+      prefix: jianli/resume
+  llm:
+    volcengine:
+      api-key: your-ark-api-key-here
+      endpoints:
+        resume: ep-your-pro-endpoint-id
+        interview: ep-your-lite-endpoint-id
+        profile: ep-your-pro-endpoint-id
+        resume-builder: ep-your-lite-endpoint-id

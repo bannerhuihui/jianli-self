@@ -1,1 +1,1 @@
-{"name":"@ai-talent-agent/api","version":"0.1.0","type":"module","main":"src/index.ts","types":"src/index.ts","dependencies":{"@ai-talent-agent/domain":"file:../domain","@ai-talent-agent/shared":"file:../shared"}}
+{"name":"@ai-talent-agent/api","version":"0.1.0","type":"module","main":"src/index.ts","types":"src/index.ts","dependencies":{"@ai-talent-agent/domain":"file:../domain","@ai-talent-agent/shared":"file:../shared"},"devDependencies":{"@dcloudio/types":"^3.4.8"}}

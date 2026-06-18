@@ -9,4 +9,12 @@ export default defineConfig({
     // 工作区包走源码，避免预构建缓存遗漏新增 export 导致页面加载失败
     exclude: ['@ai-talent-agent/shared', '@ai-talent-agent/domain', '@ai-talent-agent/api'],
   },
+  css: {
+    preprocessorOptions: {
+      scss: {
+        // 使用 Dart Sass 新编译器 API，消除 legacy-js-api 弃用警告
+        api: 'modern-compiler',
+      },
+    },
+  },
 });

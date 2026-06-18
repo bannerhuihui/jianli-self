@@ -1,17 +1,16 @@
 package com.aitalentagent.api.service;
 
+import com.aitalentagent.api.agent.AgentOrchestrator;
 import com.aitalentagent.api.agent.MockDataFactory;
 import com.aitalentagent.api.common.ApiException;
 import com.aitalentagent.api.common.Ids;
 import com.aitalentagent.api.domain.*;
-import com.aitalentagent.api.repository.InMemoryStore;
+import com.aitalentagent.api.repository.AppStore;
+import com.aitalentagent.api.storage.ResumeStorage;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
 import java.time.Instant;
 import java.util.*;
 
@@ -22,14 +21,21 @@ public class JourneyService {
     private static final Set<String> ALLOWED_VERSION_KEYS = Set.of("ats", "hr", "platform", "email");
     private static final long MAX_FILE_SIZE = 20L * 1024 * 1024;
 
-    private final InMemoryStore store;
+    private final AppStore store;
     private final TaskService taskService;
-    private final Path uploadDir;
+    private final AgentOrchestrator agentOrchestrator;
+    private final ResumeStorage resumeStorage;
 
-    public JourneyService(InMemoryStore store, TaskService taskService) {
+    public JourneyService(
+            AppStore store,
+            TaskService taskService,
+            AgentOrchestrator agentOrchestrator,
+            ResumeStorage resumeStorage
+    ) {
         this.store = store;
         this.taskService = taskService;
-        this.uploadDir = Path.of(System.getProperty("java.io.tmpdir"), "ai-talent-agent-uploads");
+        this.agentOrchestrator = agentOrchestrator;
+        this.resumeStorage = resumeStorage;
     }
 
     public Journey createJourney(String userId) {
@@ -72,7 +78,7 @@ public class JourneyService {
         entity.setFileName(file.getOriginalFilename());
         entity.setFileType(extension);
         entity.setFileSize(file.getSize());
-        entity.setStoragePath(persistFile(entity.getId(), extension, file));
+        entity.setStoragePath(resumeStorage.store(journeyId, entity.getId(), extension, file));
         store.saveResumeFile(entity);
 
         journey.setResumeFileId(entity.getId());
@@ -118,6 +124,12 @@ public class JourneyService {
                 .orElseThrow(() -> new ApiException("JOURNEY_STATE_INVALID", "结构化简历尚未生成", HttpStatus.CONFLICT));
     }
 
+    public ResumeFileEntity getResumeFile(String journeyId, String userId) {
+        requireOwnedJourney(journeyId, userId);
+        return store.findLatestResumeFileByJourneyId(journeyId)
+                .orElseThrow(() -> new ApiException("RESUME_FILE_NOT_FOUND", "未找到原始简历文件", HttpStatus.NOT_FOUND));
+    }
+
     public StructuredResumeEntity patchStructuredResume(String journeyId, String userId, StructuredResumePatch patch) {
         StructuredResumeEntity resume = getStructuredResume(journeyId, userId);
         if (patch.basicInfo() != null) {
@@ -145,18 +157,18 @@ public class JourneyService {
         StructuredResumeEntity resume = getStructuredResume(journeyId, userId);
         validateResumeForInterview(resume);
 
-        InterviewSessionEntity session = store.findInterviewSessionByJourneyId(journeyId).orElseGet(() -> {
-            InterviewSessionEntity created = new InterviewSessionEntity();
-            created.setId(Ids.next("iv"));
-            created.setJourneyId(journeyId);
-            created.setMissingEvidence(List.of("communicationAbility", "leadershipAbility"));
-            return created;
-        });
-
-        if (session.getTurns().isEmpty()) {
-            appendFirstQuestion(session);
+        InterviewSessionEntity session = store.findInterviewSessionByJourneyId(journeyId).orElse(null);
+        if (session == null) {
+            session = agentOrchestrator.startInterview(journeyId);
+            store.saveInterviewSession(session);
+        } else if (session.getTurns().isEmpty()) {
+            InterviewSessionEntity started = agentOrchestrator.startInterview(journeyId);
+            session.setTurns(started.getTurns());
+            session.setStage(started.getStage());
+            session.setMissingEvidence(started.getMissingEvidence());
+            session.setQuestionIndex(started.getQuestionIndex());
+            store.saveInterviewSession(session);
         }
-        store.saveInterviewSession(session);
 
         journey.setInterviewSessionId(session.getId());
         journey.setStatus(JourneyStatus.INTERVIEW_ACTIVE);
@@ -180,38 +192,10 @@ public class JourneyService {
         }
 
         InterviewSessionEntity session = getInterview(journeyId, userId);
-        InterviewTurnEntity userTurn = createTurn("user", content, null, null);
-        session.getTurns().add(userTurn);
-
-        List<MockDataFactory.MockInterviewQuestion> questions = MockDataFactory.interviewQuestions();
-        int nextIndex = session.getQuestionIndex() + 1;
-        InterviewTurnEntity agentTurn;
-
-        if (nextIndex < questions.size()) {
-            MockDataFactory.MockInterviewQuestion question = questions.get(nextIndex);
-            agentTurn = createTurn(
-                    "agent",
-                    question.question(),
-                    question.questionReason(),
-                    question.targetCapabilities()
-            );
-            session.setQuestionIndex(nextIndex);
-            session.setStage(question.stage());
-            session.setCanGenerateProfile(nextIndex >= 1);
-        } else {
-            agentTurn = createTurn(
-                    "agent",
-                    "感谢补充。如果您暂无更多信息，可以结束访谈并生成人才画像。",
-                    "访谈信息已较充分",
-                    List.of()
-            );
-            session.setCanGenerateProfile(true);
-            session.setStage("wrap_up");
-        }
-
-        session.getTurns().add(agentTurn);
+        StructuredResumeEntity resume = getStructuredResume(journeyId, userId);
+        InterviewTurnResponse response = agentOrchestrator.processInterviewTurn(journeyId, session, content, resume);
         store.saveInterviewSession(session);
-        return new InterviewTurnResponse(userTurn, agentTurn, session);
+        return response;
     }
 
     public InterviewSessionEntity skipInterviewQuestion(String journeyId, String userId) {
@@ -338,17 +322,6 @@ public class JourneyService {
         }
     }
 
-    private String persistFile(String fileId, String extension, MultipartFile file) {
-        try {
-            Files.createDirectories(uploadDir);
-            Path target = uploadDir.resolve(fileId + "." + extension);
-            file.transferTo(target);
-            return target.toString();
-        } catch (IOException ex) {
-            throw new ApiException("INTERNAL_ERROR", "文件保存失败", HttpStatus.INTERNAL_SERVER_ERROR);
-        }
-    }
-
     private String extension(String fileName) {
         if (fileName == null || !fileName.contains(".")) {
             return "";
@@ -384,19 +357,6 @@ public class JourneyService {
         if (resume.getBasicInfo().getName() == null || resume.getBasicInfo().getName().isBlank()) {
             throw new ApiException("JOURNEY_STATE_INVALID", "请先填写姓名", HttpStatus.UNPROCESSABLE_ENTITY);
         }
-    }
-
-    private void appendFirstQuestion(InterviewSessionEntity session) {
-        MockDataFactory.MockInterviewQuestion question = MockDataFactory.interviewQuestions().get(0);
-        InterviewTurnEntity agentTurn = createTurn(
-                "agent",
-                question.question(),
-                question.questionReason(),
-                question.targetCapabilities()
-        );
-        session.getTurns().add(agentTurn);
-        session.setQuestionIndex(0);
-        session.setStage(question.stage());
     }
 
     private InterviewTurnEntity createTurn(

@@ -1,21 +1,48 @@
-import { mockJobProfile, mockMatches, mockResume, mockTalentProfile } from '@ai-talent-agent/shared';
-
-export async function getStructuredResume() {
-  return mockResume;
-}
-
-export async function getTalentProfile() {
-  return mockTalentProfile;
-}
-
-export async function getJobProfile() {
-  return mockJobProfile;
-}
-
-export async function getMatchResults() {
-  return mockMatches;
-}
-
-export async function getMatchDetail(candidateId: string) {
-  return mockMatches.find((match) => match.candidate.id === candidateId) ?? mockMatches[0];
-}
+export { ApiClientError } from './errors';
+export { getApiBaseUrl } from './config';
+export { createSession, ensureSession } from './auth';
+export {
+  completeInterview,
+  confirmStructuredResume,
+  createJourney,
+  ensureActiveJourneyId,
+  exportResumeVersion,
+  generateResumeVersion,
+  getActiveJourney,
+  getInterviewSession,
+  getResumeFile,
+  getResumeVersion,
+  getTalentProfile,
+  getStructuredResume,
+  listResumeVersions,
+  skipInterviewQuestion,
+  startProfileGeneration,
+  startParseResume,
+  submitInterviewTurn,
+  uploadResumeFile,
+} from './journey';
+export { getTask, waitForTask } from './task';
+export {
+  ensureResumeVersionForActiveJourney,
+  exportResumeVersionForActiveJourney,
+  getResumeFileForActiveJourney,
+  getTalentProfileForActiveJourney,
+  getStructuredResumeForActiveJourney,
+  prepareCandidateContext,
+  uploadAndParseResume,
+} from './candidate';
+export { getJobProfile, getMatchDetail, getMatchResults } from './hr-mocks';
+export type {
+  ApiStructuredResume,
+  ApiTalentProfile,
+  AsyncTask,
+  InterviewSession,
+  InterviewTurn,
+  InterviewTurnResponse,
+  ResumeExportResult,
+  ResumeFileUpload,
+  ResumeVersion,
+  ResumeVersionKey,
+  SessionData,
+  TaskAccepted,
+} from './types';

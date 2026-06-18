@@ -53,6 +53,24 @@ curl -s -X POST http://localhost:8080/api/v1/journeys \
 # 4. 上传简历 → 解析 → 轮询任务 → 后续步骤见 API_CONTRACT.md
 ```
 
+## 模式切换
+
+| `app.agents.mode` | 行为 |
+| --- | --- |
+| `mock`（默认） | 固定 Mock 数据，无需 API Key |
+| `llm` | 调用火山方舟，见 `docs/VOLCENGINE_SETUP.md` |
+
+## 火山方舟联调
+
+详见仓库根目录 [`docs/VOLCENGINE_SETUP.md`](../../docs/VOLCENGINE_SETUP.md)。
+
+快速步骤：
+
+1. 复制 `application-local.yml.example` → `application-local.yml`
+2. 填入 API Key 和 4 个 Endpoint ID
+3. 设置 `app.agents.mode: llm`
+4. `mvn spring-boot:run`
+
 ## 测试
 
 ```bash

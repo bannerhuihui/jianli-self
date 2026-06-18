@@ -37,13 +37,18 @@ public final class ApiMapper {
     }
 
     public static Map<String, Object> resumeFile(ResumeFileEntity file) {
-        return Map.of(
-                "fileId", file.getId(),
-                "fileName", file.getFileName(),
-                "fileType", file.getFileType(),
-                "fileSize", file.getFileSize(),
-                "uploadedAt", file.getUploadedAt()
-        );
+        String storagePath = file.getStoragePath();
+        boolean remote = storagePath != null
+                && (storagePath.startsWith("http://") || storagePath.startsWith("https://"));
+
+        Map<String, Object> data = new LinkedHashMap<>();
+        data.put("fileId", file.getId());
+        data.put("fileName", file.getFileName());
+        data.put("fileType", file.getFileType());
+        data.put("fileSize", file.getFileSize());
+        data.put("uploadedAt", file.getUploadedAt());
+        data.put("fileUrl", remote ? storagePath : null);
+        return data;
     }
 
     public static Map<String, Object> structuredResume(StructuredResumeEntity resume) {

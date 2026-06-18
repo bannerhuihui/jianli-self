@@ -89,86 +89,28 @@
           </view>
 
           <view v-else class="preview-stage">
-            <view v-if="selectedVersion === 'ats'" class="ats-preview resume-preview">
-              <view class="preview-head">
-                <text class="ats-name">张伟 (Felix)</text>
-                <text class="ats-meta">高级全栈工程师 | 北京, 中国 | felix.zhang@example.com</text>
-              </view>
-              <view class="ats-section">
-                <text class="ats-section-title">核心总结</text>
-                <text class="ats-text">拥有 8 年以上构建可扩展 SaaS 架构的经验。精通 React、Node.js 和分布式系统，在大型科技公司有成功领导跨职能团队的记录。</text>
-              </view>
-              <view class="ats-section">
-                <text class="ats-section-title">工作经历</text>
-                <view class="ats-job"><view class="job-row"><text>科技巨头解决方案 - 资深负责人</text><text>2020 - 至今</text></view></view>
-                <view class="ats-list">
-                  <text>• 使用 Golang 构建了每分钟处理 100 万次以上请求的微服务架构。</text>
-                  <text>• 领导分布在 3 个时区的 15 名开发人员组成的跨职能团队。</text>
-                  <text>• 通过系统重构将核心服务的延迟降低了 35%。</text>
+            <view class="resume-preview content-preview">
+              <view class="content-head">
+                <text class="content-title">{{ currentVersion?.title || currentVersionMeta.title }}</text>
+                <view class="content-meta">
+                  <AppTag :label="currentVersionMeta.badge" :tone="currentVersionMeta.tone" />
+                  <AppTag :label="confidenceLabel" :tone="confidenceTone" />
                 </view>
               </view>
-              <view class="ats-section">
-                <text class="ats-section-title">专业技能</text>
-                <text class="ats-text">JavaScript, TypeScript, Python, Go, Kubernetes, AWS, SQL, NoSQL.</text>
-              </view>
-              <view class="preview-footer"><text>ATS 优化版本 v2.4</text><text class="mode-pill">文本优先模式</text></view>
-            </view>
 
-            <view v-else-if="selectedVersion === 'hr'" class="hr-preview resume-preview">
-              <view class="hr-sidebar">
-                <view class="hr-avatar">张</view>
-                <text class="hr-name">张伟</text>
-                <text class="hr-title">高级全栈工程师</text>
-                <view class="hr-block">
-                  <text class="hr-block-title">联系方式</text>
-                  <text>felix.z@ai.com</text>
-                  <text>138-0000-0000</text>
-                </view>
-                <view class="radar-mini"><view class="radar-fill" /></view>
-              </view>
-              <view class="hr-content">
-                <text class="hr-section-title">个人总结</text>
-                <text class="hr-quote">“致力于通过人工智能与前沿工程实践解决复杂商业问题，拥有卓越的技术前瞻性与团队领导力。”</text>
-                <text class="hr-section-title">核心项目</text>
-                <view class="project-line"><text class="project-title">云端分布式架构重构</text><text class="project-desc">负责公司核心系统的微服务转型，提升了 40% 的吞吐效率。</text></view>
-                <view class="project-line muted"><text class="project-title">AI 智能人才评估系统</text><text class="project-desc">主导开发基于 NLP 的简历解析引擎，准确率达到 98.5%。</text></view>
-                <text class="created-by">Created by AI Talent Agent</text>
-              </view>
-            </view>
-
-            <view v-else-if="selectedVersion === 'platform'" class="platform-preview resume-preview">
-              <text class="platform-name">张伟 | 高级架构师 · 8 年经验</text>
-              <text class="platform-meta">上海 · 清华大学 · 计算机科学与技术</text>
-              <view class="platform-section">
-                <text class="platform-label">一句话亮点</text>
-                <text class="platform-text">擅长分布式系统与云原生架构，具备从 0 到 1 推动复杂技术方案落地的经验。</text>
-              </view>
-              <view class="platform-section">
-                <text class="platform-label">核心技能</text>
-                <view class="platform-tags">
-                  <AppTag label="Kubernetes" tone="gray" />
-                  <AppTag label="Node.js" tone="gray" />
-                  <AppTag label="PostgreSQL" tone="gray" />
-                  <AppTag label="系统设计" tone="gray" />
+              <view v-if="currentVersion?.warnings?.length" class="content-warnings">
+                <view v-for="(warning, idx) in currentVersion.warnings" :key="idx" class="warning-row">
+                  <AppIcon name="info" :size="16" color="#ad6800" />
+                  <text>{{ warning }}</text>
                 </view>
               </view>
-              <view class="platform-section">
-                <text class="platform-label">适合岗位</text>
-                <text class="platform-text">后端架构师 · 技术专家 · 云原生平台负责人</text>
-              </view>
-              <view class="preview-footer"><text>平台简介版本 v1.0</text><text class="mode-pill">招聘平台专用</text></view>
-            </view>
 
-            <view v-else class="email-preview resume-preview">
-              <text class="email-subject">主题：候选人自荐 - 张伟（高级架构师）</text>
-              <text class="email-line">您好，</text>
-              <text class="email-line">基于目标岗位匹配分析，我整理了以下核心信息供您快速了解：</text>
-              <text class="email-line">• 8 年互联网架构经验，主导微服务转型与核心系统升级</text>
-              <text class="email-line">• 技术栈覆盖 Kubernetes、Node.js、PostgreSQL 与系统设计</text>
-              <text class="email-line">• 综合匹配度 94.8%，适合架构师 / 技术专家方向</text>
-              <text class="email-line">完整简历见附件，期待进一步沟通。谢谢！</text>
-              <text class="email-sign">张伟</text>
-              <view class="preview-footer"><text>邮件正文版本</text><text class="mode-pill">可直接发送</text></view>
+              <text class="content-body">{{ currentVersion?.content || '暂无内容' }}</text>
+
+              <view class="preview-footer">
+                <text>{{ currentVersionMeta.title }} · AI 生成</text>
+                <text class="mode-pill">可复制 / 导出</text>
+              </view>
             </view>
           </view>
 
@@ -182,13 +124,16 @@
 
       <section class="evidence-strip">
         <view class="match-block">
-          <text class="metric-label">AI 岗位匹配度预测</text>
-          <view class="metric-row"><text class="metric-value">94.8%</text><AppTag label="极高匹配" tone="green" /></view>
+          <text class="metric-label">AI 综合评分</text>
+          <view class="metric-row"><text class="metric-value">{{ matchScore }}</text></view>
         </view>
         <view class="divider desktop-only" />
         <view class="role-block">
           <text class="metric-label">针对性建议岗位</text>
-          <view class="role-tags"><AppTag label="后端架构师" tone="gray" /><AppTag label="技术专家" tone="gray" /></view>
+          <view class="role-tags">
+            <AppTag v-for="role in recommendedRoles" :key="role" :label="role" tone="gray" />
+            <text v-if="!recommendedRoles.length" class="role-empty">暂无推荐岗位</text>
+          </view>
         </view>
         <button class="evidence-link" @tap="showEvidence">
           <text>查看优化证据</text>
@@ -200,21 +145,32 @@
 </template>
 
 <script setup lang="ts">
-import { computed, ref } from 'vue';
+import { computed, onMounted, reactive, ref } from 'vue';
 import { CANDIDATE_FLOW } from '../../../constants/flows';
 import { createFlowStepsProps } from '../../../utils/flow-steps';
-import { mockResumeVersionTexts, type ResumeVersionKey } from '@ai-talent-agent/shared';
+import type { ResumeVersionKey } from '@ai-talent-agent/shared';
+import {
+  ApiClientError,
+  ensureResumeVersionForActiveJourney,
+  exportResumeVersionForActiveJourney,
+  getTalentProfileForActiveJourney,
+  type ApiTalentProfile,
+  type ResumeVersion,
+} from '@ai-talent-agent/api';
 import AppTag from '../../../components/AppTag.vue';
 import AppTopNav from '../../../components/AppTopNav.vue';
 import AppIcon from '../../../components/AppIcon.vue';
 import ProgressSteps from '../../../components/ProgressSteps.vue';
 import StatePanel from '../../../components/StatePanel.vue';
-import { copyText, runAsyncAction, showToast, simulateDelay } from '../../../utils/feedback';
+import { copyText, showToast } from '../../../utils/feedback';
 
 const selectedVersion = ref<ResumeVersionKey>('ats');
 const generating = ref(false);
 const generateError = ref(false);
 const exporting = ref(false);
+
+const versionCache = reactive<Record<string, ResumeVersion>>({});
+const profile = ref<ApiTalentProfile | null>(null);
 
 const versions = [
   {
@@ -256,53 +212,111 @@ const versions = [
 ];
 
 const currentVersionMeta = computed(() => versions.find((v) => v.key === selectedVersion.value) || versions[0]);
+const currentVersion = computed<ResumeVersion | null>(() => versionCache[selectedVersion.value] ?? null);
+
+const confidenceLabel = computed(() => {
+  switch (currentVersion.value?.confidence) {
+    case 'high':
+      return '高置信度';
+    case 'low':
+      return '低置信度 · 建议核对';
+    default:
+      return '中等置信度';
+  }
+});
+const confidenceTone = computed(() => {
+  switch (currentVersion.value?.confidence) {
+    case 'high':
+      return 'green' as const;
+    case 'low':
+      return 'amber' as const;
+    default:
+      return 'blue' as const;
+  }
+});
+
+const matchScore = computed(() => {
+  const score = profile.value?.overallScore;
+  return typeof score === 'number' ? `${score}%` : '—';
+});
+const recommendedRoles = computed(() => profile.value?.recommendedRoles ?? []);
+
+async function loadVersion(key: ResumeVersionKey, regenerate = false) {
+  generateError.value = false;
+  generating.value = true;
+  try {
+    const version = await ensureResumeVersionForActiveJourney(key, { regenerate });
+    versionCache[key] = version;
+  } catch (error) {
+    generateError.value = true;
+    const message = error instanceof ApiClientError ? error.message : '简历版本生成失败';
+    showToast(message);
+  } finally {
+    generating.value = false;
+  }
+}
 
 async function selectVersion(key: ResumeVersionKey) {
-  if (selectedVersion.value === key) return;
-  generateError.value = false;
+  if (selectedVersion.value === key && !generateError.value) return;
   selectedVersion.value = key;
-  generating.value = true;
-  await simulateDelay(600);
-  generating.value = false;
+  if (versionCache[key]) {
+    generateError.value = false;
+    return;
+  }
+  await loadVersion(key);
 }
 
 function copyCurrent() {
-  copyText(mockResumeVersionTexts[selectedVersion.value], '简历内容已复制');
+  if (!currentVersion.value) {
+    showToast('请先等待简历版本生成完成');
+    return;
+  }
+  copyText(currentVersion.value.content, '简历内容已复制');
 }
 
-async function exportWord() {
+async function exportVersion(format: 'pdf' | 'docx') {
+  if (!currentVersion.value) {
+    showToast('请先等待简历版本生成完成');
+    return;
+  }
   exporting.value = true;
-  await runAsyncAction(
-    () => simulateDelay(1200),
-    { success: `${currentVersionMeta.value.title} Word 已生成`, fail: 'Word 导出失败，请重试' },
-  );
-  exporting.value = false;
+  try {
+    const result = await exportResumeVersionForActiveJourney(selectedVersion.value, format);
+    showToast(`${result.fileName} 已生成`);
+  } catch (error) {
+    const message = error instanceof ApiClientError ? error.message : '导出失败，请重试';
+    showToast(message);
+  } finally {
+    exporting.value = false;
+  }
 }
 
-async function exportPdf() {
-  exporting.value = true;
-  const ok = await runAsyncAction(
-    () => simulateDelay(1500),
-    { loading: '正在导出 PDF', success: `${currentVersionMeta.value.title} PDF 已保存`, fail: 'PDF 导出失败，请重试' },
-  );
-  exporting.value = false;
-  if (!ok) generateError.value = true;
+function exportWord() {
+  return exportVersion('docx');
+}
+
+function exportPdf() {
+  return exportVersion('pdf');
 }
 
 async function regenerate() {
-  generateError.value = false;
-  generating.value = true;
-  const ok = await runAsyncAction(
-    () => simulateDelay(1000),
-    { success: '简历版本已重新生成' },
-  );
-  generating.value = false;
-  if (!ok) generateError.value = true;
+  await loadVersion(selectedVersion.value, true);
 }
 
 function showEvidence() {
   showToast('证据链：简历校对 + AI 访谈 + 岗位匹配分析');
 }
+
+onMounted(async () => {
+  getTalentProfileForActiveJourney()
+    .then((data) => {
+      profile.value = data;
+    })
+    .catch(() => {
+      profile.value = null;
+    });
+  await loadVersion(selectedVersion.value);
+});
 </script>
 
 <style lang="scss" scoped>
@@ -336,6 +350,14 @@ function showEvidence() {
 .preview-loading, .preview-error { min-height: 760rpx; display: flex; align-items: center; justify-content: center; padding: 48rpx; background: rgba(203,219,245,0.22); }
 .retry-btn { margin-top: 12rpx; min-height: 72rpx; padding: 0 32rpx; }
 .preview-stage { overflow-x: auto; min-height: 760rpx; padding: 48rpx; background: rgba(203,219,245,0.22); }
+.content-preview { display: flex; flex-direction: column; gap: 28rpx; padding: 56rpx; color: #111827; }
+.content-head { display: flex; flex-direction: column; gap: 16rpx; border-bottom: 2rpx solid #eef1f8; padding-bottom: 24rpx; }
+.content-title { color: #0b1c30; font-size: 40rpx; font-weight: 900; line-height: 1.3; }
+.content-meta { display: flex; flex-wrap: wrap; gap: 12rpx; }
+.content-warnings { display: flex; flex-direction: column; gap: 12rpx; border-radius: 16rpx; padding: 24rpx; background: #fff7e6; }
+.warning-row { display: flex; align-items: flex-start; gap: 10rpx; color: #ad6800; font-size: 24rpx; line-height: 1.6; }
+.content-body { color: #1f2937; font-size: 26rpx; line-height: 1.85; white-space: pre-wrap; word-break: break-word; }
+.role-empty { color: #909399; font-size: 24rpx; }
 .platform-preview, .email-preview { display: flex; flex-direction: column; gap: 24rpx; padding: 56rpx; color: #111827; }
 .platform-name { font-size: 38rpx; font-weight: 900; }
 .platform-meta { color: #565e74; font-size: 24rpx; }

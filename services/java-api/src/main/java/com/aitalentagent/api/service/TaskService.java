@@ -1,11 +1,11 @@
 package com.aitalentagent.api.service;
 
-import com.aitalentagent.api.agent.MockDataFactory;
+import com.aitalentagent.api.agent.AgentOrchestrator;
 import com.aitalentagent.api.common.ApiException;
 import com.aitalentagent.api.common.Ids;
 import com.aitalentagent.api.config.AppProperties;
 import com.aitalentagent.api.domain.*;
-import com.aitalentagent.api.repository.InMemoryStore;
+import com.aitalentagent.api.repository.AppStore;
 import org.springframework.http.HttpStatus;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
@@ -13,17 +13,22 @@ import org.springframework.stereotype.Service;
 import java.time.Instant;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Optional;
 
 @Service
 public class TaskService {
 
-    private final InMemoryStore store;
+    private final AppStore store;
     private final AppProperties appProperties;
+    private final AgentOrchestrator agentOrchestrator;
 
-    public TaskService(InMemoryStore store, AppProperties appProperties) {
+    public TaskService(
+            AppStore store,
+            AppProperties appProperties,
+            AgentOrchestrator agentOrchestrator
+    ) {
         this.store = store;
         this.appProperties = appProperties;
+        this.agentOrchestrator = agentOrchestrator;
     }
 
     public AsyncTask createTask(String journeyId, TaskType type, Map<String, Object> metadata) {
@@ -50,10 +55,15 @@ public class TaskService {
 
     @Async("taskExecutor")
     public void runParseResumeTask(String taskId) {
-        executeWithDelay(taskId, () -> {
+        executeTask(taskId, () -> {
             AsyncTask task = requireTask(taskId);
             Journey journey = requireJourney(task.getJourneyId());
-            StructuredResumeEntity resume = MockDataFactory.createStructuredResume(journey.getId());
+            String fileId = task.getMetadata() == null ? null : String.valueOf(task.getMetadata().getOrDefault("fileId", ""));
+            if (fileId == null || fileId.isBlank() || "null".equals(fileId)) {
+                fileId = journey.getResumeFileId();
+            }
+
+            StructuredResumeEntity resume = agentOrchestrator.parseResume(journey.getId(), fileId);
             store.saveStructuredResume(resume);
 
             journey.setStructuredResumeId(resume.getId());
@@ -75,13 +85,13 @@ public class TaskService {
 
     @Async("taskExecutor")
     public void runGenerateProfileTask(String taskId) {
-        executeWithDelay(taskId, () -> {
+        executeTask(taskId, () -> {
             AsyncTask task = requireTask(taskId);
             Journey journey = requireJourney(task.getJourneyId());
             StructuredResumeEntity resume = store.findStructuredResumeByJourneyId(journey.getId())
                     .orElseThrow(() -> new ApiException("JOURNEY_STATE_INVALID", "请先完成简历校对", HttpStatus.CONFLICT));
 
-            TalentProfileEntity profile = MockDataFactory.createTalentProfile(journey.getId(), resume.getBasicInfo());
+            TalentProfileEntity profile = agentOrchestrator.generateProfile(journey.getId(), resume);
             store.saveTalentProfile(profile);
 
             journey.setTalentProfileId(profile.getId());
@@ -98,14 +108,14 @@ public class TaskService {
 
     @Async("taskExecutor")
     public void runGenerateResumeVersionTask(String taskId, String versionKey) {
-        executeWithDelay(taskId, () -> {
+        executeTask(taskId, () -> {
             AsyncTask task = requireTask(taskId);
             Journey journey = requireJourney(task.getJourneyId());
             TalentProfileEntity profile = store.findTalentProfileByJourneyId(journey.getId())
                     .orElseThrow(() -> new ApiException("PROFILE_NOT_READY", "请先生成人才画像", HttpStatus.UNPROCESSABLE_ENTITY));
 
-            ResumeVersionEntity version = MockDataFactory.createResumeVersion(
-                    journey.getId(), versionKey, profile.getCandidate()
+            ResumeVersionEntity version = agentOrchestrator.generateResumeVersion(
+                    journey.getId(), versionKey, profile
             );
             store.saveResumeVersion(version);
 
@@ -124,7 +134,7 @@ public class TaskService {
 
     @Async("taskExecutor")
     public void runExportResumeTask(String taskId, String versionKey, String format) {
-        executeWithDelay(taskId, () -> {
+        executeTask(taskId, () -> {
             AsyncTask task = requireTask(taskId);
             Journey journey = requireJourney(task.getJourneyId());
             ResumeVersionEntity version = store.findResumeVersionByJourneyIdAndKey(journey.getId(), versionKey)
@@ -139,7 +149,7 @@ public class TaskService {
         });
     }
 
-    private void executeWithDelay(String taskId, TaskRunner runner) {
+    private void executeTask(String taskId, TaskRunner runner) {
         AsyncTask task = requireTask(taskId);
         task.setStatus(TaskStatus.RUNNING);
         task.setProgress(10);
@@ -147,7 +157,9 @@ public class TaskService {
         store.saveTask(task);
 
         try {
-            Thread.sleep(appProperties.getAgents().getMockDelayMs());
+            if (!agentOrchestrator.isLlmMode()) {
+                Thread.sleep(appProperties.getAgents().getMockDelayMs());
+            }
             task.setProgress(80);
             task.setUpdatedAt(Instant.now());
             store.saveTask(task);
@@ -161,12 +173,11 @@ public class TaskService {
             store.saveTask(task);
         } catch (ApiException ex) {
             failTask(task, ex.getCode(), ex.getMessage());
-            throw ex;
         } catch (InterruptedException ex) {
             Thread.currentThread().interrupt();
             failTask(task, "TASK_FAILED", "任务被中断");
         } catch (Exception ex) {
-            failTask(task, "TASK_FAILED", "任务执行失败");
+            failTask(task, "TASK_FAILED", "任务执行失败: " + ex.getMessage());
         }
     }
 

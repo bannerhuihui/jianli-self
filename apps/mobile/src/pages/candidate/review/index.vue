@@ -11,14 +11,30 @@
         <view class="panel-toolbar">
           <text class="panel-heading">原始简历文件</text>
           <view class="toolbar-actions">
-            <view class="tool-button"><AppIcon name="zoom_in" :size="20" color="#434655" /></view>
-            <view class="tool-button"><AppIcon name="zoom_out" :size="20" color="#434655" /></view>
-            <view class="tool-button"><AppIcon name="download" :size="20" color="#434655" /></view>
+            <text v-if="resumeFile?.fileName" class="file-name-tag">{{ resumeFile.fileName }}</text>
+            <view class="tool-button" @tap="openOriginal"><AppIcon name="open_in_new" :size="20" color="#434655" /></view>
           </view>
         </view>
 
-        <scroll-view scroll-y class="resume-paper">
+        <!-- 图片原件直接预览 -->
+        <scroll-view v-if="previewKind === 'image'" scroll-y class="resume-paper">
+          <image :src="fileUrl" mode="widthFix" class="preview-image" />
+        </scroll-view>
+
+        <!-- PDF 原件（H5 内嵌预览） -->
+        <!-- #ifdef H5 -->
+        <view v-else-if="previewKind === 'pdf'" class="resume-paper">
+          <iframe :src="fileUrl" class="preview-frame" frameborder="0" />
+        </view>
+        <!-- #endif -->
+
+        <!-- 回退：展示结构化解析结果 -->
+        <scroll-view v-else scroll-y class="resume-paper">
           <view class="paper-content">
+            <view v-if="previewKind === 'unsupported'" class="preview-hint">
+              <AppIcon name="info" :size="18" color="#004ac6" />
+              <text>该格式暂不支持内嵌预览，可点击右上角在新窗口打开原件。以下为 AI 解析结果。</text>
+            </view>
             <text class="resume-name">{{ resume.basicInfo.name }}的简历</text>
             <view class="contact-row">
               <text>{{ resume.basicInfo.phone }}</text>
@@ -27,21 +43,28 @@
 
             <view class="resume-section">
               <text class="resume-section-title">教育背景</text>
-              <view class="resume-line-between"><text>{{ resume.basicInfo.education }}</text><text>2016 - 2020</text></view>
-              <text class="resume-subline">学士学位</text>
+              <text v-if="educationLines.length === 0" class="resume-subline">暂无解析结果</text>
+              <text v-for="item in educationLines" :key="item" class="resume-subline">{{ item }}</text>
             </view>
 
             <view class="resume-section">
               <text class="resume-section-title">工作经历</text>
-              <view class="resume-line-between"><text>阿里巴巴 - 高级软件工程师</text><text>2020 - 至今</text></view>
+              <text v-if="workLines.length === 0" class="resume-subline">暂无解析结果</text>
+              <view v-else class="resume-bullets">
+                <text v-for="item in workLines" :key="item">• {{ item }}</text>
+              </view>
+            </view>
+
+            <view class="resume-section" v-if="projectLines.length > 0">
+              <text class="resume-section-title">项目经历</text>
               <view class="resume-bullets">
-                <text v-for="item in resume.workExperience" :key="item">• {{ item }}</text>
+                <text v-for="item in projectLines" :key="item">• {{ item }}</text>
               </view>
             </view>
 
             <view class="resume-section">
               <text class="resume-section-title">专业技能</text>
-              <text class="resume-subline">{{ resume.skills.join(', ') }}</text>
+              <text class="resume-subline">{{ skillLines.join(', ') || '暂无解析结果' }}</text>
             </view>
           </view>
           <view class="scan-overlay">
@@ -64,9 +87,11 @@
           </view>
 
           <view class="quality-card">
-            <view class="quality-head"><text>解析质量评分</text><text class="quality-score">86%</text></view>
-            <view class="quality-track"><view class="quality-value" /></view>
-            <text class="quality-note">发现 2 个低置信度字段，建议确认后再进入 AI 访谈。</text>
+            <view class="quality-head"><text>解析质量评分</text><text class="quality-score">{{ qualityPercent }}%</text></view>
+            <view class="quality-track"><view class="quality-value" :style="{ width: `${qualityPercent}%` }" /></view>
+            <text class="quality-note">
+              {{ warningLines.length > 0 ? `发现 ${warningLines.length} 条解析提示，建议确认后再进入 AI 访谈。` : '解析结果较好，请核对后进入 AI 访谈。' }}
+            </text>
           </view>
 
           <view class="field-card">
@@ -75,27 +100,36 @@
                 <AppIcon name="person" :size="20" color="#004ac6" />
                 <text class="field-title">基本信息</text>
               </view>
-              <view class="confidence-badge high">置信度: 高</view>
+              <view class="confidence-badge high">置信度: {{ confidenceLabel }}</view>
             </view>
             <view class="form-grid">
               <view class="form-field"><text class="field-label">姓名</text><input class="text-input" :value="resume.basicInfo.name" /></view>
+              <view class="form-field"><text class="field-label">职位</text><input class="text-input" :value="resume.basicInfo.title" /></view>
+              <view class="form-field"><text class="field-label">所在地</text><input class="text-input" :value="resume.basicInfo.location" /></view>
               <view class="form-field"><text class="field-label">联系电话</text><input class="text-input" :value="resume.basicInfo.phone" /></view>
               <view class="form-field full"><text class="field-label">邮箱</text><input class="text-input" :value="resume.basicInfo.email" /></view>
             </view>
           </view>
 
-          <view class="field-card low-confidence">
+          <view class="field-card" :class="{ 'low-confidence': educationLines.length === 0 }">
             <view class="field-head">
               <view class="field-title-row">
                 <AppIcon name="school" :size="20" color="#004ac6" />
                 <text class="field-title">教育经历</text>
               </view>
-              <view class="confidence-badge low">置信度: 低 - 建议复核</view>
+              <view class="confidence-badge" :class="educationLines.length === 0 ? 'low' : 'high'">
+                {{ educationLines.length === 0 ? '置信度: 低 - 建议复核' : '置信度: 高' }}
+              </view>
             </view>
             <view class="form-grid">
-              <view class="form-field"><text class="field-label">院校</text><input class="text-input warning" value="清华大学" /></view>
-              <view class="form-field"><text class="field-label">专业</text><input class="text-input" value="计算机科学与技术" /></view>
-              <view class="form-field full"><text class="field-label">学位</text><input class="text-input" value="学士" /></view>
+              <view v-if="educationLines.length === 0" class="form-field full">
+                <text class="field-label">教育背景</text>
+                <input class="text-input warning" :value="resume.basicInfo.education" placeholder="请补充教育经历" />
+              </view>
+              <view v-for="(item, index) in educationLines" :key="`${item}-${index}`" class="form-field full">
+                <text class="field-label">教育经历 {{ index + 1 }}</text>
+                <input class="text-input" :value="item" />
+              </view>
             </view>
           </view>
 
@@ -105,15 +139,19 @@
                 <AppIcon name="work" :size="20" color="#004ac6" />
                 <text class="field-title">工作经历</text>
               </view>
-              <view class="confidence-badge high">置信度: 极高</view>
+              <view class="confidence-badge" :class="workLines.length === 0 ? 'low' : 'high'">
+                {{ workLines.length === 0 ? '置信度: 低 - 建议复核' : '置信度: 高' }}
+              </view>
             </view>
-            <view class="experience-item">
+            <view v-if="workLines.length === 0" class="experience-item">
+              <text class="experience-desc">暂未解析到工作经历，请手动补充。</text>
+            </view>
+            <view v-for="(item, index) in workLines" :key="`${item}-${index}`" class="experience-item">
               <view class="experience-top">
-                <text class="experience-title">阿里巴巴 - 高级软件工程师</text>
+                <text class="experience-title">经历 {{ index + 1 }}</text>
                 <AppIcon name="edit" :size="18" color="#737686" />
               </view>
-              <text class="experience-time">2020.07 - 至今 (4年1个月)</text>
-              <text class="experience-desc">主导微服务架构升级，支持千万级 QPS 大促系统。</text>
+              <text class="experience-desc">{{ item }}</text>
             </view>
             <button class="add-button">+ 添加工作经历</button>
           </view>
@@ -124,12 +162,14 @@
                 <AppIcon name="article" :size="20" color="#004ac6" />
                 <text class="field-title">项目经历</text>
               </view>
-              <view class="confidence-badge medium">置信度: 中</view>
+              <view class="confidence-badge medium">置信度: {{ projectLines.length > 0 ? '中' : '低' }}</view>
             </view>
             <view class="project-list">
-              <view v-for="project in resume.projects" :key="project" class="project-item">
+              <view v-if="projectLines.length === 0" class="project-item">
+                <text class="project-desc">暂未解析到项目经历，可在访谈环节补充。</text>
+              </view>
+              <view v-for="(project, index) in projectLines" :key="`${project}-${index}`" class="project-item">
                 <text class="project-title">{{ project }}</text>
-                <text class="project-desc">AI 已识别项目名称，但项目背景、职责边界和量化结果仍建议补充。</text>
               </view>
             </view>
             <button class="add-button">+ 添加项目经历</button>
@@ -144,20 +184,20 @@
               <view class="confidence-badge high">置信度: 高</view>
             </view>
             <view class="skill-list">
-              <view v-for="skill in resume.skills" :key="skill" class="skill-pill">
+              <view v-for="skill in skillLines" :key="skill" class="skill-pill">
                 <text>{{ skill }}</text>
                 <AppIcon name="close" :size="14" color="#ffffff" />
               </view>
-              <text class="add-skill">+ 添加</text>
+              <text v-if="skillLines.length === 0" class="add-skill">暂无技能标签</text>
+              <text v-else class="add-skill">+ 添加</text>
             </view>
           </view>
 
-          <view class="missing-card">
-            <text class="missing-title">缺失字段提示</text>
+          <view class="missing-card" v-if="warningLines.length > 0 || missingLines.length > 0">
+            <text class="missing-title">解析提示</text>
             <view class="missing-list">
-              <text>• 建议补充最近一次离职原因，用于职业稳定性判断。</text>
-              <text>• 建议补充 1-2 个项目的量化结果，提升画像证据强度。</text>
-              <text>• 若简历解析不准确，可重新上传或手动录入。</text>
+              <text v-for="item in warningLines" :key="`w-${item}`">• {{ item }}</text>
+              <text v-for="item in missingLines" :key="`m-${item}`">• 缺失字段：{{ item }}</text>
             </view>
           </view>
 
@@ -179,6 +219,9 @@
 </template>
 
 <script setup lang="ts">
+import { computed, onMounted, ref } from 'vue';
+import type { ApiStructuredResume, ResumeFileUpload } from '@ai-talent-agent/api';
+import { getResumeFileForActiveJourney, getStructuredResumeForActiveJourney } from '@ai-talent-agent/api';
 import { mockResume } from '@ai-talent-agent/shared';
 import { CANDIDATE_FLOW } from '../../../constants/flows';
 import { createFlowStepsProps } from '../../../utils/flow-steps';
@@ -187,7 +230,93 @@ import AppTopNav from '../../../components/AppTopNav.vue';
 import ProgressSteps from '../../../components/ProgressSteps.vue';
 import { showToast } from '../../../utils/feedback';
 
-const resume = mockResume;
+const resume = ref<ApiStructuredResume>(mockResume as ApiStructuredResume);
+const resumeFile = ref<ResumeFileUpload | null>(null);
+const loading = ref(true);
+const loaded = ref(false);
+
+const IMAGE_EXTS = ['jpg', 'jpeg', 'png', 'webp', 'gif', 'bmp'];
+
+const fileUrl = computed(() => resumeFile.value?.fileUrl ?? '');
+const previewKind = computed<'image' | 'pdf' | 'unsupported' | 'fallback'>(() => {
+  const file = resumeFile.value;
+  if (!file || !file.fileUrl) {
+    return 'fallback';
+  }
+  const type = (file.fileType || '').toLowerCase();
+  const url = file.fileUrl.toLowerCase();
+  if (type.includes('pdf') || url.includes('.pdf')) {
+    return 'pdf';
+  }
+  if (IMAGE_EXTS.some((ext) => type.includes(ext) || url.includes(`.${ext}`))) {
+    return 'image';
+  }
+  return 'unsupported';
+});
+
+function openOriginal() {
+  if (!fileUrl.value) {
+    showToast('暂无可打开的原始文件');
+    return;
+  }
+  if (typeof window !== 'undefined' && typeof window.open === 'function') {
+    window.open(fileUrl.value, '_blank');
+    return;
+  }
+  uni.setClipboardData({
+    data: fileUrl.value,
+    success: () => showToast('原件链接已复制'),
+  });
+}
+
+function nonEmpty(items?: string[]) {
+  return (items ?? []).filter((item) => item.trim().length > 0);
+}
+
+const qualityPercent = computed(() => Math.round((resume.value.parseQualityScore ?? 0) * 100));
+const educationLines = computed(() => {
+  const fromList = nonEmpty(resume.value.education);
+  if (fromList.length > 0) {
+    return fromList;
+  }
+  if (resume.value.basicInfo.education?.trim()) {
+    return [resume.value.basicInfo.education];
+  }
+  return [];
+});
+const workLines = computed(() => nonEmpty(resume.value.workExperience));
+const projectLines = computed(() => nonEmpty(resume.value.projects));
+const skillLines = computed(() => nonEmpty(resume.value.skills));
+const warningLines = computed(() => nonEmpty(resume.value.warnings));
+const missingLines = computed(() => nonEmpty(resume.value.missingFields));
+const confidenceLabel = computed(() => {
+  const level = resume.value.confidence ?? 'medium';
+  if (level === 'high') return '高';
+  if (level === 'low') return '低';
+  return '中';
+});
+
+onMounted(async () => {
+  if (loaded.value) {
+    return;
+  }
+  loaded.value = true;
+  try {
+    resume.value = await getStructuredResumeForActiveJourney();
+  } catch {
+    showToast('加载解析结果失败，请重新上传');
+  } finally {
+    loading.value = false;
+  }
+
+  getResumeFileForActiveJourney()
+    .then((file) => {
+      resumeFile.value = file;
+    })
+    .catch(() => {
+      resumeFile.value = null;
+    });
+});
 
 function onManualEntry() {
   showToast('手动录入（MVP 占位）');
@@ -240,6 +369,28 @@ function onSaveEdits() {
   border-radius: 16rpx;
   background: #fff;
   box-shadow: 0 16rpx 40rpx rgba(15, 23, 42, 0.1);
+}
+.preview-image { display: block; width: 100%; }
+.preview-frame { display: block; width: 100%; height: 100%; min-height: 640rpx; border: none; background: #fff; }
+.file-name-tag {
+  max-width: 360rpx;
+  overflow: hidden;
+  color: #434655;
+  font-size: 24rpx;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+.preview-hint {
+  display: flex;
+  align-items: flex-start;
+  gap: 10rpx;
+  margin-bottom: 32rpx;
+  border-radius: 12rpx;
+  padding: 20rpx 24rpx;
+  background: #eff4ff;
+  color: #004ac6;
+  font-size: 24rpx;
+  line-height: 1.5;
 }
 .paper-content { max-width: 760rpx; margin: 0 auto; padding: 96rpx 48rpx; color: #334155; }
 .resume-name { display: block; margin-bottom: 32rpx; font-size: 56rpx; font-weight: 700; line-height: 1.2; }

@@ -89,6 +89,15 @@ public class JourneyController {
         return ResponseEntity.ok(ApiResponse.of(ApiMapper.structuredResume(resume), requestId(request)));
     }
 
+    @GetMapping("/{journeyId}/resume-file")
+    public ResponseEntity<ApiResponse<Map<String, Object>>> getResumeFile(
+            @PathVariable String journeyId,
+            HttpServletRequest request
+    ) {
+        ResumeFileEntity file = journeyService.getResumeFile(journeyId, userId());
+        return ResponseEntity.ok(ApiResponse.of(ApiMapper.resumeFile(file), requestId(request)));
+    }
+
     @PatchMapping("/{journeyId}/structured-resume")
     public ResponseEntity<ApiResponse<Map<String, Object>>> patchStructuredResume(
             @PathVariable String journeyId,
