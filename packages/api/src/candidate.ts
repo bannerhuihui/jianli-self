@@ -8,6 +8,7 @@ import {
   getTalentProfile,
   getStructuredResume,
   listResumeVersions,
+  patchStructuredResume,
   startParseResume,
   uploadResumeFile,
 } from './journey';
@@ -20,6 +21,7 @@ import type {
   ResumeFileUpload,
   ResumeVersion,
   ResumeVersionKey,
+  StructuredResumePatch,
 } from './types';
 
 export async function prepareCandidateContext(): Promise<{ journeyId: string }> {
@@ -53,6 +55,13 @@ export async function uploadAndParseResume(
 export async function getStructuredResumeForActiveJourney(): Promise<ApiStructuredResume> {
   const { journeyId } = await prepareCandidateContext();
   return getStructuredResume(journeyId);
+}
+
+export async function saveStructuredResumeForActiveJourney(
+  patch: StructuredResumePatch,
+): Promise<ApiStructuredResume> {
+  const { journeyId } = await prepareCandidateContext();
+  return patchStructuredResume(journeyId, patch);
 }
 
 export async function getResumeFileForActiveJourney(): Promise<ResumeFileUpload | null> {

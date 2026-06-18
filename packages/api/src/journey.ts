@@ -10,6 +10,7 @@ import type {
   ResumeFileUpload,
   ResumeVersion,
   ResumeVersionKey,
+  StructuredResumePatch,
   TaskAccepted,
 } from './types';
 
@@ -104,6 +105,16 @@ export async function getStructuredResume(journeyId: string): Promise<ApiStructu
 
 export async function getResumeFile(journeyId: string): Promise<ResumeFileUpload> {
   return apiRequest<ResumeFileUpload>(`/journeys/${journeyId}/resume-file`);
+}
+
+export async function patchStructuredResume(
+  journeyId: string,
+  patch: StructuredResumePatch,
+): Promise<ApiStructuredResume> {
+  return apiRequest<ApiStructuredResume>(`/journeys/${journeyId}/structured-resume`, {
+    method: 'PATCH',
+    body: patch,
+  });
 }
 
 export async function confirmStructuredResume(journeyId: string): Promise<{

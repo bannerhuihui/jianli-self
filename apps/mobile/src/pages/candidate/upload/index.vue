@@ -5,24 +5,12 @@
     <view class="container upload-container">
       <ProgressSteps v-bind="createFlowStepsProps(CANDIDATE_FLOW, 0)" navigable />
 
-      <view v-if="phase === 'parsing'" class="parsing-overlay">
-        <view class="parsing-modal">
-          <view class="scan-card">
-            <view class="scan-line" />
-            <view class="scan-skeleton">
-              <view class="scan-bar w-75" />
-              <view class="scan-bar w-full" />
-              <view class="scan-bar w-50" />
-              <view class="scan-bar w-85" />
-              <view class="scan-bar w-66" />
-            </view>
-          </view>
-          <text class="parsing-title">AI 正在深度解析中...</text>
-          <text class="parsing-desc">我们正在扫描您的简历细节，提取核心技能与项目经验。这通常需要 1-2 分钟，请耐心等待。</text>
-          <view class="parsing-track"><view class="parsing-bar" /></view>
-          <text class="parsing-tag">处理数据资产</text>
-        </view>
-      </view>
+      <ProcessingOverlay
+        v-if="phase === 'parsing'"
+        title="AI 正在深度解析中..."
+        description="我们正在扫描您的简历细节，提取核心技能与项目经验。这通常需要 1-2 分钟，请耐心等待。"
+        tag="处理数据资产"
+      />
 
       <view v-else-if="phase === 'error'" class="state-wrap">
         <StatePanel tone="error" icon="warning" icon-color="#ba1a1a" title="简历解析失败" :description="errorMessage">
@@ -128,6 +116,7 @@ import { createFlowStepsProps } from '../../../utils/flow-steps';
 import AppTopNav from '../../../components/AppTopNav.vue';
 import AppIcon from '../../../components/AppIcon.vue';
 import ProgressSteps from '../../../components/ProgressSteps.vue';
+import ProcessingOverlay from '../../../components/ProcessingOverlay.vue';
 import StatePanel from '../../../components/StatePanel.vue';
 import { showToast } from '../../../utils/feedback';
 
@@ -199,72 +188,6 @@ function retryParse() {
 
 <style lang="scss" scoped>
 .upload-container { display: flex; flex-direction: column; gap: 48rpx; padding-top: 48rpx; padding-bottom: 80rpx; }
-
-/* Parsing overlay — ai_talent_agent_2 */
-.parsing-overlay {
-  position: fixed;
-  inset: 0;
-  z-index: 100;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 32rpx;
-  background: rgba(0, 0, 0, 0.5);
-  backdrop-filter: blur(12px);
-}
-.parsing-modal {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  width: 100%;
-  max-width: 720rpx;
-  padding: 80rpx 64rpx;
-  border-radius: 32rpx;
-  background: #fff;
-  box-shadow: 0 24rpx 64rpx rgba(15, 23, 42, 0.2);
-  text-align: center;
-}
-.scan-card {
-  position: relative;
-  overflow: hidden;
-  width: 192rpx;
-  height: 256rpx;
-  margin-bottom: 64rpx;
-  border: 4rpx solid #dbe1ff;
-  border-radius: 16rpx;
-}
-.scan-line {
-  position: absolute;
-  left: 0;
-  right: 0;
-  top: 0;
-  height: 4rpx;
-  background: linear-gradient(90deg, transparent, #2563eb, transparent);
-  animation: scan 3s linear infinite;
-}
-@keyframes scan {
-  0% { transform: translateY(0); }
-  100% { transform: translateY(256rpx); }
-}
-.scan-skeleton {
-  display: flex;
-  flex-direction: column;
-  gap: 16rpx;
-  padding: 16rpx;
-  opacity: 0.3;
-}
-.scan-bar { height: 8rpx; border-radius: 999rpx; background: #c3c6d7; }
-.scan-bar.w-75 { width: 75%; }
-.scan-bar.w-full { width: 100%; }
-.scan-bar.w-50 { width: 50%; }
-.scan-bar.w-85 { width: 83%; }
-.scan-bar.w-66 { width: 66%; }
-.parsing-title { color: #0b1c30; font-size: 40rpx; font-weight: 600; line-height: 1.4; }
-.parsing-desc { margin-top: 16rpx; color: #434655; font-size: 32rpx; line-height: 1.5; }
-.parsing-track { width: 100%; height: 6rpx; margin-top: 48rpx; overflow: hidden; border-radius: 999rpx; background: #e5eeff; }
-.parsing-bar { width: 65%; height: 100%; background: #004ac6; animation: pulse 1.6s ease-in-out infinite alternate; }
-@keyframes pulse { from { width: 35%; } to { width: 85%; } }
-.parsing-tag { margin-top: 32rpx; color: #004ac6; font-size: 24rpx; font-weight: 500; letter-spacing: 0.12em; text-transform: uppercase; }
 
 .state-wrap { padding: 24rpx 0; }
 .state-actions { display: flex; flex-direction: column; gap: 16rpx; width: 100%; margin-top: 12rpx; }

@@ -53,7 +53,7 @@
           </view>
           <view class="dimension-score-row"><text class="dimension-score">{{ item.score.toFixed(1) }}</text><text class="dimension-unit">/ 5.0</text></view>
           <text class="dimension-reason">{{ item.reason }}</text>
-          <button class="evidence-button">{{ item.key === 'careerStability' ? '风险溯源' : '查看证据' }}</button>
+          <button class="evidence-button" @tap="openCapabilityEvidence(item)">{{ item.key === 'careerStability' ? '风险溯源' : '查看证据' }}</button>
         </view>
       </view>
 
@@ -76,7 +76,7 @@
         <view class="bottom-card">
           <text class="bottom-title">证据链入口 / 溯源中心</text>
           <view class="evidence-list">
-            <view v-for="item in evidenceEntries" :key="item.title" class="evidence-entry">
+            <view v-for="item in evidenceEntries" :key="item.title" class="evidence-entry" @tap="openEntryEvidence(item)">
               <view class="entry-icon"><AppIcon :name="item.icon" :size="24" color="#004ac6" /></view>
               <view class="entry-copy">
                 <text class="entry-title">{{ item.title }}</text>
@@ -90,12 +90,47 @@
 
       <navigator url="/pages/candidate/resume/index" class="flow-btn flow-btn--primary flow-btn--block">生成简历版本</navigator>
     </view>
+
+    <view v-if="drawerOpen" class="evidence-mask" @tap="closeDrawer">
+      <view class="evidence-drawer" @tap.stop>
+        <view class="drawer-head">
+          <text class="drawer-title">{{ drawerTitle }}</text>
+          <view class="drawer-close" @tap="closeDrawer">
+            <AppIcon name="close" :size="20" color="#565e74" />
+          </view>
+        </view>
+        <scroll-view scroll-y class="drawer-body">
+          <view v-if="drawerEvidence.length === 0" class="drawer-empty">
+            <AppIcon name="info" :size="28" color="#94a3b8" />
+            <text>暂无关联证据，建议返回访谈环节补充更多信息。</text>
+          </view>
+          <view v-for="ev in drawerEvidence" :key="ev.id" class="evidence-card">
+            <view class="evidence-card-head">
+              <view class="evidence-source" :class="ev.source">
+                <AppIcon
+                  :name="ev.source === 'interview' ? 'chat' : 'paperclip'"
+                  :size="16"
+                  :color="ev.source === 'interview' ? '#004ac6' : '#006242'"
+                />
+                <text>{{ ev.source === 'interview' ? '面试证据' : '简历证据' }} · {{ ev.id }}</text>
+              </view>
+            </view>
+            <text class="evidence-snippet">{{ ev.snippet || '无片段内容' }}</text>
+            <view v-if="ev.capabilityKeys && ev.capabilityKeys.length" class="evidence-tags">
+              <text v-for="k in ev.capabilityKeys" :key="k" class="evidence-tag">
+                {{ capabilityNameByKey[k] || k }}
+              </text>
+            </view>
+          </view>
+        </scroll-view>
+      </view>
+    </view>
   </view>
 </template>
 
 <script setup lang="ts">
 import { computed, onMounted, ref } from 'vue';
-import type { ApiTalentProfile } from '@ai-talent-agent/api';
+import type { ApiTalentProfile, ProfileCapability, ProfileEvidence } from '@ai-talent-agent/api';
 import { getTalentProfileForActiveJourney } from '@ai-talent-agent/api';
 import { mockTalentProfile } from '@ai-talent-agent/shared';
 import { CANDIDATE_FLOW } from '../../../constants/flows';
@@ -109,19 +144,59 @@ import { showToast } from '../../../utils/feedback';
 
 const profile = ref<ApiTalentProfile>(mockTalentProfile as unknown as ApiTalentProfile);
 
+const drawerOpen = ref(false);
+const drawerTitle = ref('');
+const drawerEvidence = ref<ProfileEvidence[]>([]);
+
+const capabilityNameByKey = computed(() => {
+  const map: Record<string, string> = {};
+  for (const cap of profile.value.capabilities ?? []) {
+    map[cap.key] = cap.name;
+  }
+  return map;
+});
+
 const evidenceEntries = computed(() => {
   const evidence = profile.value.evidence ?? [];
   if (evidence.length === 0) {
     return [
-      { icon: 'paperclip', title: '原始简历溯源', desc: '暂未返回证据链详情，建议继续访谈补充信息。' },
+      { icon: 'paperclip', title: '原始简历溯源', desc: '暂未返回证据链详情，建议继续访谈补充信息。', raw: null as ProfileEvidence | null },
     ];
   }
   return evidence.slice(0, 6).map((item) => ({
     icon: item.source === 'interview' ? 'chat' : 'paperclip',
     title: `${item.source === 'interview' ? '面试' : '简历'}证据 ${item.id}`,
     desc: item.snippet || '无片段内容',
+    raw: item as ProfileEvidence | null,
   }));
 });
+
+function evidenceForCapability(cap: ProfileCapability) {
+  const all = profile.value.evidence ?? [];
+  const ids = new Set(cap.evidenceIds ?? []);
+  return all.filter((ev) => {
+    const byId = ids.size > 0 && ids.has(ev.id);
+    const byKey = (ev.capabilityKeys ?? []).includes(cap.key);
+    return byId || byKey;
+  });
+}
+
+function openCapabilityEvidence(cap: ProfileCapability) {
+  drawerTitle.value = `${cap.name} · 证据链`;
+  drawerEvidence.value = evidenceForCapability(cap);
+  drawerOpen.value = true;
+}
+
+function openEntryEvidence(entry: { title: string; raw: ProfileEvidence | null }) {
+  const all = profile.value.evidence ?? [];
+  drawerTitle.value = entry.raw ? '证据溯源详情' : '证据链 / 溯源中心';
+  drawerEvidence.value = entry.raw ? [entry.raw] : all;
+  drawerOpen.value = true;
+}
+
+function closeDrawer() {
+  drawerOpen.value = false;
+}
 
 onMounted(async () => {
   try {
@@ -193,6 +268,90 @@ onMounted(async () => {
 .entry-desc { color: #737686; font-size: 22rpx; line-height: 1.5; }
 .entry-arrow { color: #737686; font-size: 44rpx; }
 .next-button { margin-top: 8rpx; }
+
+/* Evidence drawer */
+.evidence-mask {
+  position: fixed;
+  inset: 0;
+  z-index: 200;
+  display: flex;
+  justify-content: flex-end;
+  background: rgba(11, 28, 48, 0.45);
+}
+.evidence-drawer {
+  display: flex;
+  flex-direction: column;
+  width: 88%;
+  max-width: 720rpx;
+  height: 100%;
+  background: #fff;
+  box-shadow: -16rpx 0 48rpx rgba(15, 23, 42, 0.18);
+  animation: drawer-in 0.25s ease;
+}
+@keyframes drawer-in {
+  from { transform: translateX(100%); }
+  to { transform: translateX(0); }
+}
+.drawer-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16rpx;
+  padding: 32rpx;
+  border-bottom: 2rpx solid #e2e8f0;
+}
+.drawer-title { color: #0b1c30; font-size: 32rpx; font-weight: 900; }
+.drawer-close {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 64rpx;
+  height: 64rpx;
+  border-radius: 999rpx;
+  background: #f2f4f6;
+}
+.drawer-body { flex: 1; min-height: 0; padding: 32rpx; box-sizing: border-box; }
+.drawer-empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 20rpx;
+  padding: 96rpx 48rpx;
+  color: #94a3b8;
+  font-size: 26rpx;
+  text-align: center;
+}
+.evidence-card {
+  display: flex;
+  flex-direction: column;
+  gap: 18rpx;
+  margin-bottom: 24rpx;
+  border: 2rpx solid #e2e8f0;
+  border-radius: 16rpx;
+  padding: 28rpx;
+  background: #f8fafc;
+}
+.evidence-card-head { display: flex; align-items: center; justify-content: space-between; }
+.evidence-source {
+  display: flex;
+  align-items: center;
+  gap: 10rpx;
+  font-size: 24rpx;
+  font-weight: 700;
+}
+.evidence-source.interview { color: #004ac6; }
+.evidence-source.resume { color: #006242; }
+.evidence-snippet { color: #434655; font-size: 28rpx; line-height: 1.65; }
+.evidence-tags { display: flex; flex-wrap: wrap; gap: 12rpx; }
+.evidence-tag {
+  border-radius: 999rpx;
+  padding: 6rpx 20rpx;
+  background: rgba(0, 74, 198, 0.08);
+  color: #004ac6;
+  font-size: 22rpx;
+  font-weight: 600;
+}
+
 @media (min-width: 768px) {
   .overview-card { grid-template-columns: 4fr 8fr; }
   .radar-panel { border-right: 2rpx solid #c3c6d7; padding-right: 40rpx; }

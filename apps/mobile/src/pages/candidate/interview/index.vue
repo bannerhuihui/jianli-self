@@ -6,6 +6,21 @@
       <ProgressSteps v-bind="createFlowStepsProps(CANDIDATE_FLOW, 2)" navigable />
     </view>
 
+    <ProcessingOverlay
+      v-if="isLoadingSession"
+      title="AI 面试官准备中..."
+      description="正在结合你的简历生成首个面试问题，请稍候。这通常需要 10-30 秒。"
+      tag="生成面试问题"
+    />
+
+    <ProcessingOverlay
+      v-if="isGeneratingProfile"
+      title="AI 正在生成人才画像..."
+      description="正在综合简历与访谈内容，构建多维能力画像。这通常需要 1-2 分钟，请耐心等待。"
+      tag="生成人才画像"
+    />
+
+    <template v-if="!isLoadingSession">
     <view class="mode-bar">
       <view class="mode-switch">
         <button class="flow-segment" :class="{ 'flow-segment--active': mode === 'chat' }" @tap="mode = 'chat'">文字聊天</button>
@@ -36,15 +51,7 @@
 
       <section class="chat-main">
         <StatePanel
-          v-if="isLoadingSession"
-          tone="info"
-          icon="hourglass_top"
-          icon-color="#004ac6"
-          title="正在加载访谈会话"
-          description="请稍候，我们正在同步你的历史问答。"
-        />
-        <StatePanel
-          v-else-if="showLowConfidence"
+          v-if="showLowConfidence"
           tone="warning"
           icon="info"
           icon-color="#b45309"
@@ -53,7 +60,7 @@
         />
 
         <view class="chat-card">
-          <scroll-view scroll-y class="chat-history">
+          <scroll-view scroll-y class="chat-history" :scroll-into-view="scrollIntoView" scroll-with-animation>
             <view v-for="message in messages" :key="message.id" class="message-row" :class="message.role">
               <view class="avatar" :class="message.role">
                 <AppIcon
@@ -71,6 +78,7 @@
                 </text>
               </view>
             </view>
+            <view id="chatBottom" class="chat-anchor" />
           </scroll-view>
 
           <view class="chat-input-area">
@@ -83,7 +91,9 @@
                   :disabled="isGenerating"
                   :maxlength="MAX_INPUT_CHARS"
                   @input="onDraftInput"
+                  @keydown="onKeydown"
                 />
+                <text class="input-hint">Enter 发送 · Shift+Enter 换行</text>
                 <text class="char-count">{{ charCount }}/{{ MAX_INPUT_CHARS }}</text>
               </view>
               <view class="input-actions">
@@ -116,11 +126,11 @@
         <view class="glass-panel insight-card">
           <view class="panel-title-row">
             <AppIcon name="track_changes" :size="18" color="#004ac6" />
-            <text class="panel-title">目标胜任力标签（{{ stage }}）</text>
+            <text class="panel-title">目标胜任力标签（{{ stageLabel }}）</text>
           </view>
           <view class="tag-list">
             <text
-              v-for="item in (missingEvidence.length ? missingEvidence : ['证据完整度已满足，可进入画像'])"
+              v-for="item in missingEvidenceLabels"
               :key="item"
               class="competency-pill"
               :class="{ active: missingEvidence.length > 0 }"
@@ -234,11 +244,12 @@
         </view>
       </section>
     </view>
+    </template>
   </view>
 </template>
 
 <script setup lang="ts">
-import { computed, onMounted, ref } from 'vue';
+import { computed, nextTick, onMounted, ref } from 'vue';
 import {
   ApiClientError,
   completeInterview,
@@ -255,6 +266,7 @@ import { createFlowStepsProps } from '../../../utils/flow-steps';
 import AppIcon from '../../../components/AppIcon.vue';
 import AppTopNav from '../../../components/AppTopNav.vue';
 import ProgressSteps from '../../../components/ProgressSteps.vue';
+import ProcessingOverlay from '../../../components/ProcessingOverlay.vue';
 import StatePanel from '../../../components/StatePanel.vue';
 import { showToast } from '../../../utils/feedback';
 
@@ -262,6 +274,7 @@ const mode = ref<'chat' | 'voice'>('chat');
 const MAX_INPUT_CHARS = 2000;
 const draftAnswer = ref('');
 const isGenerating = ref(false);
+const isGeneratingProfile = ref(false);
 const isLoadingSession = ref(false);
 const journeyId = ref('');
 const stage = ref('experience_exploration');
@@ -270,23 +283,46 @@ const canGenerateProfile = ref(false);
 const interviewProgress = ref(0);
 const answeredCount = ref(2);
 const skippedCount = ref(0);
-const totalSteps = 10;
-const currentStep = computed(() => {
-  const byProgress = Math.ceil(interviewProgress.value * totalSteps);
-  const byTurns = answeredCount.value + skippedCount.value + 1;
-  return Math.min(totalSteps, Math.max(1, Math.max(byProgress, byTurns)));
+const STAGE_STEPS = [
+  { key: 'experience_exploration', name: '经历梳理' },
+  { key: 'deep_dive', name: '深度追问' },
+  { key: 'preference_exploration', name: '偏好与动机' },
+  { key: 'wrap_up', name: '收尾确认' },
+];
+const totalSteps = STAGE_STEPS.length;
+const stageIndex = computed(() => {
+  const idx = STAGE_STEPS.findIndex((item) => item.key === stage.value);
+  return idx >= 0 ? idx : 0;
 });
-const estimatedMinutes = computed(() => Math.max(1, Math.ceil((1 - interviewProgress.value) * 20)));
+const currentStep = computed(() => stageIndex.value + 1);
+const stageLabel = computed(() => STAGE_STEPS[stageIndex.value]?.name ?? '访谈进行中');
+const estimatedMinutes = computed(() => Math.max(1, Math.ceil((1 - interviewProgress.value) * 8)));
 
-const stepNames = ['自我介绍', '核心技能考核', '团队冲突处理', '项目难点攻克', '未来职业规划'];
-const stepItems = computed(() => stepNames.map((name, index) => {
-  const stepNo = index + 1;
+const stepItems = computed(() => STAGE_STEPS.map((item, index) => {
   let state = 'todo';
-  if (stepNo < currentStep.value) state = 'done';
-  else if (stepNo === currentStep.value) state = 'active';
-  else if (stepNo === stepNames.length) state = 'todo faded';
-  return { index: stepNo, name, state };
+  if (index < stageIndex.value) state = 'done';
+  else if (index === stageIndex.value) state = 'active';
+  return { index: index + 1, name: item.name, state };
 }));
+
+const CAPABILITY_LABELS: Record<string, string> = {
+  learningAbility: '学习能力',
+  logicAbility: '逻辑能力',
+  communicationAbility: '沟通能力',
+  executionAbility: '执行能力',
+  innovationAbility: '创新能力',
+  leadershipAbility: '领导能力',
+  stressTolerance: '抗压能力',
+  careerStability: '职业稳定性',
+};
+function capabilityLabel(key: string) {
+  return CAPABILITY_LABELS[key] ?? key;
+}
+const missingEvidenceLabels = computed(() =>
+  missingEvidence.value.length
+    ? missingEvidence.value.map(capabilityLabel)
+    : ['证据完整度已满足，可进入画像'],
+);
 
 const charCount = computed(() => draftAnswer.value.length);
 const completenessScore = computed(() => Math.min(95, 48 + answeredCount.value * 12 - skippedCount.value * 8));
@@ -294,6 +330,14 @@ const showLowConfidence = computed(() => completenessScore.value < 65 && answere
 
 type ChatMessage = { id: string; role: 'ai' | 'user'; content: string; thinking?: boolean };
 const messages = ref<ChatMessage[]>([]);
+const scrollIntoView = ref('');
+
+function scrollToBottom() {
+  scrollIntoView.value = '';
+  nextTick(() => {
+    scrollIntoView.value = 'chatBottom';
+  });
+}
 
 const suggestions = ['如何量化评估方案优劣的细节', '最终落地后的业务反馈数据'];
 
@@ -301,8 +345,24 @@ function onDraftInput(event: any) {
   draftAnswer.value = String(event.detail.value ?? '').slice(0, MAX_INPUT_CHARS);
 }
 
+function onKeydown(event: any) {
+  const isEnter = event?.key === 'Enter' || event?.keyCode === 13 || event?.detail?.keyCode === 13;
+  if (!isEnter) {
+    return;
+  }
+  if (event?.shiftKey) {
+    return;
+  }
+  event?.preventDefault?.();
+  event?.stopPropagation?.();
+  if (!isGenerating.value) {
+    sendAnswer();
+  }
+}
+
 function pushMessage(role: 'ai' | 'user', content: string, options: { thinking?: boolean } = {}) {
   messages.value.push({ id: `m-${Date.now()}-${Math.random().toString(16).slice(2, 8)}`, role, content, thinking: options.thinking });
+  scrollToBottom();
 }
 
 function hydrateFromSession(session: {
@@ -324,6 +384,7 @@ function hydrateFromSession(session: {
   missingEvidence.value = session.missingEvidence;
   stage.value = session.stage;
   interviewProgress.value = Math.max(0, Math.min(1, session.progress ?? 0));
+  scrollToBottom();
 }
 
 async function initInterview() {
@@ -387,6 +448,7 @@ async function sendAnswer() {
     missingEvidence.value = response.missingEvidence;
     stage.value = response.stage;
     interviewProgress.value = Math.max(interviewProgress.value, Math.min(1, currentStep.value / totalSteps));
+    scrollToBottom();
   } catch (error) {
     if (thinkingId) {
       messages.value = messages.value.filter((item) => item.id !== thinkingId);
@@ -451,9 +513,9 @@ async function finishInterview() {
 
 async function navigateToProfile() {
   isGenerating.value = true;
+  isGeneratingProfile.value = true;
   let ok = false;
   try {
-    uni.showLoading({ title: '生成画像中', mask: true });
     await completeInterview(journeyId.value);
     const accepted = await startProfileGeneration(journeyId.value);
     const task = await waitForTask(accepted.taskId, { timeoutMs: 180000 });
@@ -466,7 +528,7 @@ async function navigateToProfile() {
     const message = error instanceof ApiClientError ? error.message : '画像生成失败';
     showToast(message, 'error');
   } finally {
-    uni.hideLoading();
+    isGeneratingProfile.value = false;
   }
   isGenerating.value = false;
   if (ok) uni.navigateTo({ url: '/pages/candidate/profile/index' });
@@ -602,14 +664,15 @@ function toggleMic() {
   display: flex;
   flex-direction: column;
   gap: 24rpx;
-  min-height: calc(100vh - 320rpx);
+  height: calc(100vh - 360rpx);
+  min-height: 0;
 }
 .chat-card {
   display: flex;
   flex: 1;
   flex-direction: column;
   overflow: hidden;
-  min-height: 640rpx;
+  min-height: 0;
   border: 2rpx solid #c3c6d7;
   border-radius: 16rpx;
   background: #fff;
@@ -617,10 +680,12 @@ function toggleMic() {
 }
 .chat-history {
   flex: 1;
-  height: 480rpx;
+  min-height: 0;
+  height: auto;
   padding: 48rpx;
   box-sizing: border-box;
 }
+.chat-anchor { height: 1rpx; }
 .message-row {
   display: flex;
   align-items: flex-start;
@@ -707,6 +772,14 @@ function toggleMic() {
   bottom: 24rpx;
   color: #565e74;
   font-size: 24rpx;
+  line-height: 1.33;
+}
+.input-hint {
+  position: absolute;
+  left: 24rpx;
+  bottom: 24rpx;
+  color: #94a3b8;
+  font-size: 22rpx;
   line-height: 1.33;
 }
 .input-actions {
@@ -1038,8 +1111,9 @@ function toggleMic() {
   .progress-name { font-size: 14px; }
   .progress-dot { width: 24px; height: 24px; font-size: 10px; }
   .time-row { font-size: 12px; }
-  .chat-main { flex: 1; min-width: 0; min-height: calc(100vh - 200px); }
-  .chat-history { height: auto; min-height: 360px; padding: 24px; }
+  .chat-main { flex: 1; min-width: 0; height: calc(100vh - 200px); min-height: 0; }
+  .chat-history { flex: 1; height: auto; min-height: 0; padding: 24px; }
+  .input-hint { left: 12px; bottom: 12px; font-size: 12px; }
   .message-row { gap: 16px; margin-bottom: 24px; }
   .avatar { width: 40px; height: 40px; }
   .bubble { padding: 16px; font-size: 16px; border-radius: 12px; }

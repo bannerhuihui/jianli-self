@@ -2,6 +2,13 @@
   <view class="page candidate-flow-page resume-page">
     <AppTopNav active="求职者流程" />
 
+    <ProcessingOverlay
+      v-if="generating"
+      title="AI 正在生成简历..."
+      :description="`正在优化「${currentVersionMeta.title}」，请稍候。这通常需要 1-2 分钟。`"
+      tag="生成简历版本"
+    />
+
     <view class="container resume-container">
       <ProgressSteps v-bind="createFlowStepsProps(CANDIDATE_FLOW, 4)" navigable />
 
@@ -57,7 +64,7 @@
           <view class="export-note">
             <text class="note-title">关于导出</text>
             <text class="note-desc">所有版本均由 AI 针对您的目标岗位进行深度优化，确保在不同筛选环节中展现最佳状态。</text>
-            <view class="rule-link">
+            <view class="rule-link" @tap="openRules">
               <AppIcon name="info" :size="18" color="#004ac6" />
               <text>查看简历优化规则</text>
             </view>
@@ -67,8 +74,8 @@
         <section class="preview-panel">
           <view class="preview-toolbar">
             <view class="tabs">
-              <text class="tab active">预览界面</text>
-              <text class="tab">渲染日志</text>
+              <text class="tab" :class="{ active: activeTab === 'preview' }" @tap="activeTab = 'preview'">预览界面</text>
+              <text class="tab" :class="{ active: activeTab === 'log' }" @tap="activeTab = 'log'">渲染日志</text>
             </view>
             <view class="zoom desktop-only">
               <AppIcon name="zoom_out" :size="18" color="#565e74" />
@@ -86,6 +93,41 @@
 
           <view v-else-if="generating" class="preview-loading">
             <StatePanel tone="loading" icon="loop" icon-color="#004ac6" title="正在生成简历版本" :description="`正在优化 ${currentVersionMeta.title}...`" />
+          </view>
+
+          <view v-else-if="activeTab === 'log'" class="render-log">
+            <view v-if="!currentVersion" class="log-empty">
+              <AppIcon name="info" :size="28" color="#94a3b8" />
+              <text>暂无渲染日志，请先生成简历版本。</text>
+            </view>
+            <template v-else>
+              <view class="log-grid">
+                <view v-for="row in renderLog" :key="row.label" class="log-row">
+                  <text class="log-label">{{ row.label }}</text>
+                  <text class="log-value">{{ row.value }}</text>
+                </view>
+              </view>
+              <view class="log-section">
+                <text class="log-section-title">生成提示 / 警告</text>
+                <view v-if="currentVersion.warnings.length === 0" class="log-line ok">
+                  <AppIcon name="check_circle" :size="16" color="#006242" filled />
+                  <text>无警告，内容已通过校验。</text>
+                </view>
+                <view v-for="(w, i) in currentVersion.warnings" :key="i" class="log-line warn">
+                  <AppIcon name="info" :size="16" color="#ad6800" />
+                  <text>{{ w }}</text>
+                </view>
+              </view>
+              <view class="log-section">
+                <text class="log-section-title">引用证据 ID</text>
+                <view v-if="currentVersion.usedEvidenceIds.length === 0" class="log-line">
+                  <text>本次生成未显式引用证据条目。</text>
+                </view>
+                <view v-else class="log-ids">
+                  <text v-for="id in currentVersion.usedEvidenceIds" :key="id" class="log-id">{{ id }}</text>
+                </view>
+              </view>
+            </template>
           </view>
 
           <view v-else class="preview-stage">
@@ -135,11 +177,56 @@
             <text v-if="!recommendedRoles.length" class="role-empty">暂无推荐岗位</text>
           </view>
         </view>
-        <button class="evidence-link" @tap="showEvidence">
+        <button class="evidence-link" @tap="openEvidence">
           <text>查看优化证据</text>
           <AppIcon name="arrow_forward" :size="18" color="#004ac6" />
         </button>
       </section>
+    </view>
+
+    <view v-if="drawerOpen" class="rz-mask" @tap="closeDrawer">
+      <view class="rz-drawer" @tap.stop>
+        <view class="rz-head">
+          <text class="rz-title">{{ drawerMode === 'rules' ? '简历优化规则' : '优化证据' }}</text>
+          <view class="rz-close" @tap="closeDrawer">
+            <AppIcon name="close" :size="20" color="#565e74" />
+          </view>
+        </view>
+        <scroll-view scroll-y class="rz-body">
+          <template v-if="drawerMode === 'rules'">
+            <text class="rz-subtitle">{{ currentRules.title }}</text>
+            <text class="rz-hint">不同版本针对不同投递环节做了差异化优化，以下为「{{ currentVersionMeta.title }}」的优化策略：</text>
+            <view v-for="(rule, i) in currentRules.rules" :key="i" class="rz-rule">
+              <AppIcon name="check_circle" :size="18" color="#004ac6" filled />
+              <text>{{ rule }}</text>
+            </view>
+          </template>
+
+          <template v-else>
+            <text class="rz-hint">本版本在生成时引用了以下证据进行优化（来自简历校对与 AI 访谈）：</text>
+            <view v-if="usedEvidence.matched.length === 0 && usedEvidence.ids.length === 0" class="rz-empty">
+              <AppIcon name="info" :size="28" color="#94a3b8" />
+              <text>本版本暂无显式引用的优化证据，优化主要基于简历校对与岗位匹配分析。</text>
+            </view>
+            <template v-else>
+              <view v-for="ev in usedEvidence.matched" :key="ev.id" class="rz-evi">
+                <view class="rz-evi-head">
+                  <AppIcon
+                    :name="ev.source === 'interview' ? 'chat' : 'paperclip'"
+                    :size="16"
+                    :color="ev.source === 'interview' ? '#004ac6' : '#006242'"
+                  />
+                  <text>{{ ev.source === 'interview' ? '面试证据' : '简历证据' }} · {{ ev.id }}</text>
+                </view>
+                <text class="rz-evi-snippet">{{ ev.snippet || '无片段内容' }}</text>
+              </view>
+              <view v-if="usedEvidence.unmatchedIds.length" class="rz-evi">
+                <text class="rz-evi-snippet">其他引用证据 ID：{{ usedEvidence.unmatchedIds.join('、') }}</text>
+              </view>
+            </template>
+          </template>
+        </scroll-view>
+      </view>
     </view>
   </view>
 </template>
@@ -152,7 +239,6 @@ import type { ResumeVersionKey } from '@ai-talent-agent/shared';
 import {
   ApiClientError,
   ensureResumeVersionForActiveJourney,
-  exportResumeVersionForActiveJourney,
   getTalentProfileForActiveJourney,
   type ApiTalentProfile,
   type ResumeVersion,
@@ -161,6 +247,7 @@ import AppTag from '../../../components/AppTag.vue';
 import AppTopNav from '../../../components/AppTopNav.vue';
 import AppIcon from '../../../components/AppIcon.vue';
 import ProgressSteps from '../../../components/ProgressSteps.vue';
+import ProcessingOverlay from '../../../components/ProcessingOverlay.vue';
 import StatePanel from '../../../components/StatePanel.vue';
 import { copyText, showToast } from '../../../utils/feedback';
 
@@ -241,6 +328,91 @@ const matchScore = computed(() => {
 });
 const recommendedRoles = computed(() => profile.value?.recommendedRoles ?? []);
 
+const activeTab = ref<'preview' | 'log'>('preview');
+const drawerOpen = ref(false);
+const drawerMode = ref<'rules' | 'evidence'>('rules');
+
+const OPTIMIZATION_RULES: Record<ResumeVersionKey, { title: string; rules: string[] }> = {
+  ats: {
+    title: 'ATS 版本 · 机器筛选优化规则',
+    rules: [
+      '使用标准章节标题（工作经历 / 教育背景 / 技能），确保 ATS 正确解析结构。',
+      '关键词与目标岗位 JD 对齐，提升简历在招聘系统中的匹配得分。',
+      '采用纯文本排版，避免表格、图片、文本框等导致解析失败的元素。',
+      '量化成果（百分比、金额、数量），突出可被检索的硬性指标。',
+    ],
+  },
+  hr: {
+    title: 'HR 版本 · 人工阅读优化规则',
+    rules: [
+      '亮点前置：将与目标岗位最匹配的经历与成果放在首屏。',
+      '突出业务影响与结果，便于 HR 在数十秒内做出判断。',
+      '适度的视觉层次（加粗、分组、留白），提升人工阅读体验。',
+      '控制篇幅在 1-2 页，避免信息过载与重复表述。',
+    ],
+  },
+  platform: {
+    title: '平台简介 · 投递专用优化规则',
+    rules: [
+      '精炼为短简介，突出 3-5 个核心标签与代表性亮点。',
+      '适配招聘平台 / 内推渠道的字段长度限制。',
+      '强调岗位方向与可投递性，弱化冗长细节。',
+    ],
+  },
+  email: {
+    title: '邮件正文 · 自荐优化规则',
+    rules: [
+      '以自荐口吻组织正文，开头点明目标岗位与核心匹配点。',
+      '简短有力，控制在 3-4 段，便于 HR 快速浏览或转发。',
+      '结尾给出明确的下一步（附简历、期望沟通方式）。',
+    ],
+  },
+};
+const currentRules = computed(() => OPTIMIZATION_RULES[selectedVersion.value]);
+
+const usedEvidence = computed(() => {
+  const ids = currentVersion.value?.usedEvidenceIds ?? [];
+  const all = profile.value?.evidence ?? [];
+  const matched = all.filter((ev) => ids.includes(ev.id));
+  const matchedIds = new Set(matched.map((ev) => ev.id));
+  const unmatchedIds = ids.filter((id) => !matchedIds.has(id));
+  return { ids, matched, unmatchedIds };
+});
+
+function formatTime(iso?: string) {
+  if (!iso) return '—';
+  const date = new Date(iso);
+  if (Number.isNaN(date.getTime())) return iso;
+  return date.toLocaleString('zh-CN', { hour12: false });
+}
+
+const renderLog = computed(() => {
+  const version = currentVersion.value;
+  if (!version) return [] as Array<{ label: string; value: string }>;
+  return [
+    { label: '版本', value: `${version.title}（${version.versionKey}）` },
+    { label: '生成时间', value: formatTime(version.generatedAt) },
+    { label: '内容格式', value: version.contentFormat === 'markdown' ? 'Markdown' : '纯文本' },
+    { label: '置信度', value: confidenceLabel.value },
+    { label: '正文字数', value: `${version.content.length} 字` },
+    { label: '引用证据', value: `${version.usedEvidenceIds.length} 条` },
+  ];
+});
+
+function openRules() {
+  drawerMode.value = 'rules';
+  drawerOpen.value = true;
+}
+
+function openEvidence() {
+  drawerMode.value = 'evidence';
+  drawerOpen.value = true;
+}
+
+function closeDrawer() {
+  drawerOpen.value = false;
+}
+
 async function loadVersion(key: ResumeVersionKey, regenerate = false) {
   generateError.value = false;
   generating.value = true;
@@ -274,37 +446,74 @@ function copyCurrent() {
   copyText(currentVersion.value.content, '简历内容已复制');
 }
 
-async function exportVersion(format: 'pdf' | 'docx') {
-  if (!currentVersion.value) {
+function escapeHtml(text: string) {
+  return text
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;');
+}
+
+function buildFileName(ext: string) {
+  const name = profile.value?.candidate?.name?.trim() || '简历';
+  return `${name}_${currentVersionMeta.value.title}.${ext}`;
+}
+
+function triggerDownload(blob: Blob, filename: string) {
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = filename;
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  setTimeout(() => URL.revokeObjectURL(url), 1000);
+}
+
+function exportWord() {
+  const version = currentVersion.value;
+  if (!version) {
     showToast('请先等待简历版本生成完成');
+    return;
+  }
+  if (typeof document === 'undefined') {
+    copyText(version.content, '当前环境不支持下载，已复制内容');
     return;
   }
   exporting.value = true;
   try {
-    const result = await exportResumeVersionForActiveJourney(selectedVersion.value, format);
-    showToast(`${result.fileName} 已生成`);
-  } catch (error) {
-    const message = error instanceof ApiClientError ? error.message : '导出失败，请重试';
-    showToast(message);
+    const html = `<html xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:w="urn:schemas-microsoft-com:office:word" xmlns="http://www.w3.org/TR/REC-html40"><head><meta charset="utf-8"><title>${escapeHtml(version.title)}</title></head><body><pre style="font-family:'微软雅黑','Microsoft YaHei',sans-serif;font-size:12pt;line-height:1.7;white-space:pre-wrap;word-break:break-word;">${escapeHtml(version.content)}</pre></body></html>`;
+    const blob = new Blob(['\ufeff', html], { type: 'application/msword' });
+    triggerDownload(blob, buildFileName('doc'));
+    showToast('Word 文件已开始下载', 'success');
   } finally {
     exporting.value = false;
   }
 }
 
-function exportWord() {
-  return exportVersion('docx');
-}
-
 function exportPdf() {
-  return exportVersion('pdf');
+  const version = currentVersion.value;
+  if (!version) {
+    showToast('请先等待简历版本生成完成');
+    return;
+  }
+  if (typeof window === 'undefined' || typeof document === 'undefined') {
+    copyText(version.content, '当前环境不支持导出，已复制内容');
+    return;
+  }
+  const printWindow = window.open('', '_blank');
+  if (!printWindow) {
+    showToast('请允许浏览器弹出窗口以导出 PDF');
+    return;
+  }
+  printWindow.document.write(
+    `<html><head><meta charset="utf-8"><title>${escapeHtml(version.title)}</title><style>@page{margin:18mm;}body{font-family:'微软雅黑','Microsoft YaHei',sans-serif;color:#111;}pre{white-space:pre-wrap;word-break:break-word;font-size:14px;line-height:1.75;margin:0;}</style></head><body><pre>${escapeHtml(version.content)}</pre><script>window.onload=function(){setTimeout(function(){window.print();},200);};<\/script></body></html>`,
+  );
+  printWindow.document.close();
+  showToast('已打开打印窗口，请在弹窗中选择“另存为 PDF”');
 }
 
 async function regenerate() {
   await loadVersion(selectedVersion.value, true);
-}
-
-function showEvidence() {
-  showToast('证据链：简历校对 + AI 访谈 + 岗位匹配分析');
 }
 
 onMounted(async () => {
@@ -350,6 +559,38 @@ onMounted(async () => {
 .preview-loading, .preview-error { min-height: 760rpx; display: flex; align-items: center; justify-content: center; padding: 48rpx; background: rgba(203,219,245,0.22); }
 .retry-btn { margin-top: 12rpx; min-height: 72rpx; padding: 0 32rpx; }
 .preview-stage { overflow-x: auto; min-height: 760rpx; padding: 48rpx; background: rgba(203,219,245,0.22); }
+
+/* Render log */
+.render-log { min-height: 760rpx; padding: 48rpx; background: rgba(203,219,245,0.22); display: flex; flex-direction: column; gap: 32rpx; }
+.log-empty { display: flex; flex-direction: column; align-items: center; gap: 18rpx; padding: 120rpx 48rpx; color: #94a3b8; font-size: 26rpx; text-align: center; }
+.log-grid { display: flex; flex-direction: column; border: 2rpx solid #dbe1ff; border-radius: 16rpx; background: #fff; overflow: hidden; }
+.log-row { display: flex; justify-content: space-between; gap: 24rpx; padding: 22rpx 28rpx; border-bottom: 2rpx solid #eef1f8; }
+.log-row:last-child { border-bottom: none; }
+.log-label { color: #565e74; font-size: 24rpx; }
+.log-value { color: #0b1c30; font-size: 24rpx; font-weight: 700; text-align: right; }
+.log-section { display: flex; flex-direction: column; gap: 14rpx; }
+.log-section-title { color: #0b1c30; font-size: 26rpx; font-weight: 900; }
+.log-line { display: flex; align-items: flex-start; gap: 10rpx; color: #565e74; font-size: 24rpx; line-height: 1.6; }
+.log-line.ok { color: #006242; }
+.log-line.warn { color: #ad6800; }
+.log-ids { display: flex; flex-wrap: wrap; gap: 12rpx; }
+.log-id { border-radius: 8rpx; padding: 6rpx 16rpx; background: #eff4ff; color: #004ac6; font-size: 22rpx; font-family: monospace; }
+
+/* Optimization drawer */
+.rz-mask { position: fixed; inset: 0; z-index: 200; display: flex; justify-content: flex-end; background: rgba(11,28,48,0.45); }
+.rz-drawer { display: flex; flex-direction: column; width: 88%; max-width: 720rpx; height: 100%; background: #fff; box-shadow: -16rpx 0 48rpx rgba(15,23,42,0.18); animation: rz-in 0.25s ease; }
+@keyframes rz-in { from { transform: translateX(100%); } to { transform: translateX(0); } }
+.rz-head { display: flex; align-items: center; justify-content: space-between; gap: 16rpx; padding: 32rpx; border-bottom: 2rpx solid #e2e8f0; }
+.rz-title { color: #0b1c30; font-size: 32rpx; font-weight: 900; }
+.rz-close { display: flex; align-items: center; justify-content: center; width: 64rpx; height: 64rpx; border-radius: 999rpx; background: #f2f4f6; }
+.rz-body { flex: 1; min-height: 0; padding: 32rpx; box-sizing: border-box; }
+.rz-subtitle { display: block; color: #004ac6; font-size: 28rpx; font-weight: 900; margin-bottom: 12rpx; }
+.rz-hint { display: block; color: #565e74; font-size: 24rpx; line-height: 1.6; margin-bottom: 24rpx; }
+.rz-rule { display: flex; align-items: flex-start; gap: 14rpx; margin-bottom: 20rpx; border: 2rpx solid #e2e8f0; border-radius: 16rpx; padding: 24rpx; background: #f8fafc; color: #434655; font-size: 26rpx; line-height: 1.6; }
+.rz-empty { display: flex; flex-direction: column; align-items: center; gap: 18rpx; padding: 96rpx 48rpx; color: #94a3b8; font-size: 26rpx; text-align: center; }
+.rz-evi { display: flex; flex-direction: column; gap: 16rpx; margin-bottom: 24rpx; border: 2rpx solid #e2e8f0; border-radius: 16rpx; padding: 28rpx; background: #f8fafc; }
+.rz-evi-head { display: flex; align-items: center; gap: 10rpx; color: #004ac6; font-size: 24rpx; font-weight: 700; }
+.rz-evi-snippet { color: #434655; font-size: 26rpx; line-height: 1.65; }
 .content-preview { display: flex; flex-direction: column; gap: 28rpx; padding: 56rpx; color: #111827; }
 .content-head { display: flex; flex-direction: column; gap: 16rpx; border-bottom: 2rpx solid #eef1f8; padding-bottom: 24rpx; }
 .content-title { color: #0b1c30; font-size: 40rpx; font-weight: 900; line-height: 1.3; }

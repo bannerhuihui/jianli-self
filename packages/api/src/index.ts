@@ -15,6 +15,7 @@ export {
   getTalentProfile,
   getStructuredResume,
   listResumeVersions,
+  patchStructuredResume,
   skipInterviewQuestion,
   startProfileGeneration,
   startParseResume,
@@ -29,6 +30,7 @@ export {
   getTalentProfileForActiveJourney,
   getStructuredResumeForActiveJourney,
   prepareCandidateContext,
+  saveStructuredResumeForActiveJourney,
   uploadAndParseResume,
 } from './candidate';
 export { getJobProfile, getMatchDetail, getMatchResults } from './hr-mocks';
@@ -39,10 +41,13 @@ export type {
   InterviewSession,
   InterviewTurn,
   InterviewTurnResponse,
+  ProfileCapability,
+  ProfileEvidence,
   ResumeExportResult,
   ResumeFileUpload,
   ResumeVersion,
   ResumeVersionKey,
   SessionData,
+  StructuredResumePatch,
   TaskAccepted,
 } from './types';

@@ -128,6 +128,14 @@ export interface ApiStructuredResume extends StructuredResume {
   updatedAt?: string;
 }
 
+export interface StructuredResumePatch {
+  basicInfo?: Partial<Candidate>;
+  education?: string[];
+  workExperience?: string[];
+  projects?: string[];
+  skills?: string[];
+}
+
 export type ResumeVersionKey = 'ats' | 'hr' | 'platform' | 'email';
 
 export interface ResumeVersion {
